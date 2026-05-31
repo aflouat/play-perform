@@ -1,47 +1,28 @@
-# IN PROGRESS — Epic : Sons, Score Animé, Mohamed Complet
+# IN PROGRESS — Patch : Suspense boundary /auth (v0.5.1)
 
-## Statut : TERMINÉ ✅ (2026-05-30)
+## Statut : TERMINÉ ✅ (2026-05-31)
 
-## Ce que cette Epic a produit
+## Problème corrigé
 
-### Corrections de bugs
-- `esma/page.tsx` : bug hydration corrigé — `getActiveProfileId()` était appelé au render (SSR) sans `useEffect`, causant une erreur localStorage côté serveur. Corrigé avec `useState + useEffect`.
+**Erreur build Vercel** :
+```
+⨯ useSearchParams() should be wrapped in a suspense boundary at page "/auth"
+```
 
-### Sons enthousiastes (src/lib/audio.ts)
-- `speakEnthusiastic(word, lang)` : dit d'abord une interjection aléatoire ("Super !", "Bravo !", "Génial !"...) puis le mot — voix pitch 1.3, rate 1.1
-- `speakInstruction(text, lang)` : voix claire pour les consignes
-- `getBestVoice(lang)` : sélectionne automatiquement la meilleure voix disponible (locale prioritaire)
-- Pool d'interjections par langue (FR/EN/ES)
+**Cause** : `AuthPage` (le composant page exporté) appelait directement `useSearchParams()`, 
+et `AuthForm` (sous-composant) aussi. Next.js exige que tout `useSearchParams()` soit dans un `<Suspense>`.
 
-### Score animé visible
-- `XpGainToast` + `useXpGain` hook : badge "+N XP" flottant qui apparaît et monte avec fondu
-- CSS : `@keyframes xpfloat`, `score-pop`, `level-up` dans globals.css
-- Intégré dans quiz Omar, jeu Esma, modes Mohamed
+**Double bug** : `AuthPage` et `AuthForm` avaient chacun leur propre `screen` state — les boutons 
+"Pas encore de compte ?" dans `AuthPage` ne synchronisaient pas l'état de `AuthForm`.
 
-### Mohamed — 3 modes complets
-- **LetterMode** : une lettre à la fois, clavier physique + bouton tactile, 4 niveaux
-- **WordMode** : mot entier à taper lettre par lettre (CHAT, SOLEIL...), feedback visuel par lettre
-- **ScienceMode** : 8 QCM sciences pour 6 ans (gravité, photosynthèse, arc-en-ciel...) avec faits amusants
+## Solution
 
-### Données
-- `src/lib/phrase-data.ts` : mots niveau 1 (4 lettres) et niveau 2 (5-6 lettres) pour taper
-- `src/lib/science-data.ts` : 8 questions sciences illustrées avec explication et fait bonus
+- Renommé `AuthForm` → `AuthContent` — unique composant avec tout le state + `useSearchParams`
+- `AuthPage` devient un wrapper layout pur + `<Suspense><AuthContent /></Suspense>`
+- Les boutons toggle "Se connecter / S'inscrire" intégrés dans `AuthContent` (state unifié)
+- 143 lignes (< 150)
 
-### Fichiers .md consolidés
-- `README.md` : état complet du système
-- `CLAUDE.md` : instructions agentiques à jour
-- `todo.md` : roadmap priorisée
-- `in-progress.md` : ce fichier
+## Fichiers modifiés
 
-## Fichiers créés / modifiés
-- `src/lib/audio.ts` — sons enthousiastes
-- `src/lib/phrase-data.ts` — mots à taper (NEW)
-- `src/lib/science-data.ts` — questions sciences (NEW)
-- `src/components/ui/XpGainToast.tsx` — animation XP (NEW)
-- `src/components/keyboard/LetterMode.tsx` — mode lettres (NEW)
-- `src/components/keyboard/WordMode.tsx` — mode mots (NEW)
-- `src/components/keyboard/ScienceMode.tsx` — mode sciences (NEW)
-- `src/app/keyboard/page.tsx` — 3 modes avec onglets
-- `src/app/esma/page.tsx` — bug hydration corrigé + score animé
-- `src/app/quiz/[subject]/page.tsx` — XpGainToast + speakEnthusiastic
-- `src/app/globals.css` — animations CSS
+- `src/app/auth/page.tsx` — refactorisé (Suspense + state unifié)
+- `package.json` — version 0.5.0 → 0.5.1
