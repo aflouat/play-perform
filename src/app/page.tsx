@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
-import { PROFILES, setActiveProfileId, getHomeRouteForProfile } from '@/lib/profiles';
+import { PROFILES, setActiveProfileId, getActiveProfileId, clearActiveProfile, getHomeRouteForProfile } from '@/lib/profiles';
 import { fetchStudents } from '@/lib/db';
 import type { DbStudent } from '@/lib/db';
 import { useScore } from '@/hooks/useScore';
@@ -67,21 +67,31 @@ export default function WelcomePage() {
   useEffect(() => {
     async function init() {
       const { data } = await getSupabase().auth.getSession();
+      let resolvedProfiles: DisplayProfile[];
       if (data.session) {
         setParentLogged(true);
         const students = await fetchStudents();
         if (students.length > 0) {
-          setProfiles(students.map(toDisplayProfile));
+          resolvedProfiles = students.map(toDisplayProfile);
+          setProfiles(resolvedProfiles);
+          // Clear stale activeProfileId that no longer matches current profiles
+          const ids = new Set(resolvedProfiles.map((p) => p.id));
+          const stale = getActiveProfileId();
+          if (stale && !ids.has(stale)) clearActiveProfile();
           setReady(true);
           return;
         }
       }
       // Fallback: hardcoded profiles
-      setProfiles(PROFILES.map((p) => ({
+      resolvedProfiles = PROFILES.map((p) => ({
         id: p.id, name: p.name, emoji: p.emoji,
         gradient: p.gradient, tagline: p.tagline,
         homeRoute: getHomeRouteForProfile(p),
-      })));
+      }));
+      const ids = new Set(resolvedProfiles.map((p) => p.id));
+      const stale = getActiveProfileId();
+      if (stale && !ids.has(stale)) clearActiveProfile();
+      setProfiles(resolvedProfiles);
       setReady(true);
     }
     init();

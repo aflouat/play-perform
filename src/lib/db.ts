@@ -157,6 +157,12 @@ export async function deleteStudent(id: string): Promise<void> {
   await db.from('students').delete().eq('id', id);
 }
 
+export async function updateStudent(id: string, updates: Partial<DbStudent>): Promise<void> {
+  const db = getClient();
+  if (!db) return;
+  await db.from('students').update(updates).eq('id', id);
+}
+
 function getServerClient(): SupabaseClient {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY ?? '';
@@ -173,6 +179,24 @@ export async function fetchQuestionsFromDb(subject: string): Promise<DbQuestion[
   if (!db) return [];
   const { data } = await db.from('questions').select('*').eq('subject', subject);
   return (data as DbQuestion[]) ?? [];
+}
+
+export async function fetchAllQuestionsFromDb(subject?: string): Promise<DbQuestion[]> {
+  const db = getServerClient();
+  let q = db.from('questions').select('*').order('subject').order('difficulty');
+  if (subject) q = q.eq('subject', subject);
+  const { data } = await q;
+  return (data as DbQuestion[]) ?? [];
+}
+
+export async function updateQuestion(id: string, updates: Partial<DbQuestion>): Promise<void> {
+  const db = getServerClient();
+  await db.from('questions').update(updates).eq('id', id);
+}
+
+export async function deleteQuestion(id: string): Promise<void> {
+  const db = getServerClient();
+  await db.from('questions').delete().eq('id', id);
 }
 
 // ── Release Notes ─────────────────────────────────────────────────────────

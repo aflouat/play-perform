@@ -4,8 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
-import { fetchStudents, insertStudent, deleteStudent } from '@/lib/db';
+import { fetchStudents, insertStudent } from '@/lib/db';
 import type { DbStudent } from '@/lib/db';
+import { StudentCard } from '@/components/parent/StudentCard';
 
 function getClient() {
   return createClient(
@@ -54,14 +55,12 @@ export default function ParentPage() {
     setAdding(false);
   }
 
-  async function handleDelete(id: string) {
-    await deleteStudent(id);
+  function handleDelete(id: string) {
     setStudents((s) => s.filter((st) => st.id !== id));
   }
 
-  async function handleLogout() {
-    await getClient().auth.signOut();
-    router.push('/');
+  function handleUpdated(updated: DbStudent) {
+    setStudents((s) => s.map((st) => st.id === updated.id ? updated : st));
   }
 
   if (loading) return <div className="min-h-screen flex items-center justify-center text-slate-400 text-sm">Chargement…</div>;
@@ -72,34 +71,23 @@ export default function ParentPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-black text-[#1a1a2e]">Mes élèves</h1>
-            <p className="text-slate-500 text-sm">{students.length} profil(s) actif(s)</p>
+            <p className="text-slate-500 text-sm">{students.length} profil(s)</p>
           </div>
-          <button onClick={handleLogout} className="text-xs text-slate-400 hover:text-rose-500 font-semibold transition-colors">
+          <button onClick={() => getClient().auth.signOut().then(() => router.push('/'))}
+            className="text-xs text-slate-400 hover:text-rose-500 font-semibold transition-colors">
             Déconnexion
           </button>
         </div>
 
-        {/* Student list */}
         <div className="space-y-3">
           {students.map((s) => (
-            <div key={s.id} className="flex items-center gap-4 bg-white rounded-2xl p-4 shadow-sm">
-              <div className={`w-12 h-12 shrink-0 rounded-xl bg-gradient-to-br ${s.gradient} flex items-center justify-center text-2xl shadow`}>
-                {s.emoji}
-              </div>
-              <div className="flex-1">
-                <div className="font-bold text-[#1a1a2e]">{s.name}</div>
-                <div className="text-slate-400 text-xs">{s.grade} · {s.age} ans</div>
-              </div>
-              <button onClick={() => s.id && handleDelete(s.id)}
-                className="text-slate-300 hover:text-rose-400 transition-colors text-lg leading-none">×</button>
-            </div>
+            <StudentCard key={s.id} student={s} onDelete={handleDelete} onUpdated={handleUpdated} />
           ))}
           {students.length === 0 && (
             <p className="text-slate-400 text-sm text-center py-4">Aucun élève — ajoutez-en un ci-dessous.</p>
           )}
         </div>
 
-        {/* Add form */}
         <form onSubmit={handleAdd} className="bg-white rounded-2xl shadow-md p-5 space-y-4">
           <h2 className="font-black text-[#1a1a2e]">Ajouter un élève</h2>
           <div className="grid grid-cols-2 gap-3">
@@ -131,9 +119,7 @@ export default function ParentPage() {
         </form>
 
         <div className="text-center">
-          <Link href="/" className="text-sm text-slate-400 hover:text-slate-600 font-semibold">
-            ← Retour à l'accueil
-          </Link>
+          <Link href="/" className="text-sm text-slate-400 hover:text-slate-600 font-semibold">← Retour à l'accueil</Link>
         </div>
       </div>
     </div>

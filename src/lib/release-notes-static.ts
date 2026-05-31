@@ -3,6 +3,27 @@ import type { DbReleaseNote } from '@/lib/db';
 // Historique statique — fallback si Supabase non configuré
 export const STATIC_RELEASE_NOTES: DbReleaseNote[] = [
   {
+    id: 'static-v0.4.0',
+    version: '0.4.0',
+    deployed_at: '2026-05-31T18:00:00Z',
+    title: 'Admin questions + espace parent amélioré + bug niveau',
+    summary: 'Interface admin pour modifier/supprimer les questions importées, espace parent avec édition des élèves et affichage de leur progression, correction du bug niveau mismatch.',
+    changes: [
+      'Bug fix : niveau mismatch Mohamed — activeProfileId stale nettoyé au chargement de l\'accueil',
+      'Admin /admin/questions : liste les questions importées (DB), filtre par matière',
+      'Admin /admin/questions/[id] : formulaire complet d\'édition (question, options, explication, difficulté)',
+      'API PUT /api/questions/[id] : mise à jour question (protégée service role key)',
+      'API DELETE /api/questions/[id] : suppression question (protégée)',
+      'API GET /api/questions : liste questions DB avec filtre subject',
+      'Admin layout avec nav partagée (Import CSV · Questions)',
+      'Parent : bouton ✏️ sur chaque élève pour modifier prénom/âge/classe inline',
+      'Parent : badge XP/niveau affiché sur chaque carte élève (depuis localStorage)',
+      'Composant StudentCard extrait (src/components/parent/)',
+    ],
+    tags: ['feature', 'bugfix', 'admin'],
+    deployed_by: 'Claude Code',
+  },
+  {
     id: 'static-v0.3.0',
     version: '0.3.0',
     deployed_at: '2026-05-31T12:00:00Z',
