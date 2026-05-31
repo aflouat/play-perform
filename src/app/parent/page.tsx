@@ -32,10 +32,12 @@ export default function ParentPage() {
   const [gradient, setGradient] = useState(GRADIENTS[0]);
   const [adding, setAdding] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [parentId, setParentId] = useState<string | undefined>();
 
   useEffect(() => {
     getClient().auth.getSession().then(({ data }) => {
       if (!data.session) { router.replace('/auth'); return; }
+      setParentId(data.session.user.id);
       fetchStudents().then((s) => { setStudents(s); setLoading(false); });
     });
   }, [router]);
@@ -49,7 +51,7 @@ export default function ParentPage() {
       grade: grade.trim() || 'CE1',
       tagline: `${name.trim()} apprend avec SYNTH.EDU`,
       age: parseInt(age) || 10,
-    });
+    }, parentId);
     if (student) setStudents((s) => [...s, student]);
     setName(''); setAge(''); setGrade('');
     setAdding(false);

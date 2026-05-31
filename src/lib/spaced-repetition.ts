@@ -72,6 +72,13 @@ export function isDue(progress: QuestionProgress): boolean {
   return new Date(progress.nextReview) <= new Date();
 }
 
+// Question vue il y a moins d'une heure → ne pas re-sélectionner immédiatement
+const RECENT_THRESHOLD_MS = 60 * 60 * 1000; // 1 heure
+export function isRecentlySeen(progress: QuestionProgress): boolean {
+  if (!progress.lastSeen) return false;
+  return Date.now() - new Date(progress.lastSeen).getTime() < RECENT_THRESHOLD_MS;
+}
+
 export function selectQuestions(
   allQuestions: QuizQuestion[],
   progressMap: Record<string, QuestionProgress>,
@@ -90,9 +97,11 @@ export function selectQuestions(
       due.push(q);
     } else if (p.state === 'mastered') {
       mastered.push(q);
-    } else {
-      reviewing.push(q); // review state, not yet due → 4th fallback
+    } else if (!isRecentlySeen(p)) {
+      reviewing.push(q); // review state, not yet due, not seen in last hour
     }
+    // Questions seen in the last hour are intentionally skipped
+    // to respect the forgetting curve — they will be due at nextReview
   }
 
   // Sort due by nextReview ascending (most overdue first)

@@ -58,11 +58,13 @@ export default function QuizPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<QuizAnswer[]>([]);
   const [finished, setFinished] = useState(false);
+  const [questionsLoaded, setQuestionsLoaded] = useState(false);
 
   useEffect(() => {
     if (profileId === '__none__' || allForSubject.length === 0) return;
     setQuestions(isValidSubject(subject) ? srsSelect(allForSubject, 5) : []);
     setCurrentIndex(0); setAnswers([]); setFinished(false);
+    setQuestionsLoaded(true);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionKey, profileId]);
 
@@ -97,8 +99,24 @@ export default function QuizPage() {
       </div>
     );
   }
-  if (profileId === '__none__' || questions.length === 0) {
+  if (profileId === '__none__' || !questionsLoaded) {
     return <div className="min-h-screen flex items-center justify-center text-slate-400 text-sm">Chargement…</div>;
+  }
+  if (questions.length === 0) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
+        <div className="text-6xl mb-4">🌟</div>
+        <h2 className="text-2xl font-black text-[#1a1a2e]">Session terminée !</h2>
+        <p className="text-slate-500 mt-2 text-sm leading-relaxed">
+          Toutes les questions ont été révisées récemment.<br/>
+          Reviens dans quelques heures pour respecter<br/>la courbe de mémorisation.
+        </p>
+        <button onClick={() => router.push('/home')}
+          className="mt-6 rounded-2xl bg-sky-500 text-white font-bold px-6 py-3 hover:bg-sky-400 transition-colors">
+          ← Accueil
+        </button>
+      </div>
+    );
   }
   if (finished) {
     return <QuizResultScreen answers={answers} questions={questions} score={score}

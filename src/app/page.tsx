@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
 import { PROFILES, setActiveProfileId, getActiveProfileId, clearActiveProfile, getHomeRouteForProfile } from '@/lib/profiles';
-import { fetchStudents } from '@/lib/db';
+import { fetchStudents, insertStudent } from '@/lib/db';
 import type { DbStudent } from '@/lib/db';
 import { useScore } from '@/hooks/useScore';
 
@@ -25,6 +25,20 @@ function getSupabase() {
   );
 }
 
+const DEFAULT_PARENT_EMAIL = 'aflouat@gmail.com';
+
+const DEFAULT_STUDENTS_SEED = [
+  { name: 'Omar',    emoji: '🧑‍🎓', gradient: 'from-sky-400 to-blue-500',     grade: '6ème',      tagline: 'Objectif : brevet',      age: 12 },
+  { name: 'Esma',   emoji: '🌸',   gradient: 'from-pink-400 to-rose-500',    grade: 'CP adapté', tagline: 'Mots & phrases',          age: 9  },
+  { name: 'Mohamed',emoji: '🚀',   gradient: 'from-emerald-400 to-teal-500', grade: 'CP',        tagline: 'Apprends le clavier !',   age: 6  },
+] as const;
+
+function getHomeRouteForStudent(s: DbStudent): string {
+  if ((s.age ?? 10) <= 7) return '/keyboard';
+  if (s.grade?.toLowerCase().includes('cp')) return '/esma';
+  return '/home';
+}
+
 function toDisplayProfile(s: DbStudent): DisplayProfile {
   return {
     id: s.id ?? s.name,
@@ -32,7 +46,7 @@ function toDisplayProfile(s: DbStudent): DisplayProfile {
     emoji: s.emoji,
     gradient: s.gradient,
     tagline: `${s.grade} · ${s.age} ans`,
-    homeRoute: (s.age ?? 10) <= 7 ? '/keyboard' : '/home',
+    homeRoute: getHomeRouteForStudent(s),
   };
 }
 
@@ -70,11 +84,19 @@ export default function WelcomePage() {
       let resolvedProfiles: DisplayProfile[];
       if (data.session) {
         setParentLogged(true);
-        const students = await fetchStudents();
+        let students = await fetchStudents();
+
+        // Auto-seed default profiles for the default parent account
+        if (students.length === 0 && data.session.user.email === DEFAULT_PARENT_EMAIL) {
+          await Promise.all(
+            DEFAULT_STUDENTS_SEED.map((s) => insertStudent(s, data.session!.user.id)),
+          );
+          students = await fetchStudents();
+        }
+
         if (students.length > 0) {
           resolvedProfiles = students.map(toDisplayProfile);
           setProfiles(resolvedProfiles);
-          // Clear stale activeProfileId that no longer matches current profiles
           const ids = new Set(resolvedProfiles.map((p) => p.id));
           const stale = getActiveProfileId();
           if (stale && !ids.has(stale)) clearActiveProfile();

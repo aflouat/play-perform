@@ -18,10 +18,14 @@ export async function fetchStudents(): Promise<DbStudent[]> {
   return (data as DbStudent[]) ?? [];
 }
 
-export async function insertStudent(student: Omit<DbStudent, 'id' | 'parent_id'>): Promise<DbStudent | null> {
+export async function insertStudent(
+  student: Omit<DbStudent, 'id' | 'parent_id'>,
+  parentId?: string,
+): Promise<DbStudent | null> {
   const db = getClient();
   if (!db) return null;
-  const { data } = await db.from('students').insert(student).select().single();
+  const payload = parentId ? { ...student, parent_id: parentId } : student;
+  const { data } = await db.from('students').insert(payload).select().single();
   return (data as DbStudent) ?? null;
 }
 
