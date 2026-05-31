@@ -47,7 +47,7 @@ export default function ParentPage() {
         <AddStudentForm onAdded={(student) => setStudents((s) => [...s, student])} />
 
         <div className="text-center">
-          <Link href="/" className="text-sm text-slate-400 hover:text-slate-600 font-semibold">← Retour à l'accueil</Link>
+          <Link href="/" className="text-sm text-slate-400 hover:text-slate-600 font-semibold">← Retour à l&apos;accueil</Link>
         </div>
       </div>
     </div>

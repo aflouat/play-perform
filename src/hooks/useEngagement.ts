@@ -41,7 +41,7 @@ export function useEngagement(options: UseEngagementOptions): UseEngagementRetur
   const heartbeatRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const onPingRef = useRef(onPing);
-  onPingRef.current = onPing;
+  useEffect(() => { onPingRef.current = onPing; }, [onPing]);
 
   // Tick local chaque seconde
   useEffect(() => {
@@ -112,13 +112,12 @@ export function useEngagement(options: UseEngagementOptions): UseEngagementRetur
       });
       if (afkTimerRef.current) clearTimeout(afkTimerRef.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {
     isActive,
     isAfk,
     elapsedSeconds,
-    totalSeconds: totalRef.current,
+    totalSeconds: elapsedSeconds,
   };
 }

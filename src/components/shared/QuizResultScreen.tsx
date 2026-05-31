@@ -2,7 +2,7 @@
 
 import React from 'react';
 import type { QuizAnswer, QuizQuestion, Score } from '@/types';
-import { XpGainToast, useXpGain } from '@/components/ui/XpGainToast';
+import { XpGainToast } from '@/components/ui/XpGainToast';
 
 interface QuizResultScreenProps {
   answers: QuizAnswer[];

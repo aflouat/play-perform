@@ -8,48 +8,28 @@ import { useAvatar } from '@/hooks/useAvatar';
 import { useLearningMode } from '@/hooks/useLearningMode';
 import { AvatarPicker } from '@/components/shared/AvatarPicker';
 import { ProfileHeader } from '@/components/shared/ProfileHeader';
-import { clearActiveProfile, getActiveProfileId, getProfileById } from '@/lib/profiles';
+import { clearActiveProfile, getProfileById } from '@/lib/profiles';
+import { useActiveProfileId } from '@/hooks/useActiveProfileId';
 import { ALL_QUIZ_SUBJECTS, getSubjectLabel } from '@/lib/quiz-data';
 import { getQuestions } from '@/lib/question-banks';
-import type { Subject } from '@/types';
+import { SUBJECT_META } from '@/lib/subjects';
 import { SubjectBadge } from '@/components/home/SubjectBadge';
-
-const SUBJECT_META: Record<Subject, { emoji: string; bg: string }> = {
-  maths: { emoji: '🧮', bg: 'bg-sky-500' },
-  francais: { emoji: '📝', bg: 'bg-violet-500' },
-  svt: { emoji: '🔬', bg: 'bg-emerald-500' },
-  histoire: { emoji: '🏛️', bg: 'bg-amber-500' },
-  physique: { emoji: '⚡', bg: 'bg-rose-500' },
-  it: { emoji: '💻', bg: 'bg-cyan-500' },
-  culture: { emoji: '🌍', bg: 'bg-teal-500' },
-  espace: { emoji: '🚀', bg: 'bg-indigo-500' },
-  meteo: { emoji: '🌦️', bg: 'bg-cyan-400' },
-  chimie: { emoji: '⚗️', bg: 'bg-lime-500' },
-  mecanique: { emoji: '⚙️', bg: 'bg-orange-500' },
-  geo: { emoji: '🌍', bg: 'bg-teal-500' },
-  anglais: { emoji: '🇬🇧', bg: 'bg-blue-500' },
-  espagnol: { emoji: '🇪🇸', bg: 'bg-red-500' },
-  informatique: { emoji: '💻', bg: 'bg-slate-500' },
-  telecom: { emoji: '📡', bg: 'bg-purple-500' },
-};
 
 export default function HomePage() {
   const router = useRouter();
-  const [profileId, setProfileId] = useState<string | null>(null);
+  const profileId = useActiveProfileId();
   const [showAvatars, setShowAvatars] = useState(false);
 
   useEffect(() => {
-    const id = getActiveProfileId();
-    if (!id) { router.replace('/'); return; }
-    setProfileId(id);
-  }, [router]);
+    if (profileId === '__none__') router.replace('/');
+  }, [profileId, router]);
 
-  const { score, xpToNextLevel } = useScore(profileId ?? '__none__');
-  const { avatar, avatarId, allAvatars, selectAvatar } = useAvatar(profileId ?? '__none__', score.xp);
-  const { mode, setMode } = useLearningMode(profileId ?? 'omar');
-  const profile = profileId ? getProfileById(profileId) : null;
+  const { score, xpToNextLevel } = useScore(profileId);
+  const { avatar, avatarId, allAvatars, selectAvatar } = useAvatar(profileId, score.xp);
+  const { mode, setMode } = useLearningMode(profileId === '__none__' ? 'omar' : profileId);
+  const profile = getProfileById(profileId);
 
-  if (!profileId) {
+  if (profileId === '__none__') {
     return <div className="min-h-screen flex items-center justify-center text-slate-400 text-sm">Chargement…</div>;
   }
 
@@ -80,7 +60,7 @@ export default function HomePage() {
         )}
 
         <h1 className="text-2xl font-black text-[#1a1a2e] leading-snug tracking-tight mb-2">
-          Qu'est-ce qu'on apprend aujourd'hui ?
+          Qu&apos;est-ce qu&apos;on apprend aujourd&apos;hui ?
         </h1>
         <p className="text-slate-400 text-xs mb-5">
           🔢 = questions à revoir · ✓ = maîtrisé · gris = nouveau

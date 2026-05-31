@@ -1,14 +1,12 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
 import type { DbQuestion } from '@/lib/db';
+import { NAV_SUBJECTS } from '@/lib/subjects';
 
-const SUBJECTS = [
-  'maths','francais','svt','histoire','physique','espace','meteo',
-  'chimie','mecanique','geo','anglais','espagnol','informatique','telecom',
-];
+const SUBJECTS = NAV_SUBJECTS;
 const DIFF_LABEL: Record<number, string> = { 1: '🌱', 2: '📖', 3: '⚡', 4: '🔥' };
 
 function getSupabase() {
@@ -21,7 +19,7 @@ function getSupabase() {
 export default function AdminQuestionsPage() {
   const [subject, setSubject] = useState('');
   const [questions, setQuestions] = useState<DbQuestion[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);
   const [token, setToken] = useState('');
 
@@ -32,16 +30,16 @@ export default function AdminQuestionsPage() {
     });
   }, []);
 
-  const load = useCallback(async () => {
-    setLoading(true);
+  useEffect(() => {
+    if (!token) return;
+    let active = true;
     const url = subject ? `/api/questions?subject=${subject}` : '/api/questions';
-    const res = await fetch(url);
-    const data = await res.json() as { questions: DbQuestion[] };
-    setQuestions(data.questions);
-    setLoading(false);
-  }, [subject]);
-
-  useEffect(() => { if (token) load(); }, [load, token]);
+    fetch(url)
+      .then((res) => res.json() as Promise<{ questions: DbQuestion[] }>)
+      .then((data) => { if (active) { setQuestions(data.questions); setLoading(false); } })
+      .catch(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [token, subject]);
 
   async function handleDelete(id: string) {
     if (!window.confirm(`Supprimer "${id}" ?`)) return;

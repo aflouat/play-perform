@@ -68,7 +68,7 @@ export function AddStudentForm({ onAdded }: Props) {
       </div>
 
       <div>
-        <p className="text-xs font-bold text-slate-500 mb-2">Mode d'apprentissage</p>
+        <p className="text-xs font-bold text-slate-500 mb-2">Mode d&apos;apprentissage</p>
         <div className="grid grid-cols-2 gap-2">
           {(['advanced', 'assisted'] as StudentLearningMode[]).map((lm) => (
             <button key={lm} type="button" onClick={() => setLearningMode(lm)}

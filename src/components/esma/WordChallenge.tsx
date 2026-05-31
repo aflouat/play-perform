@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
-import type { WordLang, WordCard, WordChallenge as WordChallengeType } from '@/lib/word-data';
+import React, { useState, useEffect } from 'react';
+import { toSpeechLang, type WordLang, type WordCard, type WordChallenge as WordChallengeType } from '@/lib/word-data';
 import type { LearningMode } from '@/lib/learning-mode';
 import { HintButton } from '@/components/ui/HintButton';
 import { speakInstruction } from '@/lib/audio';
@@ -14,18 +14,38 @@ interface Props {
   lang: WordLang;
   feedback: 'idle' | 'correct' | 'wrong';
   selectedId: string | null;
-  hintUsed: boolean;
-  dimmedId: string | null;
-  optionStyle: (option: WordCard) => string;
   onSelect: (option: WordCard) => void;
-  onHint: () => void;
 }
 
-function toLangCode(lang: WordLang): string {
-  return lang === 'fr' ? 'fr-FR' : lang === 'en' ? 'en-GB' : 'es-ES';
-}
+/**
+ * Vue d'une question de mots. Montée via key={current.target.id} : l'indice et
+ * l'option barrée repartent neufs à chaque question (pas d'effet de reset).
+ */
+export function WordChallenge({ current, challenges, currentIdx, mode, lang, feedback, selectedId, onSelect }: Props) {
+  const [hintUsed, setHintUsed] = useState(false);
+  const [dimmedId, setDimmedId] = useState<string | null>(null);
 
-export function WordChallenge({ current, challenges, currentIdx, mode, lang, feedback, selectedId, hintUsed, dimmedId, optionStyle, onSelect, onHint }: Props) {
+  // Au montage : énonce le mot en mode assisté.
+  useEffect(() => {
+    if (mode === 'assisted') speakInstruction(current.target.word, toSpeechLang(lang));
+  }, [mode, lang, current.target.word]);
+
+  function handleHint() {
+    if (hintUsed || feedback !== 'idle') return;
+    setHintUsed(true);
+    const wrong = current.options.filter(o => o.id !== current.target.id);
+    if (wrong.length > 0) setDimmedId(wrong[0].id);
+    speakInstruction(current.target.word, toSpeechLang(lang));
+  }
+
+  function optionStyle(option: WordCard): string {
+    if (option.id === dimmedId && feedback === 'idle') return 'bg-slate-50 border-2 border-slate-100 opacity-30 cursor-not-allowed line-through';
+    if (feedback === 'idle') return 'bg-white shadow-md hover:shadow-lg border-2 border-transparent hover:border-pink-200 active:scale-[0.98]';
+    if (option.id === current.target.id) return 'bg-emerald-50 border-2 border-emerald-400 shadow';
+    if (option.id === selectedId) return 'bg-rose-50 border-2 border-rose-400 shadow';
+    return 'bg-white opacity-40 border-2 border-transparent';
+  }
+
   return (
     <>
       <div className="flex gap-1.5 mb-5">
@@ -41,11 +61,11 @@ export function WordChallenge({ current, challenges, currentIdx, mode, lang, fee
         </div>
 
         <div className="flex gap-2 w-full">
-          <button onClick={() => speakInstruction(current.target.word, toLangCode(lang))}
+          <button onClick={() => speakInstruction(current.target.word, toSpeechLang(lang))}
             className="flex-1 rounded-2xl bg-white shadow px-4 py-2.5 flex items-center justify-center gap-2 text-slate-600 font-semibold hover:shadow-md transition-shadow text-sm">
             🔊 Écouter
           </button>
-          {mode === 'assisted' && <HintButton onHint={onHint} used={hintUsed} />}
+          {mode === 'assisted' && <HintButton onHint={handleHint} used={hintUsed} />}
         </div>
 
         {mode === 'assisted' && hintUsed && (

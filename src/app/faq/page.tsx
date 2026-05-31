@@ -106,7 +106,7 @@ export default function FaqPage() {
           </Q>
           <Q q="La plateforme fonctionne-t-elle hors connexion ?">Oui — toute la logique est côté client.</Q>
           <Q q="Comment réinitialiser le SRS ?">
-            Console : <code className="bg-slate-100 px-2 py-0.5 rounded text-xs">localStorage.removeItem('srs:omar:maths')</code>
+            Console : <code className="bg-slate-100 px-2 py-0.5 rounded text-xs">{`localStorage.removeItem('srs:omar:maths')`}</code>
           </Q>
         </Section>
 

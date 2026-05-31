@@ -104,8 +104,8 @@ export default function WelcomePage() {
       <div className="w-full max-w-sm space-y-8">
         <div className="text-center">
           <div className="text-5xl mb-3">✨</div>
-          <h1 className="text-3xl font-black text-[#1a1a2e] tracking-tight">Qui joue aujourd'hui ?</h1>
-          <p className="text-xs text-slate-400 mt-1">Choisissez l'activité après avoir sélectionné le joueur.</p>
+          <h1 className="text-3xl font-black text-[#1a1a2e] tracking-tight">Qui joue aujourd&apos;hui ?</h1>
+          <p className="text-xs text-slate-400 mt-1">Choisissez l&apos;activité après avoir sélectionné le joueur.</p>
         </div>
         <div className="space-y-3">
           {profiles.map((p) => <ProfileCard key={p.id} profile={p} onSelect={() => setSelected(p)} />)}

@@ -1,13 +1,12 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
-import type { Subject, QuizQuestion, QuizAnswer, QuizOptionId, XpGain } from '@/types';
+import type { QuizQuestion, QuizAnswer, QuizOptionId, XpGain } from '@/types';
 import { QUIZ_TIMER_SECONDS } from '@/components/shared/QuizCard';
 import { playSound, speakEnthusiastic } from '@/lib/audio';
 
 interface UseQuizSessionParams {
   profileId: string;
-  subject: Subject;
   allForSubject: QuizQuestion[];
   srsSelect: (all: QuizQuestion[], count: number, bypass: boolean) => QuizQuestion[];
   addXp: (amount: number, reason: XpGain['reason']) => void;
@@ -17,7 +16,6 @@ interface UseQuizSessionParams {
 
 export function useQuizSession({
   profileId,
-  subject,
   allForSubject,
   srsSelect,
   addXp,
@@ -32,8 +30,11 @@ export function useQuizSession({
   const [finished, setFinished] = useState(false);
   const [questionsLoaded, setQuestionsLoaded] = useState(false);
 
+  // Sélection SRS = mélange aléatoire (Math.random) : impossible en render
+  // (règle purity), donc effectuée en side-effect après résolution du profil.
   useEffect(() => {
     if (profileId === '__none__' || allForSubject.length === 0) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setQuestions(srsSelect(allForSubject, 5, bypassRecent));
     setCurrentIndex(0); setAnswers([]); setFinished(false);
     setQuestionsLoaded(true);
@@ -42,6 +43,7 @@ export function useQuizSession({
 
   const handleAnswer = useCallback((optionId: QuizOptionId, timeMs: number) => {
     const q = questions[currentIndex];
+    if (!q) return;
     const isCorrect = optionId === q.correctOptionId;
     if (isCorrect) {
       const multiplier = Math.max(0.3, 1 - (0.7 * timeMs / 1000 / QUIZ_TIMER_SECONDS));

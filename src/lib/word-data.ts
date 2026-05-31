@@ -1,5 +1,10 @@
 export type WordLang = 'fr' | 'en' | 'es';
 
+/** Code de langue BCP-47 pour la synthèse vocale. */
+export function toSpeechLang(lang: WordLang): string {
+  return lang === 'fr' ? 'fr-FR' : lang === 'en' ? 'en-GB' : 'es-ES';
+}
+
 export interface WordCard {
   id: string;
   word: string;

@@ -1,10 +1,18 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import type { DbStudent } from '@/lib/db';
 import { apiDeleteStudent, apiUpdateStudent } from '@/lib/students-api';
 
 interface StudentScore { xp: number; level: number; }
+
+function loadStudentScore(id?: string): StudentScore | null {
+  if (typeof window === 'undefined' || !id) return null;
+  try {
+    const raw = localStorage.getItem(`score:${id}`);
+    return raw ? (JSON.parse(raw) as StudentScore) : null;
+  } catch { return null; }
+}
 
 interface StudentCardProps {
   student: DbStudent;
@@ -19,15 +27,7 @@ export function StudentCard({ student, onDelete, onUpdated }: StudentCardProps) 
   const [grade, setGrade] = useState(student.grade);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [score, setScore] = useState<StudentScore | null>(null);
-
-  useEffect(() => {
-    if (!student.id) return;
-    try {
-      const raw = localStorage.getItem(`score:${student.id}`);
-      if (raw) setScore(JSON.parse(raw) as StudentScore);
-    } catch { /* ignore */ }
-  }, [student.id]);
+  const [score] = useState<StudentScore | null>(() => loadStudentScore(student.id));
 
   async function handleSave() {
     if (!student.id || !name.trim()) return;

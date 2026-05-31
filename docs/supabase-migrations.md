@@ -140,6 +140,41 @@ alter table students
 alter table students alter column parent_id set default auth.uid();
 ```
 
+## 008 — seed_demo_students
+
+Insère les 3 élèves de démonstration liés au compte parent `aflouat@gmail.com`.  
+Idempotent (WHERE NOT EXISTS). Fichier source : `migrations/008_seed_demo_students.sql`.
+
+```sql
+DO $$
+DECLARE
+  v_email  text    := 'aflouat@gmail.com';
+  v_parent uuid;
+BEGIN
+  SELECT id INTO v_parent FROM auth.users WHERE email = v_email LIMIT 1;
+  IF v_parent IS NULL THEN
+    RAISE EXCEPTION 'Aucun compte trouvé pour %. Créez d''abord le compte via /auth.', v_email;
+  END IF;
+
+  -- Omar — 12 ans, quiz, advanced
+  INSERT INTO students (parent_id, name, emoji, gradient, grade, tagline, age, mode, learning_mode)
+  SELECT v_parent, 'Omar', '🧑‍🎓', 'from-sky-400 to-blue-500', '6ème', 'Objectif : brevet', 12, 'quiz', 'advanced'
+  WHERE NOT EXISTS (SELECT 1 FROM students WHERE parent_id = v_parent AND name = 'Omar');
+
+  -- Esma — 9 ans, words, assisted
+  INSERT INTO students (parent_id, name, emoji, gradient, grade, tagline, age, mode, learning_mode)
+  SELECT v_parent, 'Esma', '🌸', 'from-pink-400 to-rose-500', 'CP adapté', 'Mots & phrases', 9, 'words', 'assisted'
+  WHERE NOT EXISTS (SELECT 1 FROM students WHERE parent_id = v_parent AND name = 'Esma');
+
+  -- Mohamed — 6 ans, keyboard, assisted
+  INSERT INTO students (parent_id, name, emoji, gradient, grade, tagline, age, mode, learning_mode)
+  SELECT v_parent, 'Mohamed', '🚀', 'from-emerald-400 to-teal-500', 'CP', 'Apprends le clavier !', 6, 'keyboard', 'assisted'
+  WHERE NOT EXISTS (SELECT 1 FROM students WHERE parent_id = v_parent AND name = 'Mohamed');
+
+  RAISE NOTICE 'Seed terminé — parent: % (id: %)', v_email, v_parent;
+END $$;
+```
+
 ---
 
 ## Variables d'environnement requises

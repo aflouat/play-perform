@@ -35,6 +35,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     if (!body.version || !body.title || !Array.isArray(body.changes)) {
       return NextResponse.json({ error: 'version, title et changes sont requis.' }, { status: 400 });
     }
+    if (!/^\d+\.\d+\.\d+/.test(body.version)) {
+      return NextResponse.json({ error: 'Format de version invalide (attendu : semver, ex. 1.2.3).' }, { status: 400 });
+    }
     await insertReleaseNote({
       version: body.version,
       title: body.title,

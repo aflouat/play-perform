@@ -4,9 +4,9 @@ import React, { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
 import type { DbQuestion } from '@/lib/db';
+import { NAV_SUBJECTS } from '@/lib/subjects';
 
-const SUBJECTS = ['maths','francais','svt','histoire','physique','espace','meteo',
-  'chimie','mecanique','geo','anglais','espagnol','informatique','telecom'];
+const SUBJECTS = NAV_SUBJECTS;
 
 type Params = Promise<{ id: string }>;
 

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import type { Subject } from '@/types';
 import { QuizCard } from '@/components/shared/QuizCard';
@@ -10,38 +10,25 @@ import { useScore } from '@/hooks/useScore';
 import { useAvatar } from '@/hooks/useAvatar';
 import { useLearningMode } from '@/hooks/useLearningMode';
 import { useQuizSession } from '@/hooks/useQuizSession';
+import { useActiveProfileId } from '@/hooks/useActiveProfileId';
 import { getSubjectLabel } from '@/lib/quiz-data';
 import { getQuestions } from '@/lib/question-banks';
-import { getActiveProfileId, getProfileById } from '@/lib/profiles';
+import { getProfileById } from '@/lib/profiles';
+import { SUBJECT_META, NAV_SUBJECTS } from '@/lib/subjects';
 import { XpGainToast, useXpGain } from '@/components/ui/XpGainToast';
 import { useSpacedRepetition } from '@/hooks/useSpacedRepetition';
 
-const SUBJECT_BG: Record<string, string> = {
-  maths: 'bg-sky-400', francais: 'bg-violet-400', svt: 'bg-emerald-400',
-  histoire: 'bg-amber-400', physique: 'bg-rose-400', espace: 'bg-indigo-400',
-  meteo: 'bg-cyan-400', chimie: 'bg-lime-500', mecanique: 'bg-orange-400',
-  geo: 'bg-teal-400', anglais: 'bg-blue-400', espagnol: 'bg-red-400',
-  informatique: 'bg-slate-500', telecom: 'bg-purple-400',
-};
-
-const ALL_SUBJECTS: Subject[] = [
-  'maths','francais','svt','histoire','physique','espace','meteo',
-  'chimie','mecanique','geo','anglais','espagnol','informatique','telecom',
-];
-
-function isValidSubject(s: string): s is Subject { return ALL_SUBJECTS.includes(s as Subject); }
+function isValidSubject(s: string): s is Subject { return NAV_SUBJECTS.includes(s as Subject); }
 
 export default function QuizPage() {
   const params = useParams();
   const router = useRouter();
   const subject = params.subject as string;
 
-  const [profileId, setProfileId] = useState<string>('__none__');
+  const profileId = useActiveProfileId();
   useEffect(() => {
-    const id = getActiveProfileId();
-    if (!id) { router.replace('/'); return; }
-    setProfileId(id);
-  }, [router]);
+    if (profileId === '__none__') router.replace('/');
+  }, [profileId, router]);
 
   const { score, xpToNextLevel, addXp } = useScore(profileId);
   const { avatar } = useAvatar(profileId, score.xp);
@@ -54,7 +41,7 @@ export default function QuizPage() {
   const allForSubject = isValidSubject(subject) ? getQuestions(subject as Subject) : [];
 
   const { questions, currentIndex, answers, finished, questionsLoaded, handleAnswer, replay, continueAnyway } =
-    useQuizSession({ profileId, subject: validSubject, allForSubject, srsSelect, addXp, triggerGain, recordAnswer });
+    useQuizSession({ profileId, allForSubject, srsSelect, addXp, triggerGain, recordAnswer });
 
   if (!isValidSubject(subject)) {
     return (
@@ -75,7 +62,7 @@ export default function QuizPage() {
         <h2 className="text-2xl font-black text-[#1a1a2e]">Bravo, tu avances vite !</h2>
         <p className="text-slate-500 mt-2 text-sm leading-relaxed">
           Toutes les questions ont été révisées récemment.<br/>
-          L'idéal est de revenir dans quelques heures.
+          L&apos;idéal est de revenir dans quelques heures.
         </p>
         <div className="flex flex-col gap-3 mt-6 w-full max-w-xs">
           <button onClick={continueAnyway}
@@ -96,7 +83,7 @@ export default function QuizPage() {
       onReplay={replay} onHome={() => router.push('/home')} />;
   }
 
-  const subjectBg = SUBJECT_BG[subject] ?? 'bg-slate-400';
+  const subjectBg = SUBJECT_META[subject as Subject]?.bg ?? 'bg-slate-400';
   const correctSoFar = answers.filter((a) => a.isCorrect).length;
 
   return (
@@ -115,8 +102,8 @@ export default function QuizPage() {
             <div key={i} className={`flex-1 h-2 rounded-full transition-all duration-500 ${i < currentIndex ? subjectBg : i === currentIndex ? `${subjectBg} opacity-40` : 'bg-slate-200'}`} />
           ))}
         </div>
-        <QuizCard question={questions[currentIndex]} questionIndex={currentIndex}
-          totalQuestions={questions.length} mode={mode} onAnswer={handleAnswer} />
+        <QuizCard key={questions[currentIndex].id} question={questions[currentIndex]}
+          mode={mode} onAnswer={handleAnswer} />
       </div>
     </div>
   );

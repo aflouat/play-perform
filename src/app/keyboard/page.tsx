@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { clearActiveProfile, getActiveProfileId, getProfileById } from '@/lib/profiles';
+import { clearActiveProfile, getProfileById } from '@/lib/profiles';
+import { useActiveProfileId } from '@/hooks/useActiveProfileId';
 import { useScore } from '@/hooks/useScore';
 import { useAvatar } from '@/hooks/useAvatar';
 import { useLearningMode } from '@/hooks/useLearningMode';
@@ -43,16 +44,14 @@ function FinishScreen({ onReplay, onHome, xp, level, name }: { onReplay: () => v
 
 export default function KeyboardPage() {
   const router = useRouter();
-  const [profileId, setProfileId] = useState<string>('__none__');
+  const profileId = useActiveProfileId();
   const [gameMode, setGameMode] = useState<GameMode>('letters');
   const [finished, setFinished] = useState(false);
   const [key, setKey] = useState(0);
 
   useEffect(() => {
-    const id = getActiveProfileId();
-    if (!id) { router.replace('/'); return; }
-    setProfileId(id);
-  }, [router]);
+    if (profileId === '__none__') router.replace('/');
+  }, [profileId, router]);
 
   const { score, xpToNextLevel } = useScore(profileId);
   const { avatar } = useAvatar(profileId, score.xp);

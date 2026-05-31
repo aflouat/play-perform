@@ -16,7 +16,7 @@ export function AvatarPicker({ allAvatars, currentXp, selectedId, onSelect }: Av
     <div>
       <h2 className="text-base font-black text-[#1a1a2e] mb-1">Ton personnage</h2>
       <p className="text-slate-400 text-xs mb-4">
-        Gagne de l'XP pour débloquer de nouveaux avatars
+        Gagne de l&apos;XP pour débloquer de nouveaux avatars
       </p>
 
       <div

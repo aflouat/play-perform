@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useScore } from '@/hooks/useScore';
 import { useAvatar } from '@/hooks/useAvatar';
 import { useLearningMode } from '@/hooks/useLearningMode';
 import { useWordSession } from '@/hooks/useWordSession';
-import { clearActiveProfile, getActiveProfileId } from '@/lib/profiles';
+import { useActiveProfileId } from '@/hooks/useActiveProfileId';
+import { clearActiveProfile } from '@/lib/profiles';
 import { LANG_LABELS, type WordLang } from '@/lib/word-data';
 import { XpGainToast, useXpGain } from '@/components/ui/XpGainToast';
 import { ProfileHeader } from '@/components/shared/ProfileHeader';
@@ -14,21 +15,19 @@ import { WordChallenge } from '@/components/esma/WordChallenge';
 
 export default function EsmaPage() {
   const router = useRouter();
-  const [profileId, setProfileId] = useState<string>('esma');
+  const profileId = useActiveProfileId();
   useEffect(() => {
-    const id = getActiveProfileId();
-    if (!id) { router.replace('/'); return; }
-    setProfileId(id);
-  }, [router]);
+    if (profileId === '__none__') router.replace('/');
+  }, [profileId, router]);
 
   const { score, xpToNextLevel, addXp } = useScore(profileId);
   const { avatar } = useAvatar(profileId, score.xp);
   const { mode, setMode } = useLearningMode(profileId);
   const { lastGain, popKey, triggerGain } = useXpGain();
 
-  const { lang, challenges, currentIdx, current, scoreGame, feedback, selectedId, finished, hintUsed, dimmedId,
-    handleLangChange, handleHint, handleSelect, restart, optionStyle, sessionLength } =
-    useWordSession({ mode, addXp, triggerGain });
+  const { lang, challenges, currentIdx, current, scoreGame, feedback, selectedId, finished,
+    handleLangChange, handleSelect, restart, sessionLength } =
+    useWordSession({ addXp, triggerGain });
 
   if (finished) {
     return (
@@ -77,10 +76,9 @@ export default function EsmaPage() {
           </div>
         </div>
 
-        <WordChallenge current={current} challenges={challenges} currentIdx={currentIdx}
-          mode={mode} lang={lang} feedback={feedback} selectedId={selectedId}
-          hintUsed={hintUsed} dimmedId={dimmedId} optionStyle={optionStyle}
-          onSelect={handleSelect} onHint={handleHint} />
+        <WordChallenge key={current.target.id} current={current} challenges={challenges}
+          currentIdx={currentIdx} mode={mode} lang={lang} feedback={feedback}
+          selectedId={selectedId} onSelect={handleSelect} />
       </div>
     </div>
   );

@@ -32,7 +32,7 @@ export function ModeSelector({ mode, onChange, compact = false }: ModeSelectorPr
 
   return (
     <div className="rounded-2xl bg-white shadow-md p-4">
-      <p className="text-xs text-slate-400 font-medium mb-3 text-center">Mode d'apprentissage</p>
+      <p className="text-xs text-slate-400 font-medium mb-3 text-center">Mode d&apos;apprentissage</p>
       <div className="flex gap-2">
         {(['assisted', 'advanced'] as LearningMode[]).map((m) => {
           const meta = MODE_LABELS[m];

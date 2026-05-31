@@ -14,8 +14,6 @@ export const QUIZ_TIMER_SECONDS = 30;
 
 interface QuizCardProps {
   question: QuizQuestion;
-  questionIndex: number;
-  totalQuestions: number;
   mode?: LearningMode;
   onAnswer: (optionId: QuizOptionId, timeMs: number) => void;
   onSpeak?: (text: string) => void;
@@ -23,8 +21,6 @@ interface QuizCardProps {
 
 export function QuizCard({
   question,
-  questionIndex,
-  totalQuestions,
   mode = 'advanced',
   onAnswer,
   onSpeak,

@@ -5,6 +5,10 @@ import type { QuizQuestion, QuizOptionId } from '@/types';
 import type { LearningMode } from '@/lib/learning-mode';
 import { speakInstruction } from '@/lib/audio';
 
+/**
+ * État interne d'une carte quiz. Le composant est remonté via `key={question.id}`
+ * à chaque nouvelle question : l'état repart donc neuf, sans effet de reset.
+ */
 export function useQuizCard(
   question: QuizQuestion,
   mode: LearningMode,
@@ -14,16 +18,13 @@ export function useQuizCard(
   const [revealed, setRevealed] = useState(false);
   const [hintUsed, setHintUsed] = useState(false);
   const [eliminatedId, setEliminatedId] = useState<QuizOptionId | null>(null);
-  const startMsRef = useRef(Date.now());
+  const startMsRef = useRef(0);
 
+  // Au montage uniquement : démarre le chrono + énonce la question en mode assisté.
   useEffect(() => {
     startMsRef.current = Date.now();
-    setSelected(null);
-    setRevealed(false);
-    setHintUsed(false);
-    setEliminatedId(null);
     if (mode === 'assisted') speakInstruction(question.questionAssisted ?? question.question);
-  }, [question.id, mode]);
+  }, [mode, question.question, question.questionAssisted]);
 
   function handleSelect(optionId: QuizOptionId) {
     if (revealed || optionId === eliminatedId) return;

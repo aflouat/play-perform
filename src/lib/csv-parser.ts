@@ -1,14 +1,12 @@
 import type { Subject } from '@/types';
 import type { DbQuestion } from '@/lib/db';
 import { splitRow, opt, req, type RowError, type ParseResult } from '@/lib/csv-tokenizer';
+import { ALL_SUBJECT_IDS } from '@/lib/subjects';
 
 export type { RowError, ParseResult } from '@/lib/csv-tokenizer';
 
-const SUBJECTS: Subject[] = [
-  'maths', 'francais', 'svt', 'histoire', 'physique',
-  'it', 'culture', 'espace', 'meteo', 'chimie',
-  'mecanique', 'geo', 'anglais', 'espagnol', 'informatique', 'telecom',
-];
+// Toutes les matières valides à l'import (inclut it/culture, hors navigation)
+const SUBJECTS: Subject[] = ALL_SUBJECT_IDS;
 
 const VALID_DIFFICULTY = new Set(['1', '2', '3', '4']);
 const VALID_OPTION_ID = new Set(['A', 'B', 'C', 'D']);
