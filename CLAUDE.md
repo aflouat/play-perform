@@ -2,13 +2,7 @@
 
 Instructions pour Claude Code dans ce repo.
 
-## Personas (agent.md → Cibles)
 
-| Profil | Âge | Besoins | Route |
-|---|---|---|---|
-| Omar | 12 ans | Quiz brevet, progression rapide | 
-| Esma | 9 ans | Troubles d'apprentissage, mots simples FR/EN/ES , tape touche mot ou phrase avec le mode assisté activé par défaut
-| Mohamed | 6 ans | Clavier, mots, découverte sciences tape touche mot ou phrase
 ## Règles de code impératives
 1. **150 lignes max par fichier** — extraire en sous-composant si dépassé
 2. **TypeScript strict** — `any` interdit, tout typer dans `src/types/`
@@ -41,6 +35,7 @@ Instructions pour Claude Code dans ce repo.
 ## Stack
 - Next.js 16.2.6 App Router · TypeScript strict · Tailwind v4
 - Jest 30 + @testing-library/react + Playwright
+- Supabase (Auth + DB) · localStorage (scores + progression SRS)
 
 ## Audio
 - `playSound(type)` — Web Audio API (correct/wrong/levelup/complete/click)
@@ -48,22 +43,39 @@ Instructions pour Claude Code dans ce repo.
 - `speakEnthusiastic(word, lang)` — TTS enthousiaste avec interjection aléatoire
 - `speakInstruction(text, lang)` — TTS instruction claire
 
-## Score visible
-- `XpGainToast` + `useXpGain` — badge "+N XP" flottant animé
-- CSS : `.xp-float`, `.score-pop`, `.level-up` dans `globals.css`
-
-## Composants Mohamed
-- `LetterMode` — une lettre à la fois (clavier physique + tap)
-- `WordMode` — mot entier lettre par lettre (clavier physique)
-- `ScienceMode` — QCM sciences pour 6 ans
-
 ## Commandes
 ```bash
 npm run dev           # Dev server
 npm run test          # Tests unit + intégration
 npm run test:e2e      # E2E Playwright
 npm run build         # Build prod
-npm run release -- --title "Titre" --changes "A,B,C" [--tags "feature,fix"] [--summary "..."]
-                      # Insère une release note dans Supabase après déploiement
-Apres chaque release, il faut faire un commit et push origin main
+ 
 ```
+
+#  Play Perform — Rôles Agentiques
+
+Ce fichier est la Source of Truth pour tout agent qui interagit avec ce repo.
+Jamais de code sans lire `in-progress.md` d'abord. Jamais de modification sans mettre à jour `README.md`, `todo.md` et `in-progress.md`.
+
+## Agent RESP (Responsable)
+- Lit et écrit `todo.md` (roadmap d'intentions)
+- Décide quelle Epic démarrer
+- Crée / met à jour `in-progress.md` avec le maximum de contexte
+- Vérifie que le `README.md` reflète la vérité du repo à tout moment
+- Peut déléguer le code à l'Agent CODEUR
+- NE CODE PAS directement sauf si pas d'autre agent dispo
+
+## Agent CODEUR (Exécutant)
+- LIT IMPERATIVEMENT `in-progress.md` avant toute ligne de code
+- LIT `README.md` pour comprendre l'état actuel du système
+- Code les tâches décrites dans `in-progress.md`
+- Respecte la contrainte 150 lignes/fichier
+- Respecte TypeScript strict, pas de `any`
+- Met à jour `README.md` à la fin de chaque Epic pour refléter les changements
+- Marque les tâches `in-progress.md` comme terminées au fur et à mesure
+- Peut signaler un blocage dans `in-progress.md` pour transfert à un autre agent
+
+## Règles de mise à jour des fichiers
+`README.md` : mis à jour à chaque fin d'Epic pour refléter l'état tech + features
+`todo.md` : le RESP gère, ajoute/modifie des intentions, repriorise
+`in-progress.md` : vivant, mis à jour en continu, effacé quand l'Epic est finie

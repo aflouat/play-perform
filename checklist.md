@@ -1,6 +1,6 @@
 le fichier est un memo des vérifications et tests a satisfaire avant livraison de code
 1-dans la catégorie des lettres à taper : ✅ D→🐬 Dauphin, ✅ O→🍊 Orange, ✅ A→🍍 Ananas (était 🍎 pomme)
-2-il y a un compte admin/rootROOT@2026 a qui est rattaché Mohamed, Omar et Esma
+2-il y a un compte admin@play.com/<dsqghgd> a qui est rattaché Mohamed, Omar et Esma
 3-pour Mohamed, l'avatar a l'accueil affiche le meme niveau XP affiché lorsqu'il joue ✅ DONE
 4-chacun des joueurs doit avoir son propre Xp ✅ DONE               
 5-a la suite d'une serie de questions, le systeme affiche un recap avec un focus sur les questions ayant une mauvaise reponse ✅ DONE
