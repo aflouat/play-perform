@@ -23,10 +23,19 @@ export default function AuthPage() {
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    getClient().auth.getSession().then(({ data }) => {
+    const db = getClient();
+    // Handle implicit flow: hash may contain access_token after email confirmation
+    db.auth.getSession().then(({ data }) => {
       if (data.session) router.replace('/parent');
       else setChecking(false);
     });
+    // Listen for auth state changes (triggered when Supabase processes the hash)
+    const { data: listener } = db.auth.onAuthStateChange((event, session) => {
+      if (session && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
+        router.replace('/parent');
+      }
+    });
+    return () => listener.subscription.unsubscribe();
   }, [router]);
 
   async function handleSubmit(e: React.FormEvent) {
