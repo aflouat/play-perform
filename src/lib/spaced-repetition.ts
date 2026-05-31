@@ -83,6 +83,7 @@ export function selectQuestions(
   allQuestions: QuizQuestion[],
   progressMap: Record<string, QuestionProgress>,
   count: number,
+  bypassRecent = false,
 ): QuizQuestion[] {
   const due: QuizQuestion[] = [];
   const newQ: QuizQuestion[] = [];
@@ -97,11 +98,9 @@ export function selectQuestions(
       due.push(q);
     } else if (p.state === 'mastered') {
       mastered.push(q);
-    } else if (!isRecentlySeen(p)) {
-      reviewing.push(q); // review state, not yet due, not seen in last hour
+    } else if (bypassRecent || !isRecentlySeen(p)) {
+      reviewing.push(q); // review state, not yet due
     }
-    // Questions seen in the last hour are intentionally skipped
-    // to respect the forgetting curve — they will be due at nextReview
   }
 
   // Sort due by nextReview ascending (most overdue first)

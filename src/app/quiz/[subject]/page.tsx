@@ -54,6 +54,7 @@ export default function QuizPage() {
   const allForSubject = isValidSubject(subject) ? getQuestions(subject as Subject) : [];
 
   const [sessionKey, setSessionKey] = useState(0);
+  const [bypassRecent, setBypassRecent] = useState(false);
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<QuizAnswer[]>([]);
@@ -62,11 +63,11 @@ export default function QuizPage() {
 
   useEffect(() => {
     if (profileId === '__none__' || allForSubject.length === 0) return;
-    setQuestions(isValidSubject(subject) ? srsSelect(allForSubject, 5) : []);
+    setQuestions(isValidSubject(subject) ? srsSelect(allForSubject, 5, bypassRecent) : []);
     setCurrentIndex(0); setAnswers([]); setFinished(false);
     setQuestionsLoaded(true);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sessionKey, profileId]);
+  }, [sessionKey, profileId, bypassRecent]);
 
   const handleAnswer = useCallback((optionId: QuizOptionId, timeMs: number) => {
     const q = questions[currentIndex];
@@ -106,22 +107,29 @@ export default function QuizPage() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
         <div className="text-6xl mb-4">🌟</div>
-        <h2 className="text-2xl font-black text-[#1a1a2e]">Session terminée !</h2>
+        <h2 className="text-2xl font-black text-[#1a1a2e]">Bravo, tu avances vite !</h2>
         <p className="text-slate-500 mt-2 text-sm leading-relaxed">
           Toutes les questions ont été révisées récemment.<br/>
-          Reviens dans quelques heures pour respecter<br/>la courbe de mémorisation.
+          L'idéal est de revenir dans quelques heures.
         </p>
-        <button onClick={() => router.push('/home')}
-          className="mt-6 rounded-2xl bg-sky-500 text-white font-bold px-6 py-3 hover:bg-sky-400 transition-colors">
-          ← Accueil
-        </button>
+        <div className="flex flex-col gap-3 mt-6 w-full max-w-xs">
+          <button onClick={() => { setBypassRecent(true); setSessionKey((k) => k + 1); }}
+            className="rounded-2xl bg-emerald-500 text-white font-bold px-6 py-3 hover:bg-emerald-400 transition-colors">
+            Continuer quand même →
+          </button>
+          <button onClick={() => router.push('/home')}
+            className="rounded-2xl bg-slate-100 text-slate-600 font-bold px-6 py-3 hover:bg-slate-200 transition-colors">
+            ← Accueil
+          </button>
+        </div>
       </div>
     );
   }
   if (finished) {
     return <QuizResultScreen answers={answers} questions={questions} score={score}
       xpToNextLevel={xpToNextLevel} lastGain={lastGain}
-      onReplay={() => setSessionKey((k) => k + 1)} onHome={() => router.push('/home')} />;
+      onReplay={() => { setBypassRecent(false); setSessionKey((k) => k + 1); }}
+      onHome={() => router.push('/home')} />;
   }
 
   const subjectBg = SUBJECT_BG[subject] ?? 'bg-slate-400';

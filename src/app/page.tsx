@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
-import { PROFILES, setActiveProfileId, getActiveProfileId, clearActiveProfile, getHomeRouteForProfile } from '@/lib/profiles';
+import { setActiveProfileId, getActiveProfileId, clearActiveProfile } from '@/lib/profiles';
 import { fetchStudents, insertStudent } from '@/lib/db';
 import type { DbStudent } from '@/lib/db';
 import { useScore } from '@/hooks/useScore';
@@ -28,7 +28,6 @@ function getSupabase() {
 }
 
 const DEFAULT_PARENT_EMAIL = 'aflouat@gmail.com';
-
 const DEFAULT_STUDENTS_SEED = [
   { name: 'Omar',    emoji: '🧑‍🎓', gradient: 'from-sky-400 to-blue-500',     grade: '6ème',      tagline: 'Objectif : brevet',      age: 12, mode: 'quiz'     as const, learning_mode: 'advanced' as const },
   { name: 'Esma',   emoji: '🌸',   gradient: 'from-pink-400 to-rose-500',    grade: 'CP adapté', tagline: 'Mots & phrases',          age: 9,  mode: 'words'    as const, learning_mode: 'assisted' as const },
@@ -65,7 +64,7 @@ function ProfileCard({ profile, onSelect }: { profile: DisplayProfile; onSelect:
             <span className="text-amber-600 text-xs font-bold">⭐ Niv.{score.level}</span>
             <span className="text-amber-400 text-xs">· {score.xp} XP</span>
           </div>
-          <span className="text-xs text-slate-400">{profile.learningMode === 'assisted' ? '🤝 Assisté' : '🚀 Avancé'}</span>
+          <span className="text-xs text-slate-400">{profile.learningMode === 'assisted' ? '🤝' : '🚀'}</span>
         </div>
       </div>
       <span className="text-slate-300 text-lg">→</span>
@@ -73,43 +72,65 @@ function ProfileCard({ profile, onSelect }: { profile: DisplayProfile; onSelect:
   );
 }
 
+function LandingScreen() {
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center px-5 py-12 bg-gradient-to-b from-violet-50 to-white">
+      <div className="w-full max-w-sm text-center space-y-8">
+        <div>
+          <div className="text-6xl mb-4">✨</div>
+          <h1 className="text-3xl font-black text-[#1a1a2e] tracking-tight">SYNTH.EDU</h1>
+          <p className="text-slate-500 mt-2 text-base leading-relaxed">
+            La plateforme d'apprentissage ludique pour tous les enfants.
+          </p>
+        </div>
+        <div className="grid grid-cols-3 gap-3 text-center">
+          {[['📚', 'Quiz', 'Matières scolaires'], ['🌸', 'Mots', 'Langues & lecture'], ['⌨️', 'Clavier', 'Lettres & sciences']].map(([emoji, label, desc]) => (
+            <div key={label} className="rounded-2xl bg-white shadow-sm border border-slate-100 p-3">
+              <div className="text-2xl mb-1">{emoji}</div>
+              <div className="text-xs font-bold text-[#1a1a2e]">{label}</div>
+              <div className="text-xs text-slate-400 mt-0.5">{desc}</div>
+            </div>
+          ))}
+        </div>
+        <div className="space-y-3">
+          <Link href="/auth"
+            className="block w-full py-4 rounded-2xl bg-violet-600 text-white font-black text-base hover:bg-violet-700 transition-colors shadow-lg">
+            👤 Connexion parent
+          </Link>
+          <Link href="/auth?signup=1"
+            className="block w-full py-3 rounded-2xl bg-violet-50 border border-violet-200 text-violet-700 font-bold text-sm hover:bg-violet-100 transition-colors">
+            Créer un compte gratuit
+          </Link>
+        </div>
+        <div className="flex justify-center gap-4">
+          <Link href="/faq" className="text-xs text-slate-400 hover:text-slate-600">❓ FAQ</Link>
+          <Link href="/releases" className="text-xs text-slate-400 hover:text-slate-600">📋 Versions</Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function WelcomePage() {
   const router = useRouter();
   const [profiles, setProfiles] = useState<DisplayProfile[]>([]);
-  const [parentLogged, setParentLogged] = useState(false);
   const [ready, setReady] = useState(false);
+  const [authed, setAuthed] = useState(false);
 
   useEffect(() => {
     async function init() {
       const { data } = await getSupabase().auth.getSession();
-      let resolvedProfiles: DisplayProfile[];
-      if (data.session) {
-        setParentLogged(true);
-        let students = await fetchStudents();
+      if (!data.session) { setReady(true); return; } // show landing
 
-        if (students.length === 0 && data.session.user.email === DEFAULT_PARENT_EMAIL) {
-          await Promise.all(
-            DEFAULT_STUDENTS_SEED.map((s) => insertStudent(s, data.session!.user.id)),
-          );
-          students = await fetchStudents();
-        }
+      setAuthed(true);
+      let students = await fetchStudents();
 
-        if (students.length > 0) {
-          resolvedProfiles = students.map(toDisplayProfile);
-          setProfiles(resolvedProfiles);
-          const ids = new Set(resolvedProfiles.map((p) => p.id));
-          const stale = getActiveProfileId();
-          if (stale && !ids.has(stale)) clearActiveProfile();
-          setReady(true);
-          return;
-        }
+      if (students.length === 0 && data.session.user.email === DEFAULT_PARENT_EMAIL) {
+        await Promise.all(DEFAULT_STUDENTS_SEED.map((s) => insertStudent(s, data.session!.user.id)));
+        students = await fetchStudents();
       }
-      // Fallback: hardcoded profiles (no parent session)
-      resolvedProfiles = PROFILES.map((p) => ({
-        id: p.id, name: p.name, emoji: p.emoji, gradient: p.gradient, tagline: p.tagline,
-        homeRoute: getHomeRouteForProfile(p),
-        learningMode: (p.id === 'esma' ? 'assisted' : 'advanced') as LearningMode,
-      }));
+
+      const resolvedProfiles = students.map(toDisplayProfile);
       const ids = new Set(resolvedProfiles.map((p) => p.id));
       const stale = getActiveProfileId();
       if (stale && !ids.has(stale)) clearActiveProfile();
@@ -121,51 +142,43 @@ export default function WelcomePage() {
 
   function handleSelect(profile: DisplayProfile) {
     setActiveProfileId(profile.id);
-    // Apply the profile's configured learning mode on selection
     saveMode(profile.id, profile.learningMode);
     router.push(profile.homeRoute);
   }
 
   if (!ready) return <div className="min-h-screen flex items-center justify-center text-slate-400 text-sm">Chargement…</div>;
+  if (!authed) return <LandingScreen />;
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-5 py-12">
       <div className="w-full max-w-sm space-y-8">
         <div className="text-center space-y-2">
           <div className="text-5xl mb-3">✨</div>
-          <h1 className="text-3xl font-black text-[#1a1a2e] tracking-tight">Bonjour !</h1>
-          <p className="text-slate-500 text-base">Qui joue aujourd'hui ?</p>
+          <h1 className="text-3xl font-black text-[#1a1a2e] tracking-tight">Qui joue aujourd'hui ?</h1>
         </div>
-
         <div className="space-y-3">
           {profiles.map((p) => (
             <ProfileCard key={p.id} profile={p} onSelect={() => handleSelect(p)} />
           ))}
-          {parentLogged && (
-            <Link href="/parent"
-              className="w-full flex items-center gap-4 rounded-2xl p-5 border-2 border-dashed border-violet-200 hover:border-violet-400 transition-colors">
-              <div className="w-16 h-16 shrink-0 rounded-2xl bg-violet-50 flex items-center justify-center text-2xl">+</div>
-              <div className="text-left">
-                <div className="text-violet-600 font-bold">Gérer les élèves</div>
-                <div className="text-slate-400 text-sm">Ajouter, modifier ou supprimer</div>
-              </div>
-            </Link>
+          {profiles.length === 0 && (
+            <div className="text-center py-8 text-slate-400 text-sm">
+              <p>Aucun élève configuré.</p>
+              <Link href="/parent" className="text-violet-600 font-semibold mt-2 block">Ajouter des élèves →</Link>
+            </div>
           )}
-        </div>
-
-        <div className="flex flex-col items-center gap-2 pt-2">
-          <Link href={parentLogged ? '/parent' : '/auth'}
-            className="inline-flex items-center gap-2 rounded-2xl bg-violet-50 border border-violet-200 px-5 py-2.5 text-sm font-semibold text-violet-600 hover:bg-violet-100 transition-all">
-            👤 {parentLogged ? 'Mon espace parent' : 'Espace parent'}
+          <Link href="/parent"
+            className="w-full flex items-center gap-4 rounded-2xl p-5 border-2 border-dashed border-violet-200 hover:border-violet-400 transition-colors">
+            <div className="w-16 h-16 shrink-0 rounded-2xl bg-violet-50 flex items-center justify-center text-2xl">+</div>
+            <div className="text-left">
+              <div className="text-violet-600 font-bold">Gérer les élèves</div>
+              <div className="text-slate-400 text-sm">Ajouter, modifier ou supprimer</div>
+            </div>
           </Link>
-          <div className="flex gap-3">
-            <Link href="/faq" className="inline-flex items-center gap-1.5 rounded-xl bg-white shadow-sm border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-500 hover:shadow-md transition-all">
-              ❓ FAQ
-            </Link>
-            <Link href="/releases" className="inline-flex items-center gap-1.5 rounded-xl bg-white shadow-sm border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-500 hover:shadow-md transition-all">
-              📋 Versions
-            </Link>
-          </div>
+        </div>
+        <div className="flex justify-center gap-4">
+          <Link href="/faq" className="text-xs text-slate-400 hover:text-slate-600">❓ FAQ</Link>
+          <Link href="/releases" className="text-xs text-slate-400 hover:text-slate-600">📋 Versions</Link>
+          <Link href="/parent" className="text-xs text-slate-400 hover:text-slate-600">👤 Espace parent</Link>
         </div>
       </div>
     </div>

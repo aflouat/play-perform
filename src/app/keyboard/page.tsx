@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { clearActiveProfile, getActiveProfileId } from '@/lib/profiles';
+import { clearActiveProfile, getActiveProfileId, getProfileById } from '@/lib/profiles';
 import { useScore } from '@/hooks/useScore';
 import { useAvatar } from '@/hooks/useAvatar';
 import { useLearningMode } from '@/hooks/useLearningMode';
@@ -20,14 +20,14 @@ const MODES: { id: GameMode; label: string; emoji: string; color: string }[] = [
   { id: 'science', label: 'Sciences', emoji: '🔬', color: 'bg-sky-500' },
 ];
 
-function FinishScreen({ onReplay, onHome, xp, level }: { onReplay: () => void; onHome: () => void; xp: number; level: number }) {
+function FinishScreen({ onReplay, onHome, xp, level, name }: { onReplay: () => void; onHome: () => void; xp: number; level: number; name: string }) {
   useEffect(() => { playSound('levelup'); }, []);
   return (
     <div className="flex flex-col items-center justify-center gap-6 py-8 text-center">
       <div className="text-7xl">🏆</div>
       <div>
         <h2 className="text-3xl font-black text-[#1a1a2e]">Mission accomplie !</h2>
-        <p className="text-slate-500 mt-1">Tu es super fort, Mohamed !</p>
+        <p className="text-slate-500 mt-1">Tu es super fort, {name} !</p>
         <div className="mt-3 inline-flex items-center gap-2 rounded-2xl bg-amber-50 border border-amber-100 px-4 py-2">
           <span className="text-amber-500 font-black">⭐ Niv.{level}</span>
           <span className="text-amber-400 text-sm">· {xp} XP</span>
@@ -56,6 +56,7 @@ export default function KeyboardPage() {
 
   const { score, xpToNextLevel } = useScore(profileId);
   const { avatar } = useAvatar(profileId, score.xp);
+  const profile = getProfileById(profileId);
   const { mode, setMode } = useLearningMode(profileId);
 
   function handleGameModeChange(m: GameMode) {
@@ -66,7 +67,7 @@ export default function KeyboardPage() {
     <div className="min-h-screen">
       <div className="max-w-sm mx-auto px-5 pt-8 pb-10">
         <ProfileHeader
-          name="Mohamed"
+          name={profile?.name ?? profileId}
           avatarEmoji={avatar?.emoji ?? '🚀'}
           score={score}
           xpToNextLevel={xpToNextLevel}
@@ -93,6 +94,7 @@ export default function KeyboardPage() {
           <FinishScreen
             xp={score.xp}
             level={score.level}
+            name={profile?.name ?? profileId}
             onReplay={() => { setFinished(false); setKey(k=>k+1); }}
             onHome={() => { clearActiveProfile(); router.push('/'); }} />
         ) : (

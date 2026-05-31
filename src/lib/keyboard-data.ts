@@ -10,7 +10,7 @@ export interface KeyboardChallenge {
 export type KeyboardLevel = 1 | 2 | 3 | 4;
 
 const LETTER_META: Record<string, { emoji: string; word: string; color: string }> = {
-  a: { emoji: '🍎', word: 'Ananas', color: 'bg-red-400' },
+  a: { emoji: '🍍', word: 'Ananas', color: 'bg-yellow-500' },
   b: { emoji: '🍌', word: 'Banane', color: 'bg-yellow-400' },
   c: { emoji: '🐱', word: 'Chat', color: 'bg-orange-400' },
   d: { emoji: '🐬', word: 'Dauphin', color: 'bg-blue-400' },

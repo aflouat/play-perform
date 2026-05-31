@@ -13,7 +13,7 @@ import {
 } from '@/lib/spaced-repetition';
 
 interface UseSpacedRepetitionReturn {
-  getQuestions: (all: QuizQuestion[], count: number) => QuizQuestion[];
+  getQuestions: (all: QuizQuestion[], count: number, bypassRecent?: boolean) => QuizQuestion[];
   recordAnswer: (questionId: string, isCorrect: boolean) => void;
   stats: SubjectStats | null;
   computeSubjectStats: (all: QuizQuestion[]) => SubjectStats;
@@ -28,8 +28,8 @@ export function useSpacedRepetition(
   );
 
   const getQuestions = useCallback(
-    (all: QuizQuestion[], count: number): QuizQuestion[] => {
-      return selectQuestions(all, progressMap, count);
+    (all: QuizQuestion[], count: number, bypassRecent = false): QuizQuestion[] => {
+      return selectQuestions(all, progressMap, count, bypassRecent);
     },
     [progressMap],
   );
