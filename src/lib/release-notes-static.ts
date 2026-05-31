@@ -3,6 +3,28 @@ import type { DbReleaseNote } from '@/lib/db';
 // Historique statique — fallback si Supabase non configuré
 export const STATIC_RELEASE_NOTES: DbReleaseNote[] = [
   {
+    id: 'static-v0.3.0',
+    version: '0.3.0',
+    deployed_at: '2026-05-31T12:00:00Z',
+    title: 'Sablier, bugs corrigés, espace parent',
+    summary: 'Sablier 30s par question avec XP décroissants, 3 bugs corrigés, lien vers l\'historique des versions, inscription parent par email avec gestion des élèves.',
+    changes: [
+      'Sablier 30s par question (cercle SVG animé, vert→orange→rouge)',
+      'XP gagnables décroissants : -70% si temps plein, minimum 30% du XP de base',
+      'Auto-soumission mauvaise réponse à l\'expiration du temps',
+      'Bug fix : "Rejouer" ne montre plus "Matière introuvable" (correction selectQuestions SRS)',
+      'Bug fix : questions en état "review" (répondues, pas encore dues) sélectionnées en fallback',
+      'Bug fix : XP et niveau toujours affichés (même à 0) sur la page d\'accueil',
+      'Lien "Versions" et "Espace parent" sur la page d\'accueil',
+      'Page /auth : inscription et connexion parent par email/mot de passe',
+      'Page /parent : ajout, visualisation et suppression d\'élèves',
+      'Page d\'accueil dynamique : si parent connecté, affiche ses élèves Supabase',
+      'Migration SQL 007 : table students avec RLS',
+    ],
+    tags: ['feature', 'bugfix'],
+    deployed_by: 'Claude Code',
+  },
+  {
     id: 'static-v0.2.0',
     version: '0.2.0',
     deployed_at: '2026-05-31T00:00:00Z',

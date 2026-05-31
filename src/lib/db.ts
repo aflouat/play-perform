@@ -114,6 +114,49 @@ export interface DbQuestion {
   explanation_assisted: string | null;
 }
 
+// ── Auth helpers ──────────────────────────────────────────────────────────
+
+export function getAuthClient(): SupabaseClient | null {
+  if (typeof window === 'undefined') return null;
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) return null;
+  return getClient(); // reuse singleton
+}
+
+// ── Students (parent-managed) ─────────────────────────────────────────────
+
+export interface DbStudent {
+  id?: string;
+  parent_id?: string;
+  name: string;
+  emoji: string;
+  gradient: string;
+  grade: string;
+  tagline: string;
+  age: number;
+}
+
+export async function fetchStudents(): Promise<DbStudent[]> {
+  const db = getClient();
+  if (!db) return [];
+  const { data } = await db.from('students').select('*').order('created_at');
+  return (data as DbStudent[]) ?? [];
+}
+
+export async function insertStudent(student: Omit<DbStudent, 'id' | 'parent_id'>): Promise<DbStudent | null> {
+  const db = getClient();
+  if (!db) return null;
+  const { data } = await db.from('students').insert(student).select().single();
+  return (data as DbStudent) ?? null;
+}
+
+export async function deleteStudent(id: string): Promise<void> {
+  const db = getClient();
+  if (!db) return;
+  await db.from('students').delete().eq('id', id);
+}
+
 function getServerClient(): SupabaseClient {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY ?? '';

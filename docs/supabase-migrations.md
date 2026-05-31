@@ -104,6 +104,28 @@ create index if not exists idx_release_notes_version on release_notes(version);
 create index if not exists idx_release_notes_deployed_at on release_notes(deployed_at desc);
 ```
 
+## 007 — students (espace parent)
+
+```sql
+create table if not exists students (
+  id uuid primary key default gen_random_uuid(),
+  parent_id uuid not null references auth.users(id) on delete cascade,
+  name text not null,
+  emoji text not null default '🎓',
+  gradient text not null default 'from-sky-400 to-blue-500',
+  grade text not null default 'CE1',
+  tagline text not null default '',
+  age integer not null default 10,
+  created_at timestamptz default now()
+);
+
+-- RLS : chaque parent ne voit que ses propres élèves
+alter table students enable row level security;
+create policy "parent voit ses eleves" on students
+  for all using (auth.uid() = parent_id)
+  with check (auth.uid() = parent_id);
+```
+
 ---
 
 ## Variables d'environnement requises

@@ -1,12 +1,15 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import type { QuizQuestion, QuizOptionId, QuizOption, QuizDifficulty } from '@/types';
 import { DIFFICULTY_META } from '@/types';
 import type { LearningMode } from '@/lib/learning-mode';
 import { HintButton } from '@/components/ui/HintButton';
+import { QuizTimer } from '@/components/ui/QuizTimer';
 import { speakInstruction } from '@/lib/audio';
 import clsx from 'clsx';
+
+export const QUIZ_TIMER_SECONDS = 30;
 
 interface QuizCardProps {
   question: QuizQuestion;
@@ -29,17 +32,15 @@ export function QuizCard({
   const [revealed, setRevealed] = useState(false);
   const [hintUsed, setHintUsed] = useState(false);
   const [eliminatedId, setEliminatedId] = useState<QuizOptionId | null>(null);
-  const [startMs] = useState(() => Date.now());
+  const startMsRef = useRef(Date.now());
 
   const displayQuestion =
     mode === 'assisted' && question.questionAssisted
-      ? question.questionAssisted
-      : question.question;
+      ? question.questionAssisted : question.question;
 
   const displayExplanation =
     mode === 'assisted' && question.explanationAssisted
-      ? question.explanationAssisted
-      : question.explanation;
+      ? question.explanationAssisted : question.explanation;
 
   const displayOptionText = (opt: QuizOption) =>
     mode === 'assisted' && opt.textAssisted ? opt.textAssisted : opt.text;
@@ -47,62 +48,62 @@ export function QuizCard({
   const diff = DIFFICULTY_META[question.difficulty as QuizDifficulty];
 
   useEffect(() => {
+    startMsRef.current = Date.now();
     setSelected(null);
     setRevealed(false);
     setHintUsed(false);
     setEliminatedId(null);
-    if (mode === 'assisted') {
-      const text = question.questionAssisted ?? question.question;
-      speakInstruction(text);
-    }
+    if (mode === 'assisted') speakInstruction(question.questionAssisted ?? question.question);
   }, [question.id, mode]);
 
   function handleSelect(optionId: QuizOptionId) {
     if (revealed || optionId === eliminatedId) return;
     setSelected(optionId);
     setRevealed(true);
-    onAnswer(optionId, Date.now() - startMs);
+    onAnswer(optionId, Date.now() - startMsRef.current);
   }
+
+  const handleTimeout = useCallback(() => {
+    if (revealed) return;
+    const wrong = question.options.find((o) => o.id !== question.correctOptionId);
+    if (wrong) handleSelect(wrong.id);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [question.id, revealed]);
 
   function handleHint() {
     if (hintUsed || revealed) return;
     setHintUsed(true);
-    // Éliminer une mauvaise réponse aléatoire (pas la bonne, pas l'actuelle)
-    const wrongs = question.options
-      .filter((o) => o.id !== question.correctOptionId)
-      .map((o) => o.id);
+    const wrongs = question.options.filter((o) => o.id !== question.correctOptionId).map((o) => o.id);
     const toEliminate = wrongs[Math.floor(Math.random() * wrongs.length)];
     setEliminatedId(toEliminate);
-    // Lire la question à voix haute
     speakInstruction(`Indice : la réponse n'est pas ${question.options.find(o => o.id === toEliminate)?.text}`);
   }
 
   function getOptionStyle(optionId: QuizOptionId): string {
-    if (optionId === eliminatedId && !revealed) {
+    if (optionId === eliminatedId && !revealed)
       return 'bg-slate-50 border-2 border-slate-100 opacity-30 text-slate-400 cursor-not-allowed line-through';
-    }
     if (!revealed) {
-      const assistedHighlight = mode === 'assisted' && optionId === question.correctOptionId && hintUsed
-        ? 'ring-2 ring-amber-300'
-        : '';
-      return `bg-white border-2 border-slate-100 hover:border-slate-300 text-[#1a1a2e] ${assistedHighlight}`;
+      const hl = mode === 'assisted' && optionId === question.correctOptionId && hintUsed ? 'ring-2 ring-amber-300' : '';
+      return `bg-white border-2 border-slate-100 hover:border-slate-300 text-[#1a1a2e] ${hl}`;
     }
     if (optionId === question.correctOptionId) return 'bg-emerald-50 border-2 border-emerald-400 text-emerald-700';
     if (optionId === selected) return 'bg-rose-50 border-2 border-rose-400 text-rose-700';
     return 'bg-white border-2 border-slate-100 opacity-40 text-slate-400';
   }
 
-  function getOptionIcon(optionId: QuizOptionId): string {
-    if (!revealed) return '';
-    if (optionId === question.correctOptionId) return '✓';
-    if (optionId === selected) return '✕';
-    return '';
-  }
+  const getOptionIcon = (id: QuizOptionId) =>
+    !revealed ? '' : id === question.correctOptionId ? '✓' : id === selected ? '✕' : '';
 
   return (
     <div className={clsx('space-y-4', mode === 'assisted' && 'space-y-5')}>
-      {/* Question */}
-      <div className={clsx('rounded-2xl bg-white shadow-md p-5', mode === 'assisted' && 'p-6 border-2 border-violet-100')}>
+      <div className={clsx('relative rounded-2xl bg-white shadow-md p-5', mode === 'assisted' && 'p-6 border-2 border-violet-100')}>
+        {/* Timer — top-right */}
+        {!revealed && (
+          <div className="absolute top-3 right-3">
+            <QuizTimer key={question.id} duration={QUIZ_TIMER_SECONDS} onTimeout={handleTimeout} />
+          </div>
+        )}
+
         {question.emoji && (
           <div className={clsx('text-center mb-3', mode === 'assisted' ? 'text-6xl' : 'text-4xl')}>
             {question.emoji}
@@ -114,16 +115,14 @@ export function QuizCard({
             <img src={question.imageUrl} alt="" className="w-full max-h-40 object-contain" />
           </div>
         )}
-        <div className="flex items-start gap-3">
+        <div className="flex items-start gap-3 pr-14">
           <p className={clsx('text-[#1a1a2e] font-bold leading-snug flex-1', mode === 'assisted' ? 'text-xl' : 'text-lg')}>
             {displayQuestion}
           </p>
           {(onSpeak || mode === 'assisted') && (
-            <button
-              onClick={() => onSpeak ? onSpeak(displayQuestion) : speakInstruction(displayQuestion)}
+            <button onClick={() => onSpeak ? onSpeak(displayQuestion) : speakInstruction(displayQuestion)}
               aria-label="Lire la question à voix haute"
-              className="shrink-0 w-10 h-10 rounded-xl bg-violet-50 border border-violet-200 flex items-center justify-center text-violet-500 hover:bg-violet-100 transition-colors"
-            >
+              className="shrink-0 w-10 h-10 rounded-xl bg-violet-50 border border-violet-200 flex items-center justify-center text-violet-500 hover:bg-violet-100 transition-colors">
               🔊
             </button>
           )}
@@ -135,29 +134,21 @@ export function QuizCard({
           <span className="text-slate-200">·</span>
           <span className="text-xs text-amber-500 font-bold">+{question.xpReward} XP</span>
           {mode === 'assisted' && !revealed && (
-            <span className="ml-auto">
-              <HintButton onHint={handleHint} used={hintUsed} size="sm" />
-            </span>
+            <span className="ml-auto"><HintButton onHint={handleHint} used={hintUsed} size="sm" /></span>
           )}
         </div>
       </div>
 
-      {/* Indice visuel assisté */}
       {mode === 'assisted' && hintUsed && !revealed && (
         <div className="rounded-xl bg-amber-50 border border-amber-200 px-4 py-2.5 flex items-center gap-2">
           <span className="text-amber-500">💡</span>
-          <span className="text-amber-700 text-sm font-medium">
-            Une mauvaise réponse a été éliminée. Écoute la question encore !
-          </span>
+          <span className="text-amber-700 text-sm font-medium">Une mauvaise réponse a été éliminée. Écoute la question encore !</span>
         </div>
       )}
 
-      {/* Options */}
       <div className="space-y-2.5">
         {question.options.map((option) => (
-          <button
-            key={option.id}
-            onClick={() => handleSelect(option.id)}
+          <button key={option.id} onClick={() => handleSelect(option.id)}
             disabled={revealed || option.id === eliminatedId}
             aria-pressed={selected === option.id}
             className={clsx(
@@ -165,8 +156,7 @@ export function QuizCard({
               getOptionStyle(option.id),
               !revealed && option.id !== eliminatedId && 'active:scale-[0.98] hover:shadow-md',
               mode === 'assisted' && 'py-5 text-base',
-            )}
-          >
+            )}>
             <div className="flex items-center gap-3">
               <span className="w-7 h-7 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center text-xs font-black text-slate-500 shrink-0">
                 {getOptionIcon(option.id) || option.id}
@@ -177,20 +167,13 @@ export function QuizCard({
         ))}
       </div>
 
-      {/* Explication */}
       {revealed && (
-        <div
-          className={clsx(
-            'rounded-2xl p-4 text-sm leading-relaxed shadow-sm',
-            selected === question.correctOptionId
-              ? 'bg-emerald-50 border border-emerald-200 text-emerald-700'
-              : 'bg-rose-50 border border-rose-200 text-rose-700',
-          )}
-          role="alert"
-        >
-          <span className="font-bold mr-1">
-            {selected === question.correctOptionId ? '✓ Bravo !' : '✕ Pas tout à fait.'}
-          </span>
+        <div className={clsx('rounded-2xl p-4 text-sm leading-relaxed shadow-sm',
+          selected === question.correctOptionId
+            ? 'bg-emerald-50 border border-emerald-200 text-emerald-700'
+            : 'bg-rose-50 border border-rose-200 text-rose-700')}
+          role="alert">
+          <span className="font-bold mr-1">{selected === question.correctOptionId ? '✓ Bravo !' : '✕ Pas tout à fait.'}</span>
           <span className="text-slate-600">{displayExplanation}</span>
         </div>
       )}

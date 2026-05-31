@@ -1,40 +1,57 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { createClient } from '@supabase/supabase-js';
 import { PROFILES, setActiveProfileId, getHomeRouteForProfile } from '@/lib/profiles';
+import { fetchStudents } from '@/lib/db';
+import type { DbStudent } from '@/lib/db';
 import { useScore } from '@/hooks/useScore';
 
-function ProfileCard({
-  profile,
-  onSelect,
-}: {
-  profile: (typeof PROFILES)[number];
-  onSelect: () => void;
-}) {
-  const { score } = useScore(profile.id);
+interface DisplayProfile {
+  id: string;
+  name: string;
+  emoji: string;
+  gradient: string;
+  tagline: string;
+  homeRoute: string;
+}
 
+function getSupabase() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL ?? '',
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '',
+  );
+}
+
+function toDisplayProfile(s: DbStudent): DisplayProfile {
+  return {
+    id: s.id ?? s.name,
+    name: s.name,
+    emoji: s.emoji,
+    gradient: s.gradient,
+    tagline: `${s.grade} · ${s.age} ans`,
+    homeRoute: (s.age ?? 10) <= 7 ? '/keyboard' : '/home',
+  };
+}
+
+function ProfileCard({ profile, onSelect }: { profile: DisplayProfile; onSelect: () => void }) {
+  const { score } = useScore(profile.id);
   return (
-    <button
-      onClick={onSelect}
+    <button onClick={onSelect}
       className="group w-full flex items-center gap-4 rounded-2xl p-5 bg-white shadow-md hover:shadow-xl active:scale-[0.97] transition-all duration-200"
-      aria-label={`Jouer en tant que ${profile.name}`}
-    >
-      <div
-        className={`w-16 h-16 shrink-0 rounded-2xl bg-gradient-to-br ${profile.gradient} flex items-center justify-center text-3xl shadow group-hover:scale-110 transition-transform duration-200`}
-      >
+      aria-label={`Jouer en tant que ${profile.name}`}>
+      <div className={`w-16 h-16 shrink-0 rounded-2xl bg-gradient-to-br ${profile.gradient} flex items-center justify-center text-3xl shadow group-hover:scale-110 transition-transform duration-200`}>
         {profile.emoji}
       </div>
       <div className="text-left flex-1">
         <div className="text-[#1a1a2e] font-black text-lg">{profile.name}</div>
         <div className="text-slate-500 text-sm">{profile.tagline}</div>
-        {score.xp > 0 && (
-          <div className="mt-1.5 inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 border border-amber-200">
-            <span className="text-amber-600 text-xs font-bold">⭐ Niv.{score.level}</span>
-            <span className="text-amber-400 text-xs">· {score.xp} XP</span>
-          </div>
-        )}
+        <div className="mt-1.5 inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 border border-amber-200">
+          <span className="text-amber-600 text-xs font-bold">⭐ Niv.{score.level}</span>
+          <span className="text-amber-400 text-xs">· {score.xp} XP</span>
+        </div>
       </div>
       <span className="text-slate-300 text-lg">→</span>
     </button>
@@ -43,11 +60,39 @@ function ProfileCard({
 
 export default function WelcomePage() {
   const router = useRouter();
+  const [profiles, setProfiles] = useState<DisplayProfile[]>([]);
+  const [parentLogged, setParentLogged] = useState(false);
+  const [ready, setReady] = useState(false);
 
-  function handleSelect(profile: (typeof PROFILES)[number]) {
+  useEffect(() => {
+    async function init() {
+      const { data } = await getSupabase().auth.getSession();
+      if (data.session) {
+        setParentLogged(true);
+        const students = await fetchStudents();
+        if (students.length > 0) {
+          setProfiles(students.map(toDisplayProfile));
+          setReady(true);
+          return;
+        }
+      }
+      // Fallback: hardcoded profiles
+      setProfiles(PROFILES.map((p) => ({
+        id: p.id, name: p.name, emoji: p.emoji,
+        gradient: p.gradient, tagline: p.tagline,
+        homeRoute: getHomeRouteForProfile(p),
+      })));
+      setReady(true);
+    }
+    init();
+  }, []);
+
+  function handleSelect(profile: DisplayProfile) {
     setActiveProfileId(profile.id);
-    router.push(getHomeRouteForProfile(profile));
+    router.push(profile.homeRoute);
   }
+
+  if (!ready) return <div className="min-h-screen flex items-center justify-center text-slate-400 text-sm">Chargement…</div>;
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-5 py-12">
@@ -59,35 +104,34 @@ export default function WelcomePage() {
         </div>
 
         <div className="space-y-3">
-          {PROFILES.map((profile) => (
-            <ProfileCard
-              key={profile.id}
-              profile={profile}
-              onSelect={() => handleSelect(profile)}
-            />
+          {profiles.map((p) => (
+            <ProfileCard key={p.id} profile={p} onSelect={() => handleSelect(p)} />
           ))}
-
-          <button
-            disabled
-            className="w-full flex items-center gap-4 rounded-2xl p-5 border-2 border-dashed border-slate-200 opacity-60"
-          >
-            <div className="w-16 h-16 shrink-0 rounded-2xl bg-slate-100 flex items-center justify-center">
-              <span className="text-slate-400 text-2xl font-light">+</span>
-            </div>
-            <div className="text-left">
-              <div className="text-slate-400 font-bold">Ajouter un profil</div>
-              <div className="text-slate-300 text-sm">Bientôt disponible</div>
-            </div>
-          </button>
+          {parentLogged && (
+            <Link href="/parent"
+              className="w-full flex items-center gap-4 rounded-2xl p-5 border-2 border-dashed border-violet-200 hover:border-violet-400 transition-colors">
+              <div className="w-16 h-16 shrink-0 rounded-2xl bg-violet-50 flex items-center justify-center text-2xl">+</div>
+              <div className="text-left">
+                <div className="text-violet-600 font-bold">Gérer les élèves</div>
+                <div className="text-slate-400 text-sm">Ajouter ou supprimer</div>
+              </div>
+            </Link>
+          )}
         </div>
 
-        <div className="text-center pt-2">
-          <Link
-            href="/faq"
-            className="inline-flex items-center gap-2 rounded-2xl bg-white shadow-sm border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-500 hover:text-slate-700 hover:shadow-md transition-all"
-          >
-            ❓ Guide &amp; FAQ
+        <div className="flex flex-col items-center gap-2 pt-2">
+          <Link href={parentLogged ? '/parent' : '/auth'}
+            className="inline-flex items-center gap-2 rounded-2xl bg-violet-50 border border-violet-200 px-5 py-2.5 text-sm font-semibold text-violet-600 hover:bg-violet-100 transition-all">
+            👤 {parentLogged ? 'Mon espace parent' : 'Espace parent'}
           </Link>
+          <div className="flex gap-3">
+            <Link href="/faq" className="inline-flex items-center gap-1.5 rounded-xl bg-white shadow-sm border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-500 hover:shadow-md transition-all">
+              ❓ FAQ
+            </Link>
+            <Link href="/releases" className="inline-flex items-center gap-1.5 rounded-xl bg-white shadow-sm border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-500 hover:shadow-md transition-all">
+              📋 Versions
+            </Link>
+          </div>
         </div>
       </div>
     </div>

@@ -4,7 +4,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import type { Subject, QuizQuestion, QuizAnswer, QuizOptionId } from '@/types';
 import type { LearningMode } from '@/lib/learning-mode';
-import { QuizCard } from '@/components/shared/QuizCard';
+import { QuizCard, QUIZ_TIMER_SECONDS } from '@/components/shared/QuizCard';
 import { ProfileHeader } from '@/components/shared/ProfileHeader';
 import { useScore } from '@/hooks/useScore';
 import { useAvatar } from '@/hooks/useAvatar';
@@ -77,8 +77,12 @@ export default function QuizPage() {
   const handleAnswer = useCallback((optionId: QuizOptionId, timeMs: number) => {
     const q = questions[currentIndex];
     const isCorrect = optionId === q.correctOptionId;
-    if (isCorrect) { playSound('correct'); addXp(q.xpReward, 'quiz-correct'); triggerGain(q.xpReward); speakEnthusiastic(''); }
-    else { playSound('wrong'); }
+    if (isCorrect) {
+      const elapsed = timeMs / 1000;
+      const multiplier = Math.max(0.3, 1 - (0.7 * elapsed / QUIZ_TIMER_SECONDS));
+      const xpEarned = Math.round(q.xpReward * multiplier);
+      playSound('correct'); addXp(xpEarned, 'quiz-correct'); triggerGain(xpEarned); speakEnthusiastic('');
+    } else { playSound('wrong'); }
     recordAnswer(q.id, isCorrect);
     const answer: QuizAnswer = { questionId: q.id, selectedOptionId: optionId, isCorrect, timeMs };
     setAnswers(prev => {
@@ -94,7 +98,7 @@ export default function QuizPage() {
     });
   }, [currentIndex, questions, addXp, triggerGain]);
 
-  if (!isValidSubject(subject) || questions.length === 0) {
+  if (!isValidSubject(subject)) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
         <div className="text-4xl mb-4">🤔</div>
@@ -102,6 +106,10 @@ export default function QuizPage() {
         <button onClick={() => router.push('/home')} className="mt-6 text-sky-500 font-semibold">← Retour</button>
       </div>
     );
+  }
+  // Loading state — profileId initializes as '__none__' then gets set via useEffect
+  if (profileId === '__none__' || questions.length === 0) {
+    return <div className="min-h-screen flex items-center justify-center text-slate-400 text-sm">Chargement…</div>;
   }
 
   const correctSoFar = answers.filter(a=>a.isCorrect).length;

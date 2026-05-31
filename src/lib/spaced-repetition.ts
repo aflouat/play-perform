@@ -79,6 +79,7 @@ export function selectQuestions(
 ): QuizQuestion[] {
   const due: QuizQuestion[] = [];
   const newQ: QuizQuestion[] = [];
+  const reviewing: QuizQuestion[] = []; // answered but not yet due
   const mastered: QuizQuestion[] = [];
 
   for (const q of allQuestions) {
@@ -89,6 +90,8 @@ export function selectQuestions(
       due.push(q);
     } else if (p.state === 'mastered') {
       mastered.push(q);
+    } else {
+      reviewing.push(q); // review state, not yet due → 4th fallback
     }
   }
 
@@ -103,6 +106,11 @@ export function selectQuestions(
   if (selected.length < count) {
     // Shuffle new questions for variety
     const shuffled = [...newQ].sort(() => Math.random() - 0.5);
+    selected.push(...shuffled.slice(0, count - selected.length));
+  }
+  if (selected.length < count) {
+    // Fill with reviewing (answered but not due yet) — allows Rejouer to work
+    const shuffled = [...reviewing].sort(() => Math.random() - 0.5);
     selected.push(...shuffled.slice(0, count - selected.length));
   }
   if (selected.length < count) {
