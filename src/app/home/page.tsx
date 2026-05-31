@@ -11,8 +11,8 @@ import { ProfileHeader } from '@/components/shared/ProfileHeader';
 import { clearActiveProfile, getActiveProfileId, getProfileById } from '@/lib/profiles';
 import { ALL_QUIZ_SUBJECTS, getSubjectLabel } from '@/lib/quiz-data';
 import { getQuestions } from '@/lib/question-banks';
-import { loadProgressMap, computeStats } from '@/lib/spaced-repetition';
 import type { Subject } from '@/types';
+import { SubjectBadge } from '@/components/home/SubjectBadge';
 
 const SUBJECT_META: Record<Subject, { emoji: string; bg: string }> = {
   maths: { emoji: '🧮', bg: 'bg-sky-500' },
@@ -32,22 +32,6 @@ const SUBJECT_META: Record<Subject, { emoji: string; bg: string }> = {
   informatique: { emoji: '💻', bg: 'bg-slate-500' },
   telecom: { emoji: '📡', bg: 'bg-purple-500' },
 };
-
-function SubjectBadge({ profileId, subject, mode }: { profileId: string; subject: Subject; mode: string }) {
-  const all = getQuestions(subject);
-  const progressMap = loadProgressMap(profileId, subject);
-  const stats = computeStats(all, progressMap);
-  if (stats.total === 0) return null;
-  if (stats.dueCount > 0) return (
-    <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-amber-400 flex items-center justify-center text-white text-xs font-black">
-      {stats.dueCount}
-    </span>
-  );
-  if (stats.masteredCount === stats.total) return (
-    <span className="absolute top-2 right-2 text-emerald-500 text-sm">✓</span>
-  );
-  return null;
-}
 
 export default function HomePage() {
   const router = useRouter();
@@ -110,7 +94,7 @@ export default function HomePage() {
             return (
               <Link key={subject} href={`/quiz/${subject}?mode=${mode}`}
                 className="relative group rounded-2xl p-4 bg-white shadow-md hover:shadow-lg active:scale-[0.97] transition-all duration-200">
-                <SubjectBadge profileId={profileId} subject={subject} mode={mode} />
+                <SubjectBadge profileId={profileId} subject={subject} />
                 <div className={`w-10 h-10 rounded-xl ${meta.bg} flex items-center justify-center text-xl mb-2.5 shadow group-hover:scale-110 transition-transform duration-200`}>
                   {meta.emoji}
                 </div>

@@ -6,10 +6,9 @@ Instructions pour Claude Code dans ce repo.
 
 | Profil | Âge | Besoins | Route |
 |---|---|---|---|
-| Omar | 12 ans | Quiz brevet, progression rapide | `/home` → `/quiz/[subject]` |
-| Esma | 9 ans | Troubles d'apprentissage, mots simples FR/EN/ES | `/esma` |
-| Mohamed | 6 ans | Clavier, mots, découverte sciences | `/keyboard` |
-
+| Omar | 12 ans | Quiz brevet, progression rapide | 
+| Esma | 9 ans | Troubles d'apprentissage, mots simples FR/EN/ES , tape touche mot ou phrase avec le mode assisté activé par défaut
+| Mohamed | 6 ans | Clavier, mots, découverte sciences tape touche mot ou phrase
 ## Règles de code impératives
 1. **150 lignes max par fichier** — extraire en sous-composant si dépassé
 2. **TypeScript strict** — `any` interdit, tout typer dans `src/types/`
@@ -70,4 +69,5 @@ npm run test:e2e      # E2E Playwright
 npm run build         # Build prod
 npm run release -- --title "Titre" --changes "A,B,C" [--tags "feature,fix"] [--summary "..."]
                       # Insère une release note dans Supabase après déploiement
+Apres chaque release, il faut faire un commit et push origin main
 ```

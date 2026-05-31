@@ -1,16 +1,8 @@
 import type { Subject } from '@/types';
 import type { DbQuestion } from '@/lib/db';
+import { splitRow, opt, req, type RowError, type ParseResult } from '@/lib/csv-tokenizer';
 
-export interface RowError {
-  row: number;
-  column: string;
-  message: string;
-}
-
-export interface ParseResult {
-  valid: DbQuestion[];
-  errors: RowError[];
-}
+export type { RowError, ParseResult } from '@/lib/csv-tokenizer';
 
 const SUBJECTS: Subject[] = [
   'maths', 'francais', 'svt', 'histoire', 'physique',
@@ -20,46 +12,6 @@ const SUBJECTS: Subject[] = [
 
 const VALID_DIFFICULTY = new Set(['1', '2', '3', '4']);
 const VALID_OPTION_ID = new Set(['A', 'B', 'C', 'D']);
-
-// Minimal CSV row parser — handles double-quoted fields with embedded commas
-function splitRow(line: string): string[] {
-  const fields: string[] = [];
-  let current = '';
-  let inQuotes = false;
-  for (let i = 0; i < line.length; i++) {
-    const ch = line[i];
-    if (ch === '"') {
-      if (inQuotes && line[i + 1] === '"') { current += '"'; i++; }
-      else { inQuotes = !inQuotes; }
-    } else if (ch === ',' && !inQuotes) {
-      fields.push(current);
-      current = '';
-    } else {
-      current += ch;
-    }
-  }
-  fields.push(current);
-  return fields;
-}
-
-function opt(value: string): string | null {
-  const trimmed = value.trim();
-  return trimmed === '' ? null : trimmed;
-}
-
-function req(
-  value: string,
-  row: number,
-  column: string,
-  errors: RowError[],
-): string | null {
-  const trimmed = value.trim();
-  if (!trimmed) {
-    errors.push({ row, column, message: `Le champ "${column}" est requis.` });
-    return null;
-  }
-  return trimmed;
-}
 
 export function parseAndValidateCsv(
   csvText: string,

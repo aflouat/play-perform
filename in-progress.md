@@ -1,28 +1,37 @@
-# IN PROGRESS — Patch : Suspense boundary /auth (v0.5.1)
+# IN PROGRESS — Refactoring + stabilisation (v0.5.1)
 
-## Statut : TERMINÉ ✅ (2026-05-31)
+## Statut : EN COURS
 
-## Problème corrigé
+## Ce qui a été fait dans cette passe
 
-**Erreur build Vercel** :
-```
-⨯ useSearchParams() should be wrapped in a suspense boundary at page "/auth"
-```
+### Bug fixes
+- API /api/students fonctionne sans `SUPABASE_SERVICE_ROLE_KEY` : fallback anon key + user JWT (Authorization header)
+- Fallback insert students sans colonnes mode/learning_mode (migration 007b non appliquée)
+- Auto-seed : tous les comptes parent avec 0 élèves reçoivent les 3 profils par défaut (plus limité à aflouat@gmail.com)
 
-**Cause** : `AuthPage` (le composant page exporté) appelait directement `useSearchParams()`, 
-et `AuthForm` (sous-composant) aussi. Next.js exige que tout `useSearchParams()` soit dans un `<Suspense>`.
+### Refactoring (règle 150 lignes)
+- `src/app/page.tsx` : 192 → 120 lignes (extraction ModeSheet + LandingScreen)
+- `src/components/shared/ModeSheet.tsx` : nouveau composant (bottom sheet mode selector)
+- `src/components/shared/LandingScreen.tsx` : nouveau composant (page d'accueil non-auth)
+- `src/types/index.ts` : 202 → 120 lignes (compactage, tous les types préservés)
 
-**Double bug** : `AuthPage` et `AuthForm` avaient chacun leur propre `screen` state — les boutons 
-"Pas encore de compte ?" dans `AuthPage` ne synchronisaient pas l'état de `AuthForm`.
+### MD mis à jour
+- `README.md` : état v0.5.1, architecture complète, variables d'env
+- `todo.md` : repriorisation, livraisons marquées ✅
+- `in-progress.md` : ce fichier
+- `knownBugs.md` : bug ajout élève (en cours de résolution via fallback API)
 
-## Solution
+## Fichiers créés / modifiés
 
-- Renommé `AuthForm` → `AuthContent` — unique composant avec tout le state + `useSearchParams`
-- `AuthPage` devient un wrapper layout pur + `<Suspense><AuthContent /></Suspense>`
-- Les boutons toggle "Se connecter / S'inscrire" intégrés dans `AuthContent` (state unifié)
-- 143 lignes (< 150)
+- `src/app/api/students/route.ts` — fallback sans service role key
+- `src/app/api/students/[id]/route.ts` — fallback sans service role key
+- `src/components/shared/ModeSheet.tsx` — NEW
+- `src/components/shared/LandingScreen.tsx` — NEW
+- `src/app/page.tsx` — allégé
+- `src/types/index.ts` — compacté
 
-## Fichiers modifiés
+## À faire encore
 
-- `src/app/auth/page.tsx` — refactorisé (Suspense + state unifié)
-- `package.json` — version 0.5.0 → 0.5.1
+- Appliquer migration 007b en prod (colonnes mode/learning_mode sur students)
+- Configurer SUPABASE_SERVICE_ROLE_KEY dans .env.local ET Vercel pour la fiabilité maximale
+- Configurer NEXT_PUBLIC_SITE_URL sur Vercel pour les liens d'activation email

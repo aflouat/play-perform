@@ -1,17 +1,17 @@
 'use client';
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import type { Subject, QuizQuestion, QuizAnswer, QuizOptionId } from '@/types';
-import { QuizCard, QUIZ_TIMER_SECONDS } from '@/components/shared/QuizCard';
+import type { Subject } from '@/types';
+import { QuizCard } from '@/components/shared/QuizCard';
 import { QuizResultScreen } from '@/components/shared/QuizResultScreen';
 import { ProfileHeader } from '@/components/shared/ProfileHeader';
 import { useScore } from '@/hooks/useScore';
 import { useAvatar } from '@/hooks/useAvatar';
 import { useLearningMode } from '@/hooks/useLearningMode';
+import { useQuizSession } from '@/hooks/useQuizSession';
 import { getSubjectLabel } from '@/lib/quiz-data';
 import { getQuestions } from '@/lib/question-banks';
-import { playSound, speakEnthusiastic } from '@/lib/audio';
 import { getActiveProfileId, getProfileById } from '@/lib/profiles';
 import { XpGainToast, useXpGain } from '@/components/ui/XpGainToast';
 import { useSpacedRepetition } from '@/hooks/useSpacedRepetition';
@@ -53,43 +53,8 @@ export default function QuizPage() {
   const { getQuestions: srsSelect, recordAnswer } = useSpacedRepetition(profileId, validSubject);
   const allForSubject = isValidSubject(subject) ? getQuestions(subject as Subject) : [];
 
-  const [sessionKey, setSessionKey] = useState(0);
-  const [bypassRecent, setBypassRecent] = useState(false);
-  const [questions, setQuestions] = useState<QuizQuestion[]>([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [answers, setAnswers] = useState<QuizAnswer[]>([]);
-  const [finished, setFinished] = useState(false);
-  const [questionsLoaded, setQuestionsLoaded] = useState(false);
-
-  useEffect(() => {
-    if (profileId === '__none__' || allForSubject.length === 0) return;
-    setQuestions(isValidSubject(subject) ? srsSelect(allForSubject, 5, bypassRecent) : []);
-    setCurrentIndex(0); setAnswers([]); setFinished(false);
-    setQuestionsLoaded(true);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sessionKey, profileId, bypassRecent]);
-
-  const handleAnswer = useCallback((optionId: QuizOptionId, timeMs: number) => {
-    const q = questions[currentIndex];
-    const isCorrect = optionId === q.correctOptionId;
-    if (isCorrect) {
-      const multiplier = Math.max(0.3, 1 - (0.7 * timeMs / 1000 / QUIZ_TIMER_SECONDS));
-      const xpEarned = Math.round(q.xpReward * multiplier);
-      playSound('correct'); addXp(xpEarned, 'quiz-correct'); triggerGain(xpEarned); speakEnthusiastic('');
-    } else { playSound('wrong'); }
-    recordAnswer(q.id, isCorrect);
-    setAnswers((prev) => {
-      const next = [...prev, { questionId: q.id, selectedOptionId: optionId, isCorrect, timeMs }];
-      if (currentIndex >= questions.length - 1) {
-        if (next.every((a) => a.isCorrect)) { addXp(20, 'quiz-perfect'); triggerGain(20); }
-        playSound('complete');
-        setTimeout(() => setFinished(true), 1000);
-      } else {
-        setTimeout(() => setCurrentIndex((i) => i + 1), 1200);
-      }
-      return next;
-    });
-  }, [currentIndex, questions, addXp, triggerGain, recordAnswer]);
+  const { questions, currentIndex, answers, finished, questionsLoaded, handleAnswer, replay, continueAnyway } =
+    useQuizSession({ profileId, subject: validSubject, allForSubject, srsSelect, addXp, triggerGain, recordAnswer });
 
   if (!isValidSubject(subject)) {
     return (
@@ -113,7 +78,7 @@ export default function QuizPage() {
           L'idéal est de revenir dans quelques heures.
         </p>
         <div className="flex flex-col gap-3 mt-6 w-full max-w-xs">
-          <button onClick={() => { setBypassRecent(true); setSessionKey((k) => k + 1); }}
+          <button onClick={continueAnyway}
             className="rounded-2xl bg-emerald-500 text-white font-bold px-6 py-3 hover:bg-emerald-400 transition-colors">
             Continuer quand même →
           </button>
@@ -128,8 +93,7 @@ export default function QuizPage() {
   if (finished) {
     return <QuizResultScreen answers={answers} questions={questions} score={score}
       xpToNextLevel={xpToNextLevel} lastGain={lastGain}
-      onReplay={() => { setBypassRecent(false); setSessionKey((k) => k + 1); }}
-      onHome={() => router.push('/home')} />;
+      onReplay={replay} onHome={() => router.push('/home')} />;
   }
 
   const subjectBg = SUBJECT_BG[subject] ?? 'bg-slate-400';
