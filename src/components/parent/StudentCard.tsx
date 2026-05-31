@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import type { DbStudent } from '@/lib/db';
-import { updateStudent } from '@/lib/db';
+import { apiDeleteStudent, apiUpdateStudent } from '@/lib/students-api';
 
 interface StudentScore { xp: number; level: number; }
 
@@ -18,6 +18,7 @@ export function StudentCard({ student, onDelete, onUpdated }: StudentCardProps) 
   const [age, setAge] = useState(String(student.age));
   const [grade, setGrade] = useState(student.grade);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [score, setScore] = useState<StudentScore | null>(null);
 
   useEffect(() => {
@@ -32,10 +33,19 @@ export function StudentCard({ student, onDelete, onUpdated }: StudentCardProps) 
     if (!student.id || !name.trim()) return;
     setSaving(true);
     const updates: Partial<DbStudent> = { name: name.trim(), age: parseInt(age) || student.age, grade: grade.trim() || student.grade };
-    await updateStudent(student.id, updates);
-    onUpdated({ ...student, ...updates });
+    const ok = await apiUpdateStudent(student.id, updates);
+    if (ok) onUpdated({ ...student, ...updates });
     setEditing(false);
     setSaving(false);
+  }
+
+  async function handleDelete() {
+    if (!student.id) return;
+    if (!window.confirm(`Supprimer ${student.name} ?`)) return;
+    setDeleting(true);
+    const ok = await apiDeleteStudent(student.id);
+    if (ok) onDelete(student.id);
+    else { alert('Erreur lors de la suppression.'); setDeleting(false); }
   }
 
   return (
@@ -64,10 +74,11 @@ export function StudentCard({ student, onDelete, onUpdated }: StudentCardProps) 
           )}
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          {!editing && (
-            <button onClick={() => setEditing(true)} className="text-slate-400 hover:text-violet-500 transition-colors text-sm" title="Modifier">✏️</button>
-          )}
-          <button onClick={() => student.id && onDelete(student.id)} className="text-slate-300 hover:text-rose-400 transition-colors text-lg leading-none">×</button>
+          {!editing && <button onClick={() => setEditing(true)} className="text-slate-400 hover:text-violet-500 transition-colors text-sm" title="Modifier">✏️</button>}
+          <button onClick={handleDelete} disabled={deleting}
+            className="text-slate-300 hover:text-rose-400 disabled:opacity-40 transition-colors text-lg leading-none">
+            {deleting ? '…' : '×'}
+          </button>
         </div>
       </div>
 
