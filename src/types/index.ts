@@ -1,5 +1,5 @@
 /**
- * Types fondamentaux SYNTH.EDU — barrel re-export
+ * Types fondamentaux  Play Perform — barrel re-export
  * Aucun `any` n'est toléré.
  */
 

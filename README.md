@@ -1,4 +1,4 @@
-# SYNTH.EDU — Play Perform · v0.5.1
+#  Play Perform · v0.5.3
 
 Plateforme d'apprentissage ludique pour enfants. Le parent crée un compte, ajoute ses élèves, et chaque enfant joue dans le mode adapté à son profil.
 
@@ -60,7 +60,7 @@ src/
 ├── hooks/                # useScore, useAvatar, useLearningMode, useSpacedRepetition
 ├── lib/
 │   ├── db/               # client, scores, questions, students, releases
-│   ├── question-banks/   # ~130 questions statiques (14 matières)
+│   ├── question-banks/   # ~200+ questions (100+ brevet + autres sujets)
 │   ├── admin-auth.ts     # isAdminAuthorized (JWT Supabase + ADMIN_EMAILS)
 │   ├── students-api.ts   # Client → /api/students (bypass RLS)
 │   ├── learning-mode.ts  # LearningMode, STUDENT_MODE_LABELS
@@ -79,7 +79,7 @@ src/
 ```bash
 npm run dev           # Dev server
 npm run build         # Build prod
-npm run test          # 63 tests
+npm run test          # 62 tests
 npm run test:e2e      # E2E Playwright
 npm run release -- --title "..." --changes "A,B,C"
 ```
@@ -94,12 +94,60 @@ ADMIN_EMAILS=                # email(s) admin séparés par virgule
 NEXT_PUBLIC_SITE_URL=        # URL de prod pour les liens email Supabase
 ```
 
-## État · v0.5.1
+## État · v0.5.3
 
-- ✅ 63/63 tests · TypeScript strict 0 erreur · Build propre
+- ✅ 62/62 tests · TypeScript strict 0 erreur · Build propre
 - ✅ Auth parent (inscription, connexion, reset mot de passe, activation email)
 - ✅ CRUD élèves via API server-side (bypass RLS, fallback sans service key)
 - ✅ Mode selector sessionnel (activité libre à chaque session)
 - ✅ Quiz SRS SM-2 + sablier 30s + XP décroissants
+- ✅ **100+ questions brevet** pour Omar (Math, Français, HG, SVT, Physique-Chimie, Anglais, Espagnol)
 - ✅ Import questions CSV + édition admin
 - ✅ Release notes Supabase + page /releases
+
+#  Play Perform — Rôles Agentiques
+
+Ce fichier est la Source of Truth pour tout agent qui interagit avec ce repo.
+Jamais de code sans lire `in-progress.md` d'abord. Jamais de modification sans mettre à jour `README.md`, `todo.md` et `in-progress.md`.
+
+## Agent RESP (Responsable)
+- Lit et écrit `todo.md` (roadmap d'intentions)
+- Décide quelle Epic démarrer
+- Crée / met à jour `in-progress.md` avec le maximum de contexte
+- Vérifie que le `README.md` reflète la vérité du repo à tout moment
+- Peut déléguer le code à l'Agent CODEUR
+- NE CODE PAS directement sauf si pas d'autre agent dispo
+
+## Agent CODEUR (Exécutant)
+- LIT IMPERATIVEMENT `in-progress.md` avant toute ligne de code
+- LIT `README.md` pour comprendre l'état actuel du système
+- Code les tâches décrites dans `in-progress.md`
+- Respecte la contrainte 150 lignes/fichier
+- Respecte TypeScript strict, pas de `any`
+- Met à jour `README.md` à la fin de chaque Epic pour refléter les changements
+- Marque les tâches `in-progress.md` comme terminées au fur et à mesure
+- Peut signaler un blocage dans `in-progress.md` pour transfert à un autre agent
+
+## Règles de mise à jour des fichiers
+`README.md` : mis à jour à chaque fin d'Epic pour refléter l'état tech + features
+`todo.md` : le RESP gère, ajoute/modifie des intentions, repriorise
+`in-progress.md` : vivant, mis à jour en continu, effacé quand l'Epic est finie
+
+## Cible1 : Omar
+- 12 ans, très bon en 6ème, veut sauter la 5ème
+- Objectif : brevet en 1er du collège
+- Projets futurs : médecin OU data scientist
+- Le produit doit être ludique, auto-adaptatif, et orienté progression rapide.
+
+## Cible2 : Esma
+- 9 ans, a des troubles d'apprentissage et de langage, niveau CP adapté, aime repeter des petites phrases en anglais ou espagnole
+- Objectif : apprentissage ludique
+- Projets futurs : développer son autonomie, lecture et écriture, ordinateur
+- Le produit doit être ludique, auto-adaptatif, et orienté progression rapide.
+
+
+## Cible3 : Mohamed
+- 6 ans, curieux, réflechi, calculateur, en classe CP avancé
+- Objectif : apprendre à taper sur le clavier, découvrir, étonnement, questions, dévinettes
+- Projets futurs : exploration scientifique et litérraire
+

@@ -45,18 +45,27 @@ import ESPACE from './espace';
 import METEO from './meteo';
 import CHIMIE from './chimie';
 import GEO from './geo';
-import ANGLAIS from './anglais';
-import ESPAGNOL from './espagnol';
+import ANGLAIS_ORIGINAL from './anglais';
+import ESPAGNOL_ORIGINAL from './espagnol';
 import INFORMATIQUE from './informatique';
 import MECANIQUE from './mecanique';
 import TELECOM from './telecom';
+import {
+  MATHS_BREVET,
+  FRANCAIS_BREVET,
+  HISTOIRE_BREVET,
+  SVT_BREVET,
+  PHYSIQUE_BREVET,
+  ANGLAIS_BREVET,
+  ESPAGNOL_BREVET,
+} from './brevet_questions';
 
 export const ALL_QUESTIONS: Record<Subject, QuizQuestion[]> = {
-  maths: MATHS,
-  francais: FRANCAIS,
-  svt: SVT,
-  histoire: HISTOIRE,
-  physique: PHYSIQUE,
+  maths: [...MATHS, ...MATHS_BREVET],
+  francais: [...FRANCAIS, ...FRANCAIS_BREVET],
+  svt: [...SVT, ...SVT_BREVET],
+  histoire: [...HISTOIRE, ...HISTOIRE_BREVET],
+  physique: [...PHYSIQUE, ...PHYSIQUE_BREVET],
   it: [],
   culture: [],
   espace: ESPACE,
@@ -64,8 +73,8 @@ export const ALL_QUESTIONS: Record<Subject, QuizQuestion[]> = {
   chimie: CHIMIE,
   mecanique: MECANIQUE,
   geo: GEO,
-  anglais: ANGLAIS,
-  espagnol: ESPAGNOL,
+  anglais: [...ANGLAIS_ORIGINAL, ...ANGLAIS_BREVET],
+  espagnol: [...ESPAGNOL_ORIGINAL, ...ESPAGNOL_BREVET],
   informatique: INFORMATIQUE,
   telecom: TELECOM,
 };

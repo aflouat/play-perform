@@ -19,6 +19,31 @@ async function getUserId(token: string): Promise<string | null> {
   } catch { return null; }
 }
 
+function pickFields<T extends Record<string, unknown>>(obj: T, keys: string[]) {
+  return keys.reduce((acc, key) => {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) acc[key] = obj[key];
+    return acc;
+  }, {} as Record<string, unknown>);
+}
+
+async function createSupportRecords(db: ReturnType<typeof dbForUser>, student: Record<string, unknown>): Promise<void> {
+  const score = {
+    profile_id: student.id,
+    xp: 0,
+    level: 1,
+    streak: 0,
+    last_activity_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  };
+
+  const profile = pickFields(student, ['id', 'parent_id', 'name', 'emoji', 'gradient', 'grade', 'tagline', 'age', 'mode']);
+
+  await Promise.allSettled([
+    db.from('scores').upsert(score, { onConflict: 'profile_id' }),
+    db.from('profiles').upsert(profile, { onConflict: 'id' }),
+  ]);
+}
+
 export async function GET(req: NextRequest): Promise<NextResponse> {
   const token = req.headers.get('authorization')?.replace('Bearer ', '') ?? '';
   const userId = await getUserId(token);
@@ -37,14 +62,25 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const payload = { ...body, parent_id: userId };
   const db = dbForUser(token);
 
-  // Try with all fields; fallback without optional columns (migration 007b may not be applied)
-  const { data, error } = await db.from('students').insert(payload).select().single();
-  if (error) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { mode: _m, learning_mode: _lm, ...base } = payload as Record<string, unknown>;
-    const { data: d2, error: e2 } = await db.from('students').insert(base).select().single();
-    if (e2) return NextResponse.json({ error: e2.message }, { status: 500 });
-    return NextResponse.json({ student: d2 });
+  async function insertStudent(payloadData: Record<string, unknown>) {
+    const { data, error } = await db.from('students').insert(payloadData).select().single();
+    if (error) throw error;
+    return data as Record<string, unknown>;
   }
-  return NextResponse.json({ student: data });
+
+  let student;
+  try {
+    student = await insertStudent(payload);
+  } catch {
+    const { mode: _m, learning_mode: _lm, ...base } = payload as Record<string, unknown>;
+    try {
+      student = await insertStudent(base);
+    } catch (fallbackError: unknown) {
+      const message = fallbackError instanceof Error ? fallbackError.message : 'Erreur interne';
+      return NextResponse.json({ error: message }, { status: 500 });
+    }
+  }
+
+  await createSupportRecords(db, student).catch(() => {});
+  return NextResponse.json({ student });
 }

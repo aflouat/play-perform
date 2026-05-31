@@ -8,7 +8,7 @@ export function LandingScreen() {
       <div className="w-full max-w-sm text-center space-y-8">
         <div>
           <div className="text-6xl mb-4">✨</div>
-          <h1 className="text-3xl font-black text-[#1a1a2e] tracking-tight">SYNTH.EDU</h1>
+          <h1 className="text-3xl font-black text-[#1a1a2e] tracking-tight"> Play Perform</h1>
           <p className="text-slate-500 mt-2 text-base leading-relaxed">
             La plateforme d&apos;apprentissage ludique pour tous les enfants.
           </p>

@@ -25,9 +25,9 @@ function AuthContent() {
 
   useEffect(() => {
     const db = getClient();
-    db.auth.getSession().then(({ data }) => { if (data.session) router.replace('/parent'); });
+    db.auth.getSession().then(({ data }) => { if (data.session) router.replace('/'); });
     const { data: sub } = db.auth.onAuthStateChange((event, session) => {
-      if (session && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) router.replace('/parent');
+      if (session && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) router.replace('/');
     });
     return () => sub.subscription.unsubscribe();
   }, [router]);
@@ -50,7 +50,7 @@ function AuthContent() {
       }
       const { error: err } = await db.auth.signInWithPassword({ email, password });
       if (err) { setError(err.message); return; }
-      router.push('/parent');
+      router.push('/');
     } finally { setLoading(false); }
   }
 
@@ -132,7 +132,7 @@ export default function AuthPage() {
       <div className="w-full max-w-sm space-y-6">
         <div className="text-center">
           <div className="text-5xl mb-3">👤</div>
-          <p className="text-slate-500 text-sm mt-1">Espace parent · SYNTH.EDU</p>
+          <p className="text-slate-500 text-sm mt-1">Espace parent ·  Play Perform</p>
         </div>
         <Suspense fallback={<div className="text-slate-400 text-sm text-center py-8">Chargement…</div>}>
           <AuthContent />

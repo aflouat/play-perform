@@ -1,195 +1,74 @@
-# SYNTH.EDU — Business Plan
+Play Perform — Business Plan
+1. Executive Summary
+Play Perform est une plateforme EdTech ludo-éducative ciblant les élèves du CP à la Terminale. L'application fusionne les meilleures mécaniques du marché : la gamification de Duolingo, l'interactivité de Kahoot, la mémorisation espacée (Anki) et la richesse de Lumni.
 
-## 1. Executive Summary
+D'abord lancé en modèle Business to Families (B2F), le produit est conçu dès le départ pour pivoter à grande échelle vers le Business to Schools (B2B) puis le Business to Government (B2G) grâce à un moteur de contenu ouvert et extensible par API.
 
-SYNTH.EDU est une plateforme d'apprentissage passif pour les familles tech : un parent développeur partage sa veille technologique, son ado ou collégien progresse dessus automatiquement, sans friction ni saisie manuelle.
+MVP : Langue Française.
 
-**Différenciation core** : un moteur de tracking passif (Page Visibility API + détection AFK + validation serveur) qui mesure le temps de focus réel sur un contenu — sans qu'aucun bouton ne soit cliqué.
+Visions cibles : Anglais & Arabe.
 
-**Fondateur** : expert Java, enseignant OpenClassrooms/Skool, certifié PMP, parent d'ado, bénévole d'accompagnement collégien. Le produit résout un problème que le fondateur vit chaque jour.
+2. Le Problème
+Scolarité rigide vs Décrochage numérique : Les élèves s'ennuient face aux méthodes traditionnelles, mais passent des heures sur des mécaniques de jeu (gaming).
 
----
+Manque d'adaptabilité : Les plateformes actuelles sont des silos fermés. Les enseignants et les parents ne peuvent pas injecter leurs propres exercices ou s'adapter aux programmes locaux facilement.
 
-## 2. Le Problème
+Silo institutionnel : Les ministères manquent d'outils grand public attractifs capables de s'interfacer avec leurs bases de données nationales.
 
-### Pour le dev-parent/mentor
-- Il consomme beaucoup de contenus tech (YouTube, articles, podcasts) mais rien n'est organisé, rien n'est partageable facilement vers les jeunes qu'il accompagne
-- Les outils de veille existants (Notion, Readwise, Feedly) sont solos — pas conçus pour partager avec un apprenant
-- Il n'a pas le temps de créer des cours : il veut partager sa veille telle quelle
+3. La Solution : L'Écosystème "Play Perform"
+Une application multi-plateforme ultra-intuitive où l'apprentissage se fait en mode "amateur et ludique".
 
-### Pour l'ado/collégien
-- Les plateformes éducatives (Duolingo, Khan Academy, Coursera) sont soit trop scolaires, soit sans lien avec le monde pro réel
-- Il apprend mieux dans un cadre informel, avec du contenu choisi par quelqu'un qu'il connaît
-- Il ne veut pas "faire ses devoirs" — mais il veut progresser
+Le Moteur d'Apprentissage Combiné :
 
-### Le gap de marché
-Aucune plateforme ne connecte la **veille professionnelle d'un adulte tech** à l'**apprentissage informel d'un jeune** dans un cadre familial/mentorat.
+Quizz interactifs rythmés (Style Kahoot).
 
----
+Cartes de mémorisation intelligentes pour la rétention long terme (Style Anki).
 
-## 3. La Solution
+Barres de progression, récompenses et streaks (Style Duolingo).
 
-### Proposition de valeur
-> "Partage ta veille. Ton ado apprend. Automatiquement."
+Extensibilité Totale (Le pilier B2B/B2G) : Un enseignement de base standardisé est inclus. Cependant, le système intègre une API ouverte et un module d'import de fichiers Batch (JSON/CSV) permettant à n'importe quel enseignant, école ou ministère d'injecter instantanément un programme scolaire personnalisé.
 
-### Les 3 composantes
+4. Stratégie de Marché & Évolution (B2F ➔ B2B ➔ B2G)
+[ Phase 1 : B2F ]          ➔       [ Phase 2 : B2B ]        ➔       [ Phase 3 : B2G ]
+Familles & Abonnements             Écoles & Tableaux                Ministères & Licences
+Individuels (Enfants CP-Term)      de bord Enseignants              Nationales / API d'État
+Étape 1 : Business to Families (B2F) — Le Validation Terrain
+Cible : Les parents cherchant un soutien scolaire sain, autonome et ludique.
 
-**Hub Veille (MVP Phase 1)**
-- Le parent importe ses ressources (YouTube, articles, liens) dans son Hub
-- Il crée un "cercle" (famille + quelques apprenants)
-- Les membres du cercle voient la veille curatée
-- Le tracking passif mesure le temps de focus réel sur chaque ressource
+Focus : Acquisition directe, boucle virale enfants/parents, validation de la rétention (Gamification).
 
-**Lab World (Phase 2)**
-- Parcours structurés basés sur la veille du parent
-- Suivi de progression pour l'ado par module/compétence
+Étape 2 : Business to Schools (B2B) — L'Adoption Institutionnelle
+Cible : Écoles privées et publiques, directeurs d'établissements.
 
-**Club World (Phase 3)**
-- Plusieurs familles/mentors créent des clubs thématiques
-- Gouvernance légère : un "board élu" (animateur principal + contributeurs)
+Outil : Fourniture d'un dashboard "Enseignant" pour suivre l'XP des élèves, assigner des devoirs sous forme de défis, et importer les cours de l'école via API / Batch.
 
----
+Étape 3 : Business to Government (B2G) — Le Changement d'Échelle
+Cible : Ministères de l'Éducation Nationale (Zone Francophone, puis Moyen-Orient/Afrique avec l'Arabe et l'Anglais).
 
-## 4. Personas
+Outil : Intégration souveraine. Le ministère pousse le programme officiel complet dans l'API de Play Perform, l'application devenant le compagnon ludique national officiel des élèves.
 
-### Persona A : Le Dev-Parent / Dev-Mentor
-- **Profil** : 30-45 ans, développeur ou architecte senior, certifié ou en formation continue
-- **Habitudes** : consomme 3-5h de contenus tech/semaine (YouTube, newsletters, podcasts)
-- **Frustration** : "Je vois plein de trucs intéressants pour mon ado mais je n'ai pas le temps de les lui présenter proprement"
-- **Motivation** : transmettre son expertise sans créer de cours formels
-- **Canal d'accès** : OpenClassrooms, Skool, LinkedIn tech, communautés dev
+5. Roadmap Produit & Contenu
+Phase 1 : Le Noyau (MVP)
+Contenu : Programme de base CP-Terminale en Français (Maths, Sciences, Langues).
 
-### Persona B : L'Ado/Collégien Apprenant
-- **Profil** : 12-20 ans, gaming-native, découvre le code via YouTube/TikTok
-- **Habitudes** : 2-4h/jour d'écrans, consommation passive forte
-- **Frustration** : "Les cours c'est chiant mais les vidéos YouTube de code c'est cool"
-- **Motivation** : progresser sans que ça ressemble à du travail scolaire
-- **Canal d'accès** : via le parent/mentor
+Tech : Moteur de rendu Web, tracking d'XP, système de cartes Anki. Import Batch standard activé.
 
----
+Phase 2 : L'Ouverture API & Internationalisation
+Contenu : Intégration des modules de langues Anglais et Arabe.
 
-## 5. Roadmap Produit
+Tech : Publication de l'API publique pour les développeurs tiers et créateurs de contenus pédagogiques.
 
-### Phase 0 — Validation sans code (S1 à S8)
-**Objectif** : 20 personnes veulent ça avant d'écrire une ligne de code.
+Phase 3 : L'Infrastructure de Masse
+Tech : Tableaux de bord analytiques multi-classes pour les écoles (B2B) et passerelles d'authentification uniques étatiques (B2G).
 
-| Action | Outil | Temps | Signal attendu |
-|--------|-------|-------|----------------|
-| Newsletter veille tech | Beehiiv (gratuit) | 30 min setup | 50 abonnés en 8 semaines |
-| Channel Skool "Dev+Ado" | Skool existant | 15 min | 10 familles actives |
-| Usage tracking perso | Notion/Readwise | En cours | Identifier les vraies frictions |
+6. Modèle Économique
+B2F (BtoC) : Abonnement mensuel freemium sans engagement pour les familles (accès aux fonctionnalités premium, statistiques avancées, profils enfants illimités).
 
-**Go/No-go** : 50 abonnés + 10 familles → lancer Phase 1.
+B2B (SaaS Écoles) : Licence annuelle par élève / par classe avec outil d'administration pour les professeurs.
 
-### Phase 1 — Hub Veille MVP (S9 à S20, 1h/jour)
-**Objectif** : Un seul monde, un seul problème résolu.
+B2G (Licences d'État) : Contrats de maintenance, déploiement sur serveurs souverains et tarification forfaitaire annuelle à la data ou au volume global d'élèves d'un pays.
 
-- Hub personnel : importer YouTube + articles + liens
-- Tracking passif (le moteur différenciant)
-- Partage vers "cercle" (famille + 5 max)
-- Dashboard simple : temps de focus par ressource
+7. Avantages Concurrentiels Défendables
+L'architecture "Open Content" : Contrairement à Duolingo ou Kahoot qui dictent leurs contenus, Play Perform accepte n'importe quelle donnée éducative via son format d'import standardisé.
 
-**Stack** : Next.js 14 + TypeScript strict + Supabase + Tailwind + shadcn/ui
-
-**Ne PAS construire** : Lab World, Club World, système XP, niveaux, governance.
-
-### Phase 2 — Lab World (mois 5+)
-Déclenché uniquement si : demande explicite de 3+ familles actives.
-
-### Phase 3 — Club World (mois 9+)
-Déclenché uniquement si : groupes de familles se forment naturellement autour d'un thème.
-
----
-
-## 6. Modèle Économique
-
-### Revenus projetés
-
-| Horizon | ARR cible | Modèle |
-|---------|-----------|--------|
-| M6 | €0 | Usage personnel + beta fermée |
-| M12 | €2 400-6 000 | 30-50 familles × €9/mois × 12 mois |
-| M24 | €6 000-18 000 | 100+ familles + tier Communauté |
-
-### Plans
-
-| Plan | Prix | Inclus |
-|------|------|--------|
-| Gratuit | €0 | 1 Hub veille, partage 3 personnes max |
-| Famille | €9/mois | Hub illimité + cercle famille + dashboard ado |
-| Communauté | €15/mois | Tout Famille + Club + accès veilles des autres |
-
-### Distribution (coût d'acquisition = €0 Phase 1)
-- Audience OpenClassrooms existante → newsletter → conversion
-- Audience Skool existante → channel dédié → onboarding
-- Bouche-à-oreille : 1 famille convaincue → invite ses pairs
-
----
-
-## 7. Go-To-Market
-
-### Séquence de lancement
-
-```
-Semaine 1-2 : Newsletter #1 sur Beehiiv (veille perso) → partager sur OC + Skool
-Semaine 3-4 : Channel Skool "Dev Parent + Ado" → 1er défi hebdomadaire
-Semaine 5-8 : Recueillir feedback, identifier les 10 familles pilotes
-Semaine 9   : Commencer le code avec les retours réels
-Mois 5      : Beta fermée 10 familles → itérations rapides
-Mois 6      : Ouverture progressive (liste d'attente)
-```
-
-### Canaux prioritaires
-1. OpenClassrooms (audience existante, gratuit)
-2. Skool (communauté existante, gratuit)
-3. LinkedIn (contenu de veille partagée → attirer des dev-parents)
-4. Bouche-à-oreille famille (le plus puissant, le moins scalable)
-
----
-
-## 8. Analyse Concurrentielle
-
-| Concurrent | Forces | Leur gap | Notre avantage |
-|-----------|--------|---------|----------------|
-| Duolingo | 500M users, gamification | Pas pour devs, pas de veille perso | Contenu réel du mentor |
-| Khan Academy | Contenu structuré, gratuit | Top-down, pas de veille parent | Curation bottom-up |
-| Readwise | Rétention mémorielle excellente | Solo, pas d'apprentissage ado | Dimension famille + partage |
-| Notion/Obsidian | Flexibilité totale | Pas de tracking passif, pas social | Mesure focus automatique |
-| Skool | Communauté forte | Pas de tracking engagement contenu | KPIs objectifs du temps appris |
-| YouTube | Contenu illimité | Aucun suivi, aucune structure | Curation + mesure + cercle |
-
-**Différenciation défendable** : le tracking passif n'est pas une feature facilement copiable — c'est une mécanique technique (Page Visibility + heartbeat + anti-triche) qui demande une vraie implémentation.
-
----
-
-## 9. Ressources Nécessaires
-
-### Humaines
-- 1 fondateur, 1h/jour (constraint principale)
-- Agents IA (Claude Code, Cursor) pour la génération de code → le fondateur = chef de produit
-
-### Techniques (Phase 1)
-- Next.js 14, TypeScript strict, Supabase (gratuit ≤500MB), Tailwind, shadcn/ui
-- YouTube Data API (gratuit ≤10K req/jour)
-- Vercel (gratuit pour hobby)
-
-### Financières
-- Coût Phase 0-1 : ~€0/mois (tous outils gratuits)
-- Supabase Pro (si >500MB) : €25/mois → déclenché par traction réelle
-
----
-
-## 10. Métriques de Succès (KPIs Go/No-Go)
-
-### Phase 0 (S1-S8)
-- [ ] 50 abonnés newsletter
-- [ ] 10 familles actives sur Skool
-- [ ] Le fondateur utilise son propre outil chaque semaine
-
-### Phase 1 (S9-S20)
-- [ ] 10 familles en beta fermée utilisent le Hub hebdomadairement
-- [ ] Temps moyen de focus/semaine > 30 min/utilisateur
-- [ ] 3 familles paient €9/mois spontanément
-
-### Règle d'or anti-île-déserte
-> Si le fondateur n'utilise pas SYNTH.EDU pour sa propre veille depuis 2 semaines → pause et retrospective avant de continuer.
+La scalabilité institutionnelle : Le code est pensé pour passer d'une interface enfant légère à une gestion de flottes de millions d'utilisateurs via API.

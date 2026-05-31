@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
 import type { DbStudent } from '@/lib/db';
 import { StudentCard } from '@/components/parent/StudentCard';
-import { AddStudentForm } from '@/components/parent/AddStudentForm';
 import { apiFetchStudents } from '@/lib/students-api';
 
 function getClient() {
@@ -44,10 +43,15 @@ export default function ParentPage() {
           {students.length === 0 && <p className="text-slate-400 text-sm text-center py-4">Aucun élève — ajoutez-en un ci-dessous.</p>}
         </div>
 
-        <AddStudentForm onAdded={(student) => setStudents((s) => [...s, student])} />
+        <div className="space-y-4">
+          <Link href="/parent/new" className="w-full flex items-center gap-4 rounded-2xl p-5 border-2 border-dashed border-violet-200 hover:border-violet-400 transition-colors">
+            <div className="w-16 h-16 shrink-0 rounded-2xl bg-violet-50 flex items-center justify-center text-2xl">+</div>
+            <div className="text-left"><div className="text-violet-600 font-bold">Ajouter un élève</div><div className="text-slate-400 text-sm">Créer un nouveau profil</div></div>
+          </Link>
 
-        <div className="text-center">
-          <Link href="/" className="text-sm text-slate-400 hover:text-slate-600 font-semibold">← Retour à l&apos;accueil</Link>
+          <div className="text-center">
+            <Link href="/" className="text-sm text-slate-400 hover:text-slate-600 font-semibold">← Retour à l&apos;accueil</Link>
+          </div>
         </div>
       </div>
     </div>

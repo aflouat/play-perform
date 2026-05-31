@@ -29,7 +29,7 @@ export function AddStudentForm({ onAdded }: Props) {
     const student = await apiInsertStudent({
       name: name.trim(), emoji, gradient,
       grade: grade.trim() || 'CE1',
-      tagline: `${name.trim()} apprend avec SYNTH.EDU`,
+      tagline: `${name.trim()} apprend avec  Play Perform`,
       age: parseInt(age) || 10,
       mode, learning_mode: learningMode,
     });

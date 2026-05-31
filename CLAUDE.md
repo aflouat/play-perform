@@ -1,8 +1,8 @@
-# CLAUDE.md — SYNTH.EDU Play Perform
+# CLAUDE.md —   Play Perform
 
 Instructions pour Claude Code dans ce repo.
 
-## Profils utilisateurs (agent.md → Cibles)
+## Personas (agent.md → Cibles)
 
 | Profil | Âge | Besoins | Route |
 |---|---|---|---|
@@ -24,23 +24,19 @@ Instructions pour Claude Code dans ce repo.
 - **Avant chaque déploiement** : bumper la version dans `package.json`
 - **Après chaque déploiement** : exécuter `npm run release -- --title "..." --changes "A,B,C"`
   pour insérer une ligne dans la table `release_notes` Supabase (visible sur `/releases`)
+- faire un git add . puis git commit -m "message" et git push origin main
+
 
 ## Index des fichiers .md
 
 | Fichier | Rôle | Mise à jour |
 |---|---|---|
 | `CLAUDE.md` | Instructions Claude Code — règles, stack, composants, versionnement | Fin de chaque Epic |
-| `README.md` | État actuel du projet, routes, architecture | Fin de chaque Epic |
+| `README.md` | État actuel du projet, routes, architecture | Fin de chaque Epic | ?
 | `in-progress.md` | Epic en cours — lire AVANT de coder, noter ce qui est fait | En continu |
 | `todo.md` | Roadmap et backlog priorisé | Fin de chaque Epic |
-| `agent.md` | Profils cibles détaillés (Omar, Esma, Mohamed) et contraintes pédagogiques | Si les profils évoluent |
-| `AGENTS.md` | Instructions agentiques générales (workflows, conventions) | Rarement |
-| `docs/mvp-phase1-spec.md` | Spécification fonctionnelle MVP Phase 1 | Si la spec change |
-| `docs/personas.md` | Personas utilisateurs détaillés | Si les personas évoluent |
-| `docs/business-plan.md` | Plan business SYNTH.EDU | Si la stratégie change |
-| `docs/FAQ-POWER-USER.md` | FAQ pour utilisateurs avancés / parents | Si nouvelles questions |
-| `docs/supabase-migrations.md` | SQL migrations Supabase (questions, release_notes, scores…) | À chaque nouvelle table |
-| `src/knownBugs.md` | Bugs connus, workarounds, issues ouvertes | Au fur et à mesure |
+| `docs/business-plan.md` | Plan business  Play Perform | Si la stratégie change |
+| `knownBugs.md` | Bugs connus, workarounds, issues ouvertes | Au fur et à mesure |
 
 ## Stack
 - Next.js 16.2.6 App Router · TypeScript strict · Tailwind v4

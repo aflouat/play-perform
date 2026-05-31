@@ -24,7 +24,7 @@ export default async function ReleasesPage() {
         <div className="mb-8">
           <h1 className="text-3xl font-black text-[#1a1a2e] mb-1">Notes de version</h1>
           <p className="text-slate-500 text-sm">
-            Historique de toutes les mises à jour de SYNTH.EDU Play Perform.
+            Historique de toutes les mises à jour de   Play Perform.
             Filtrez par date, numéro de version ou mots-clés.
           </p>
         </div>

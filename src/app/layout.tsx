@@ -8,7 +8,7 @@ const geist = Geist({
 });
 
 export const metadata: Metadata = {
-  title: 'SYNTH.EDU',
+  title: ' Play Perform',
   description: 'Apprends en jouant',
 };
 
