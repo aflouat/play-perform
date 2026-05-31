@@ -79,19 +79,20 @@ export function selectQuestions(
 ): QuizQuestion[] {
   const due: QuizQuestion[] = [];
   const newQ: QuizQuestion[] = [];
-  const reviewing: QuizQuestion[] = [];
   const mastered: QuizQuestion[] = [];
+  const notDueYet: QuizQuestion[] = [];
 
   for (const q of allQuestions) {
     const p = progressMap[q.id];
     if (!p || p.state === 'new') {
       newQ.push(q);
-    } else if (isDue(p) && p.state !== 'mastered') {
-      due.push(q);
     } else if (p.state === 'mastered') {
       mastered.push(q);
-    } else if (bypassRecent || !isRecentlySeen(p)) {
-      reviewing.push(q);
+    } else if (isDue(p)) {
+      due.push(q);
+    } else {
+      // nextReview in the future — only include in bypass mode
+      notDueYet.push(q);
     }
   }
 
@@ -106,11 +107,11 @@ export function selectQuestions(
     const shuffled = [...newQ].sort(() => Math.random() - 0.5);
     selected.push(...shuffled.slice(0, count - selected.length));
   }
-  if (selected.length < count) {
-    const shuffled = [...reviewing].sort(() => Math.random() - 0.5);
+  if (selected.length < count && bypassRecent) {
+    const shuffled = [...notDueYet].sort(() => Math.random() - 0.5);
     selected.push(...shuffled.slice(0, count - selected.length));
   }
-  if (selected.length < count) {
+  if (selected.length < count && bypassRecent) {
     const shuffled = [...mastered].sort(() => Math.random() - 0.5);
     selected.push(...shuffled.slice(0, count - selected.length));
   }

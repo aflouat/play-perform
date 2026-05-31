@@ -45,6 +45,13 @@ export const PROFILES: Profile[] = [
 ];
 
 const STORAGE_KEY = 'activeProfile';
+const META_KEY = 'activeProfileMeta';
+
+export interface ActiveProfileMeta {
+  name: string;
+  emoji: string;
+  gradient: string;
+}
 
 export function getActiveProfileId(): string | null {
   if (typeof window === 'undefined') return null;
@@ -56,9 +63,24 @@ export function setActiveProfileId(id: string): void {
   localStorage.setItem(STORAGE_KEY, id);
 }
 
+export function setActiveProfile(id: string, meta: ActiveProfileMeta): void {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(STORAGE_KEY, id);
+  localStorage.setItem(META_KEY, JSON.stringify(meta));
+}
+
+export function getActiveProfileMeta(): ActiveProfileMeta | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = localStorage.getItem(META_KEY);
+    return raw ? (JSON.parse(raw) as ActiveProfileMeta) : null;
+  } catch { return null; }
+}
+
 export function clearActiveProfile(): void {
   if (typeof window === 'undefined') return;
   localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(META_KEY);
 }
 
 export function getProfileById(id: string): Profile | undefined {

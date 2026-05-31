@@ -13,7 +13,7 @@ import { useQuizSession } from '@/hooks/useQuizSession';
 import { useActiveProfileId } from '@/hooks/useActiveProfileId';
 import { getSubjectLabel } from '@/lib/quiz-data';
 import { getQuestions } from '@/lib/question-banks';
-import { getProfileById } from '@/lib/profiles';
+import { getProfileById, getActiveProfileMeta } from '@/lib/profiles';
 import { SUBJECT_META, NAV_SUBJECTS } from '@/lib/subjects';
 import { XpGainToast, useXpGain } from '@/components/ui/XpGainToast';
 import { useSpacedRepetition } from '@/hooks/useSpacedRepetition';
@@ -35,6 +35,7 @@ export default function QuizPage() {
   const { mode, setMode } = useLearningMode(profileId);
   const { lastGain, triggerGain } = useXpGain();
   const profile = getProfileById(profileId);
+  const profileMeta = getActiveProfileMeta();
 
   const validSubject = isValidSubject(subject) ? (subject as Subject) : 'maths';
   const { getQuestions: srsSelect, recordAnswer } = useSpacedRepetition(profileId, validSubject);
@@ -90,7 +91,7 @@ export default function QuizPage() {
     <div className="min-h-screen">
       <XpGainToast gain={lastGain} />
       <div className="max-w-md mx-auto px-5 pt-8 pb-10">
-        <ProfileHeader name={profile?.name ?? profileId} avatarEmoji={avatar?.emoji ?? '🎓'}
+        <ProfileHeader name={profile?.name ?? profileMeta?.name ?? profileId} avatarEmoji={avatar?.emoji ?? profileMeta?.emoji ?? '🎓'}
           score={score} xpToNextLevel={xpToNextLevel} mode={mode} onModeChange={setMode}
           onBack={() => router.push('/home')} accentColor={subjectBg} />
         <div className="flex items-center justify-between mb-4">

@@ -8,7 +8,7 @@ import { useAvatar } from '@/hooks/useAvatar';
 import { useLearningMode } from '@/hooks/useLearningMode';
 import { AvatarPicker } from '@/components/shared/AvatarPicker';
 import { ProfileHeader } from '@/components/shared/ProfileHeader';
-import { clearActiveProfile, getProfileById } from '@/lib/profiles';
+import { clearActiveProfile, getProfileById, getActiveProfileMeta } from '@/lib/profiles';
 import { useActiveProfileId } from '@/hooks/useActiveProfileId';
 import { ALL_QUIZ_SUBJECTS, getSubjectLabel } from '@/lib/quiz-data';
 import { getQuestions } from '@/lib/question-banks';
@@ -28,6 +28,7 @@ export default function HomePage() {
   const { avatar, avatarId, allAvatars, selectAvatar } = useAvatar(profileId, score.xp);
   const { mode, setMode } = useLearningMode(profileId === '__none__' ? 'omar' : profileId);
   const profile = getProfileById(profileId);
+  const profileMeta = getActiveProfileMeta();
 
   if (profileId === '__none__') {
     return <div className="min-h-screen flex items-center justify-center text-slate-400 text-sm">Chargement…</div>;
@@ -37,8 +38,8 @@ export default function HomePage() {
     <div className="min-h-screen">
       <div className="max-w-md mx-auto px-5 pt-8 pb-24">
         <ProfileHeader
-          name={profile?.name ?? profileId}
-          avatarEmoji={avatar?.emoji ?? '🎓'}
+          name={profile?.name ?? profileMeta?.name ?? profileId}
+          avatarEmoji={avatar?.emoji ?? profileMeta?.emoji ?? '🎓'}
           score={score}
           xpToNextLevel={xpToNextLevel}
           mode={mode}

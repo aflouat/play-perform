@@ -4,12 +4,11 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
-import { setActiveProfileId, getActiveProfileId, clearActiveProfile } from '@/lib/profiles';
+import { setActiveProfile, getActiveProfileId, clearActiveProfile } from '@/lib/profiles';
 import type { DbStudent } from '@/lib/db';
 import { useScore } from '@/hooks/useScore';
 import { saveMode, type LearningMode, STUDENT_MODE_LABELS } from '@/lib/learning-mode';
 import { apiFetchStudents, apiInsertStudent } from '@/lib/students-api';
-import { ModeSheet } from '@/components/shared/ModeSheet';
 import { LandingScreen } from '@/components/shared/LandingScreen';
 
 interface DisplayProfile {
@@ -65,7 +64,6 @@ export default function WelcomePage() {
   const [profiles, setProfiles] = useState<DisplayProfile[]>([]);
   const [ready, setReady] = useState(false);
   const [authed, setAuthed] = useState(false);
-  const [selected, setSelected] = useState<DisplayProfile | null>(null);
 
   useEffect(() => {
     async function init() {
@@ -88,10 +86,9 @@ export default function WelcomePage() {
   }, []);
 
   function startSession(profile: DisplayProfile, route: string) {
-    setActiveProfileId(profile.id);
+    setActiveProfile(profile.id, { name: profile.name, emoji: profile.emoji, gradient: profile.gradient });
     const stored = typeof window !== 'undefined' ? localStorage.getItem(`mode:${profile.id}`) : null;
     if (!stored) saveMode(profile.id, profile.learningMode);
-    setSelected(null);
     router.push(route);
   }
 
@@ -100,15 +97,13 @@ export default function WelcomePage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-5 py-12">
-      {selected && <ModeSheet profile={selected} onSelect={(r) => startSession(selected, r)} onClose={() => setSelected(null)} />}
       <div className="w-full max-w-sm space-y-8">
         <div className="text-center">
           <div className="text-5xl mb-3">✨</div>
           <h1 className="text-3xl font-black text-[#1a1a2e] tracking-tight">Qui joue aujourd&apos;hui ?</h1>
-          <p className="text-xs text-slate-400 mt-1">Choisissez l&apos;activité après avoir sélectionné le joueur.</p>
         </div>
         <div className="space-y-3">
-          {profiles.map((p) => <ProfileCard key={p.id} profile={p} onSelect={() => setSelected(p)} />)}
+          {profiles.map((p) => <ProfileCard key={p.id} profile={p} onSelect={() => startSession(p, p.homeRoute)} />)}
           {profiles.length === 0 && <p className="text-center py-8 text-slate-400 text-sm">Aucun élève — <Link href="/parent" className="text-violet-600 font-semibold">en ajouter →</Link></p>}
           <Link href="/parent" className="w-full flex items-center gap-4 rounded-2xl p-5 border-2 border-dashed border-violet-200 hover:border-violet-400 transition-colors">
             <div className="w-16 h-16 shrink-0 rounded-2xl bg-violet-50 flex items-center justify-center text-2xl">+</div>
