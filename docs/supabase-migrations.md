@@ -126,6 +126,20 @@ create policy "parent voit ses eleves" on students
   with check (auth.uid() = parent_id);
 ```
 
+## 007b — Colonnes mode/learning_mode sur students
+
+```sql
+-- Ajouter après la migration 007
+alter table students
+  add column if not exists mode text not null default 'quiz'
+    check (mode in ('quiz', 'words', 'keyboard')),
+  add column if not exists learning_mode text not null default 'advanced'
+    check (learning_mode in ('assisted', 'advanced'));
+
+-- Fix: parent_id auto-set depuis le JWT (évite les inserts sans parent_id)
+alter table students alter column parent_id set default auth.uid();
+```
+
 ---
 
 ## Variables d'environnement requises

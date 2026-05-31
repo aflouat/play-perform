@@ -2,18 +2,11 @@ export type LearningMode = 'assisted' | 'advanced';
 
 const STORAGE_KEY = (profileId: string) => `mode:${profileId}`;
 
-// Default mode per profile — Esma starts in assisté, others in avancé
-export const DEFAULT_MODE: Record<string, LearningMode> = {
-  esma: 'assisted',
-  omar: 'advanced',
-  mohamed: 'advanced',
-};
-
-export function loadMode(profileId: string): LearningMode {
-  if (typeof window === 'undefined') return DEFAULT_MODE[profileId] ?? 'advanced';
+export function loadMode(profileId: string, defaultMode: LearningMode = 'advanced'): LearningMode {
+  if (typeof window === 'undefined') return defaultMode;
   const stored = localStorage.getItem(STORAGE_KEY(profileId));
   if (stored === 'assisted' || stored === 'advanced') return stored;
-  return DEFAULT_MODE[profileId] ?? 'advanced';
+  return defaultMode;
 }
 
 export function saveMode(profileId: string, mode: LearningMode): void {
@@ -32,4 +25,10 @@ export const MODE_LABELS: Record<LearningMode, { label: string; emoji: string; d
     emoji: '🚀',
     description: 'Travail autonome, sans aide automatique',
   },
+};
+
+export const STUDENT_MODE_LABELS: Record<string, { label: string; emoji: string; description: string; route: string }> = {
+  quiz:     { label: 'Quiz',    emoji: '📚', description: 'Matières scolaires, brevet',        route: '/home'     },
+  words:    { label: 'Mots',    emoji: '🌸', description: 'Mots illustrés FR/EN/ES, phrases',  route: '/esma'     },
+  keyboard: { label: 'Clavier', emoji: '⌨️', description: 'Lettres, mots, sciences',            route: '/keyboard' },
 };

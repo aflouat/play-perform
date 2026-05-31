@@ -1,5 +1,8 @@
 import { getClient } from './client';
 
+export type StudentMode = 'quiz' | 'words' | 'keyboard';
+export type StudentLearningMode = 'assisted' | 'advanced';
+
 export interface DbStudent {
   id?: string;
   parent_id?: string;
@@ -9,6 +12,8 @@ export interface DbStudent {
   grade: string;
   tagline: string;
   age: number;
+  mode?: StudentMode;           // game mode → determines home route
+  learning_mode?: StudentLearningMode; // default assisted/advanced
 }
 
 export async function fetchStudents(): Promise<DbStudent[]> {

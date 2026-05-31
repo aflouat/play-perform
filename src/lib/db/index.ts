@@ -4,7 +4,7 @@ export type { DbScore, DbBadge, DbQuizAnswer, DbKeyboardProgress } from './score
 export { syncScoreToDb, fetchScoreFromDb, syncBadgeToDb, logQuizAnswer, logKeyboardSession } from './scores';
 export type { DbQuestion } from './questions';
 export { insertQuestions, fetchQuestionsFromDb, fetchAllQuestionsFromDb, updateQuestion, deleteQuestion } from './questions';
-export type { DbStudent } from './students';
+export type { DbStudent, StudentMode, StudentLearningMode } from './students';
 export { fetchStudents, insertStudent, deleteStudent, updateStudent } from './students';
 export type { DbReleaseNote, ReleaseNoteFilter } from './releases';
 export { insertReleaseNote, fetchReleaseNotes } from './releases';

@@ -8,6 +8,7 @@ import { PROFILES, setActiveProfileId, getActiveProfileId, clearActiveProfile, g
 import { fetchStudents, insertStudent } from '@/lib/db';
 import type { DbStudent } from '@/lib/db';
 import { useScore } from '@/hooks/useScore';
+import { saveMode, type LearningMode, STUDENT_MODE_LABELS } from '@/lib/learning-mode';
 
 interface DisplayProfile {
   id: string;
@@ -16,6 +17,7 @@ interface DisplayProfile {
   gradient: string;
   tagline: string;
   homeRoute: string;
+  learningMode: LearningMode;
 }
 
 function getSupabase() {
@@ -28,25 +30,21 @@ function getSupabase() {
 const DEFAULT_PARENT_EMAIL = 'aflouat@gmail.com';
 
 const DEFAULT_STUDENTS_SEED = [
-  { name: 'Omar',    emoji: '🧑‍🎓', gradient: 'from-sky-400 to-blue-500',     grade: '6ème',      tagline: 'Objectif : brevet',      age: 12 },
-  { name: 'Esma',   emoji: '🌸',   gradient: 'from-pink-400 to-rose-500',    grade: 'CP adapté', tagline: 'Mots & phrases',          age: 9  },
-  { name: 'Mohamed',emoji: '🚀',   gradient: 'from-emerald-400 to-teal-500', grade: 'CP',        tagline: 'Apprends le clavier !',   age: 6  },
-] as const;
-
-function getHomeRouteForStudent(s: DbStudent): string {
-  if ((s.age ?? 10) <= 7) return '/keyboard';
-  if (s.grade?.toLowerCase().includes('cp')) return '/esma';
-  return '/home';
-}
+  { name: 'Omar',    emoji: '🧑‍🎓', gradient: 'from-sky-400 to-blue-500',     grade: '6ème',      tagline: 'Objectif : brevet',      age: 12, mode: 'quiz'     as const, learning_mode: 'advanced' as const },
+  { name: 'Esma',   emoji: '🌸',   gradient: 'from-pink-400 to-rose-500',    grade: 'CP adapté', tagline: 'Mots & phrases',          age: 9,  mode: 'words'    as const, learning_mode: 'assisted' as const },
+  { name: 'Mohamed',emoji: '🚀',   gradient: 'from-emerald-400 to-teal-500', grade: 'CP',        tagline: 'Apprends le clavier !',   age: 6,  mode: 'keyboard' as const, learning_mode: 'advanced' as const },
+];
 
 function toDisplayProfile(s: DbStudent): DisplayProfile {
+  const modeKey = s.mode ?? 'quiz';
   return {
     id: s.id ?? s.name,
     name: s.name,
     emoji: s.emoji,
     gradient: s.gradient,
     tagline: `${s.grade} · ${s.age} ans`,
-    homeRoute: getHomeRouteForStudent(s),
+    homeRoute: STUDENT_MODE_LABELS[modeKey]?.route ?? '/home',
+    learningMode: (s.learning_mode ?? 'advanced') as LearningMode,
   };
 }
 
@@ -62,9 +60,12 @@ function ProfileCard({ profile, onSelect }: { profile: DisplayProfile; onSelect:
       <div className="text-left flex-1">
         <div className="text-[#1a1a2e] font-black text-lg">{profile.name}</div>
         <div className="text-slate-500 text-sm">{profile.tagline}</div>
-        <div className="mt-1.5 inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 border border-amber-200">
-          <span className="text-amber-600 text-xs font-bold">⭐ Niv.{score.level}</span>
-          <span className="text-amber-400 text-xs">· {score.xp} XP</span>
+        <div className="flex items-center gap-2 mt-1.5">
+          <div className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 border border-amber-200">
+            <span className="text-amber-600 text-xs font-bold">⭐ Niv.{score.level}</span>
+            <span className="text-amber-400 text-xs">· {score.xp} XP</span>
+          </div>
+          <span className="text-xs text-slate-400">{profile.learningMode === 'assisted' ? '🤝 Assisté' : '🚀 Avancé'}</span>
         </div>
       </div>
       <span className="text-slate-300 text-lg">→</span>
@@ -86,7 +87,6 @@ export default function WelcomePage() {
         setParentLogged(true);
         let students = await fetchStudents();
 
-        // Auto-seed default profiles for the default parent account
         if (students.length === 0 && data.session.user.email === DEFAULT_PARENT_EMAIL) {
           await Promise.all(
             DEFAULT_STUDENTS_SEED.map((s) => insertStudent(s, data.session!.user.id)),
@@ -104,11 +104,11 @@ export default function WelcomePage() {
           return;
         }
       }
-      // Fallback: hardcoded profiles
+      // Fallback: hardcoded profiles (no parent session)
       resolvedProfiles = PROFILES.map((p) => ({
-        id: p.id, name: p.name, emoji: p.emoji,
-        gradient: p.gradient, tagline: p.tagline,
+        id: p.id, name: p.name, emoji: p.emoji, gradient: p.gradient, tagline: p.tagline,
         homeRoute: getHomeRouteForProfile(p),
+        learningMode: (p.id === 'esma' ? 'assisted' : 'advanced') as LearningMode,
       }));
       const ids = new Set(resolvedProfiles.map((p) => p.id));
       const stale = getActiveProfileId();
@@ -121,6 +121,8 @@ export default function WelcomePage() {
 
   function handleSelect(profile: DisplayProfile) {
     setActiveProfileId(profile.id);
+    // Apply the profile's configured learning mode on selection
+    saveMode(profile.id, profile.learningMode);
     router.push(profile.homeRoute);
   }
 
@@ -145,7 +147,7 @@ export default function WelcomePage() {
               <div className="w-16 h-16 shrink-0 rounded-2xl bg-violet-50 flex items-center justify-center text-2xl">+</div>
               <div className="text-left">
                 <div className="text-violet-600 font-bold">Gérer les élèves</div>
-                <div className="text-slate-400 text-sm">Ajouter ou supprimer</div>
+                <div className="text-slate-400 text-sm">Ajouter, modifier ou supprimer</div>
               </div>
             </Link>
           )}

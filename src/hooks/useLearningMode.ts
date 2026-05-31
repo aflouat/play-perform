@@ -10,8 +10,8 @@ interface UseLearningModeReturn {
   toggleMode: () => void;
 }
 
-export function useLearningMode(profileId: string): UseLearningModeReturn {
-  const [mode, setModeState] = useState<LearningMode>(() => loadMode(profileId));
+export function useLearningMode(profileId: string, defaultMode: LearningMode = 'advanced'): UseLearningModeReturn {
+  const [mode, setModeState] = useState<LearningMode>(() => loadMode(profileId, defaultMode));
 
   const setMode = useCallback((m: LearningMode) => {
     setModeState(m);

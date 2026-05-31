@@ -16,7 +16,9 @@ export default function AuthPage() {
   const [isSignup, setIsSignup] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPwd, setShowPwd] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(true);
 
@@ -30,14 +32,23 @@ export default function AuthPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setInfo(null);
     setLoading(true);
     const db = getClient();
     try {
-      const { error: authError } = isSignup
-        ? await db.auth.signUp({ email, password })
-        : await db.auth.signInWithPassword({ email, password });
-      if (authError) { setError(authError.message); return; }
-      router.push('/parent');
+      if (isSignup) {
+        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? window.location.origin;
+        const { error: authError } = await db.auth.signUp({
+          email, password,
+          options: { emailRedirectTo: `${siteUrl}/auth/confirm` },
+        });
+        if (authError) { setError(authError.message); return; }
+        setInfo('✉️ Vérifiez vos emails pour activer votre compte.');
+      } else {
+        const { error: authError } = await db.auth.signInWithPassword({ email, password });
+        if (authError) { setError(authError.message); return; }
+        router.push('/parent');
+      }
     } finally {
       setLoading(false);
     }
@@ -65,11 +76,20 @@ export default function AuthPage() {
           </div>
           <div>
             <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Mot de passe</label>
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6}
-              className="mt-1 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:border-violet-400"
-              placeholder="6 caractères minimum" />
+            <div className="relative mt-1">
+              <input type={showPwd ? 'text' : 'password'} value={password}
+                onChange={(e) => setPassword(e.target.value)} required minLength={6}
+                className="w-full rounded-xl border border-slate-200 px-4 py-3 pr-12 text-sm focus:outline-none focus:border-violet-400"
+                placeholder="6 caractères minimum" />
+              <button type="button" onClick={() => setShowPwd((v) => !v)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-violet-500 transition-colors text-sm"
+                aria-label={showPwd ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}>
+                {showPwd ? '🙈' : '👁️'}
+              </button>
+            </div>
           </div>
           {error && <p className="text-rose-600 text-sm bg-rose-50 rounded-xl px-3 py-2">{error}</p>}
+          {info && <p className="text-emerald-600 text-sm bg-emerald-50 rounded-xl px-3 py-2">{info}</p>}
           <button type="submit" disabled={loading}
             className="w-full py-3 rounded-xl bg-violet-600 text-white font-bold disabled:opacity-40 hover:bg-violet-700 transition-colors">
             {loading ? 'Chargement…' : isSignup ? 'Créer un compte' : 'Se connecter'}
@@ -77,8 +97,9 @@ export default function AuthPage() {
         </form>
 
         <div className="text-center space-y-3">
-          <button onClick={() => setIsSignup((v) => !v)} className="text-sm text-violet-600 font-semibold hover:underline">
-            {isSignup ? 'Déjà un compte ? Se connecter' : 'Pas encore de compte ? S\'inscrire'}
+          <button onClick={() => { setIsSignup((v) => !v); setError(null); setInfo(null); }}
+            className="text-sm text-violet-600 font-semibold hover:underline">
+            {isSignup ? 'Déjà un compte ? Se connecter' : "Pas encore de compte ? S'inscrire"}
           </button>
           <div>
             <Link href="/" className="text-xs text-slate-400 hover:text-slate-600">← Retour à l'accueil</Link>

@@ -14,6 +14,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           className="text-sm font-semibold text-slate-600 hover:text-violet-600 transition-colors">
           📝 Questions
         </Link>
+        <Link href="/parent"
+          className="text-sm font-semibold text-slate-600 hover:text-violet-600 transition-colors">
+          👨‍👧 Élèves
+        </Link>
         <div className="ml-auto">
           <Link href="/" className="text-xs text-slate-400 hover:text-slate-600">← Accueil</Link>
         </div>
