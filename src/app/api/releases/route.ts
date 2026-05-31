@@ -25,10 +25,8 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
-  // Simple bearer token check using service role key
-  const auth = req.headers.get('authorization') ?? '';
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? '';
-  if (!serviceKey || auth !== `Bearer ${serviceKey}`) {
+  const { isAdminAuthorized } = await import('@/lib/admin-auth');
+  if (!await isAdminAuthorized(req)) {
     return NextResponse.json({ error: 'Non autorisé.' }, { status: 401 });
   }
 

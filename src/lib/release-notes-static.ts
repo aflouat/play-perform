@@ -3,6 +3,27 @@ import type { DbReleaseNote } from '@/lib/db';
 // Historique statique — fallback si Supabase non configuré
 export const STATIC_RELEASE_NOTES: DbReleaseNote[] = [
   {
+    id: 'static-v0.5.0',
+    version: '0.5.0',
+    deployed_at: '2026-05-31T22:00:00Z',
+    title: 'Release propre — checklist + qualité code',
+    summary: 'Corrections des bugs checklist, sécurité admin renforcée, refactoring db.ts, QuizResultScreen avec focus mauvaises réponses.',
+    changes: [
+      'Bug fix : lettre O → 🍊 Orange (était 🐙 Pieuvre qui commence par P)',
+      'Sécurité : admin auth via JWT Supabase + vérification ADMIN_EMAILS (suppression NEXT_PUBLIC_SERVICE_ROLE_KEY)',
+      'Admin pages : vérification session Supabase obligatoire, redirect /auth si non connecté',
+      'lib/admin-auth.ts : isAdminAuthorized() partagé entre toutes les routes protégées',
+      'Récap quiz : mauvaises réponses en premier avec la bonne réponse affichée',
+      'QuizResultScreen extrait en composant dédié (src/components/shared/)',
+      'db.ts (241 lignes) splitté en 5 modules < 100 lignes chacun (db/client, scores, questions, students, releases)',
+      'FAQ refactorisée : 253 → 148 lignes',
+      'Quiz page : 213 → 128 lignes après extraction QuizResultScreen',
+      '.env.example : ADMIN_EMAILS et NEXT_PUBLIC_APP_URL documentés',
+    ],
+    tags: ['bugfix', 'security', 'refactor'],
+    deployed_by: 'Claude Code',
+  },
+  {
     id: 'static-v0.4.0',
     version: '0.4.0',
     deployed_at: '2026-05-31T18:00:00Z',

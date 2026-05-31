@@ -24,7 +24,7 @@ const LETTER_META: Record<string, { emoji: string; word: string; color: string }
   l: { emoji: '🦁', word: 'Lion', color: 'bg-amber-500' },
   m: { emoji: '🌙', word: 'Lune', color: 'bg-indigo-400' },
   n: { emoji: '☁️', word: 'Nuage', color: 'bg-slate-400' },
-  o: { emoji: '🐙', word: 'Pieuvre', color: 'bg-purple-400' },
+  o: { emoji: '🍊', word: 'Orange', color: 'bg-orange-400' },
   p: { emoji: '🐧', word: 'Pingouin', color: 'bg-slate-500' },
   q: { emoji: '🦆', word: 'Canard', color: 'bg-yellow-400' },
   r: { emoji: '🌹', word: 'Rose', color: 'bg-red-500' },
