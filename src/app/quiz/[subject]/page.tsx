@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import type { Subject } from '@/types';
 import { QuizCard } from '@/components/shared/QuizCard';
@@ -17,6 +17,8 @@ import { getProfileById, getActiveProfileMeta } from '@/lib/profiles';
 import { SUBJECT_META, NAV_SUBJECTS } from '@/lib/subjects';
 import { XpGainToast, useXpGain } from '@/components/ui/XpGainToast';
 import { useSpacedRepetition } from '@/hooks/useSpacedRepetition';
+import { loadProgressMap } from '@/lib/spaced-repetition';
+import { AnkiReviewSession } from '@/components/shared/AnkiReviewSession';
 
 function isValidSubject(s: string): s is Subject { return NAV_SUBJECTS.includes(s as Subject); }
 
@@ -44,6 +46,8 @@ export default function QuizPage() {
   const { questions, currentIndex, answers, finished, questionsLoaded, handleAnswer, replay, continueAnyway } =
     useQuizSession({ profileId, allForSubject, srsSelect, addXp, triggerGain, recordAnswer });
 
+  const [ankiQuestions, setAnkiQuestions] = useState<typeof questions>([]);
+
   if (!isValidSubject(subject)) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
@@ -57,13 +61,20 @@ export default function QuizPage() {
     return <div className="min-h-screen flex items-center justify-center text-slate-400 text-sm">Chargement…</div>;
   }
   if (questions.length === 0) {
+    const progressMap = loadProgressMap(profileId, validSubject);
+    const nextDates = allForSubject
+      .map((q) => progressMap[q.id]?.nextReview).filter(Boolean) as string[];
+    const nearest = nextDates.length > 0
+      ? new Date(Math.min(...nextDates.map((d) => new Date(d).getTime()))) : null;
+    const dateLabel = nearest
+      ? nearest.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : null;
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
         <div className="text-6xl mb-4">🌟</div>
         <h2 className="text-2xl font-black text-[#1a1a2e]">Bravo, tu avances vite !</h2>
         <p className="text-slate-500 mt-2 text-sm leading-relaxed">
-          Toutes les questions ont été révisées récemment.<br/>
-          L&apos;idéal est de revenir dans quelques heures.
+          Toutes les questions ont été révisées récemment.
+          {dateLabel && <><br/><span className="font-semibold text-violet-600">Prochaine révision : {dateLabel}</span></>}
         </p>
         <div className="flex flex-col gap-3 mt-6 w-full max-w-xs">
           <button onClick={continueAnyway}
@@ -78,10 +89,17 @@ export default function QuizPage() {
       </div>
     );
   }
+  if (ankiQuestions.length > 0) {
+    const wrongQs = questions.filter((q) => answers.find((a) => a.questionId === q.id && !a.isCorrect));
+    return <AnkiReviewSession initialQuestions={wrongQs.length > 0 ? wrongQs : ankiQuestions}
+      mode={mode} onRecord={recordAnswer} onDone={() => setAnkiQuestions([])} />;
+  }
   if (finished) {
+    const wrongQs = questions.filter((q) => answers.find((a) => a.questionId === q.id && !a.isCorrect));
     return <QuizResultScreen answers={answers} questions={questions} score={score}
       xpToNextLevel={xpToNextLevel} lastGain={lastGain}
-      onReplay={replay} onHome={() => router.push('/home')} />;
+      onReplay={replay} onHome={() => router.push('/home')}
+      onAnkiReview={wrongQs.length > 0 ? () => setAnkiQuestions(wrongQs) : undefined} />;
   }
 
   const subjectBg = SUBJECT_META[subject as Subject]?.bg ?? 'bg-slate-400';

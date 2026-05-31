@@ -12,12 +12,13 @@ interface QuizResultScreenProps {
   lastGain: number | null;
   onReplay: () => void;
   onHome: () => void;
+  onAnkiReview?: () => void;
 }
 
 const XP_PER_LEVEL = 100;
 
 export function QuizResultScreen({
-  answers, questions, score, xpToNextLevel, lastGain, onReplay, onHome,
+  answers, questions, score, xpToNextLevel, lastGain, onReplay, onHome, onAnkiReview,
 }: QuizResultScreenProps) {
   const finalCorrect = answers.filter((a) => a.isCorrect).length;
   const totalXp = answers
@@ -100,6 +101,12 @@ export function QuizResultScreen({
           </div>
         )}
 
+        {onAnkiReview && wrongAnswers.length > 0 && (
+          <button onClick={onAnkiReview}
+            className="w-full rounded-2xl bg-rose-500 py-4 font-bold text-white shadow-lg hover:bg-rose-400 transition-colors">
+            🔁 Réviser les {wrongAnswers.length} erreur{wrongAnswers.length > 1 ? 's' : ''}
+          </button>
+        )}
         <div className="flex gap-3">
           <button onClick={onHome} className="flex-1 rounded-2xl bg-slate-100 py-4 font-bold text-slate-600 hover:bg-slate-200 transition-colors">Accueil</button>
           <button onClick={onReplay} className="flex-1 rounded-2xl bg-sky-500 py-4 font-bold text-white shadow-lg hover:bg-sky-400 transition-colors">Rejouer</button>

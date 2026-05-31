@@ -64,12 +64,17 @@ export default function WelcomePage() {
   const [profiles, setProfiles] = useState<DisplayProfile[]>([]);
   const [ready, setReady] = useState(false);
   const [authed, setAuthed] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     async function init() {
       const { data } = await getSupabase().auth.getSession();
       if (!data.session) { setReady(true); return; }
       setAuthed(true);
+      fetch('/api/is-admin', { headers: { authorization: `Bearer ${data.session.access_token}` } })
+        .then((r) => r.json() as Promise<{ isAdmin: boolean }>)
+        .then(({ isAdmin }) => setIsAdmin(isAdmin))
+        .catch(() => {});
       let students = await apiFetchStudents();
       if (students.length === 0) {
         await Promise.all(DEFAULT_STUDENTS_SEED.map((s) => apiInsertStudent(s)));
@@ -114,6 +119,7 @@ export default function WelcomePage() {
           <Link href="/faq" className="hover:text-slate-600">❓ FAQ</Link>
           <Link href="/releases" className="hover:text-slate-600">📋 Versions</Link>
           <Link href="/parent" className="hover:text-slate-600">👤 Espace parent</Link>
+          {isAdmin && <Link href="/admin/questions" className="hover:text-violet-600 text-violet-400 font-semibold">⚙️ Admin</Link>}
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-#  Play Perform · v0.5.4
+#  Play Perform · v0.5.6
 
 Plateforme d'apprentissage ludique pour enfants. Le parent crée un compte, ajoute ses élèves, et chaque enfant joue dans le mode adapté à son profil. la ptf dispose d'un acces admin pour gerer les questions sur la GUI et ou batch API / CSV
 

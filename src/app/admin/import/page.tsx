@@ -9,6 +9,25 @@ interface ImportResult {
   errors: RowError[];
 }
 
+const CSV_SUBJECTS = 'maths | francais | svt | histoire | physique | anglais | espagnol | it | culture | espace | meteo | chimie | mecanique | geo | informatique | telecom';
+
+function downloadTemplate() {
+  const lines = [
+    '# Colonnes obligatoires : subject,difficulty,question,option_a,option_b,option_c,option_d,correct_option_id,explanation,xp_reward',
+    `# subject : ${CSV_SUBJECTS}`,
+    '# difficulty : 1 (initié) | 2 (apprenti) | 3 (expert) | 4 (gourou)',
+    '# correct_option_id : A | B | C | D',
+    'subject,difficulty,question,option_a,option_b,option_c,option_d,correct_option_id,explanation,xp_reward',
+    'maths,2,"Combien font 7 × 8 ?","48","54","56","64",C,"7 × 8 = 56",15',
+    'francais,1,"Quel est le pluriel de \\"cheval\\" ?","chevals","chevaux","chevales","chévaux",B,"Le pluriel irrégulier de cheval est chevaux",10',
+  ].join('\n');
+  const blob = new Blob([lines], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'template-questions.csv'; a.click();
+  URL.revokeObjectURL(url);
+}
+
 export default function AdminImportPage() {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
@@ -42,9 +61,13 @@ export default function AdminImportPage() {
   return (
     <main className="min-h-screen bg-slate-50 p-8 max-w-3xl mx-auto">
       <h1 className="text-2xl font-bold text-[#1a1a2e] mb-2">Import de questions</h1>
-      <p className="text-slate-500 mb-6 text-sm">
-        Importe des questions depuis un fichier CSV. Voir le format dans la documentation.
+      <p className="text-slate-500 mb-2 text-sm">
+        Importe des questions depuis un fichier CSV.
       </p>
+      <button onClick={downloadTemplate}
+        className="mb-6 text-xs text-violet-600 font-semibold hover:underline">
+        ⬇ Télécharger le modèle CSV
+      </button>
 
       <ImportDropzone onFile={setFile} disabled={loading} />
 
