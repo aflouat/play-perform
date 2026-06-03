@@ -8,20 +8,27 @@ import { useAvatar } from '@/hooks/useAvatar';
 import { useLearningMode } from '@/hooks/useLearningMode';
 import { AvatarPicker } from '@/components/shared/AvatarPicker';
 import { ProfileHeader } from '@/components/shared/ProfileHeader';
+import { ParcoursCard } from '@/components/shared/ParcoursCard';
 import { clearActiveProfile, getProfileById, getActiveProfileMeta } from '@/lib/profiles';
 import { useActiveProfileId } from '@/hooks/useActiveProfileId';
 import { ALL_QUIZ_SUBJECTS, getSubjectLabel } from '@/lib/quiz-data';
 import { getQuestions } from '@/lib/question-banks';
 import { SUBJECT_META } from '@/lib/subjects';
 import { SubjectBadge } from '@/components/home/SubjectBadge';
+import type { DbParcours } from '@/lib/db';
 
 export default function HomePage() {
   const router = useRouter();
   const profileId = useActiveProfileId();
   const [showAvatars, setShowAvatars] = useState(false);
+  const [myParcours, setMyParcours] = useState<DbParcours[]>([]);
 
   useEffect(() => {
-    if (profileId === '__none__') router.replace('/');
+    if (profileId === '__none__') { router.replace('/'); return; }
+    fetch(`/api/parcours/student/${profileId}`)
+      .then((r) => r.ok ? r.json() as Promise<{ parcours: DbParcours[] }> : Promise.resolve({ parcours: [] }))
+      .then((d) => setMyParcours(d.parcours ?? []))
+      .catch(() => {});
   }, [profileId, router]);
 
   const { score, xpToNextLevel } = useScore(profileId);
@@ -85,6 +92,15 @@ export default function HomePage() {
             );
           })}
         </div>
+
+        {myParcours.length > 0 && (
+          <div className="mb-7">
+            <h2 className="text-base font-black text-[#1a1a2e] mb-3">🗺️ Mes parcours</h2>
+            <div className="space-y-3">
+              {myParcours.map((p) => <ParcoursCard key={p.id} parcours={p} />)}
+            </div>
+          </div>
+        )}
 
         {score.badges.filter(b=>b.unlockedAt).length > 0 && (
           <div className="rounded-2xl bg-white shadow-md p-5">

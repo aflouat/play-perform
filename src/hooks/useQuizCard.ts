@@ -43,10 +43,14 @@ export function useQuizCard(
   function handleHint() {
     if (hintUsed || revealed) return;
     setHintUsed(true);
-    const wrongs = question.options.filter((o) => o.id !== question.correctOptionId).map((o) => o.id);
-    const toEliminate = wrongs[Math.floor(Math.random() * wrongs.length)];
-    setEliminatedId(toEliminate);
-    speakInstruction(`Indice : la réponse n'est pas ${question.options.find(o => o.id === toEliminate)?.text}`);
+    if (question.hint) {
+      speakInstruction(question.hint);
+    } else {
+      const wrongs = question.options.filter((o) => o.id !== question.correctOptionId).map((o) => o.id);
+      const toEliminate = wrongs[Math.floor(Math.random() * wrongs.length)];
+      setEliminatedId(toEliminate);
+      speakInstruction(`Indice : la réponse n'est pas ${question.options.find(o => o.id === toEliminate)?.text}`);
+    }
   }
 
   function getOptionStyle(optionId: QuizOptionId): string {

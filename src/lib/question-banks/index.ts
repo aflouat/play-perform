@@ -59,12 +59,13 @@ import {
   ANGLAIS_BREVET,
   ESPAGNOL_BREVET,
 } from './brevet_questions';
+import { HINTS_MATHS, HINTS_FRANCAIS, HINTS_HISTOIRE, HINTS_SVT } from './hints-questions';
 
 export const ALL_QUESTIONS: Record<Subject, QuizQuestion[]> = {
-  maths: [...MATHS, ...MATHS_BREVET],
-  francais: [...FRANCAIS, ...FRANCAIS_BREVET],
-  svt: [...SVT, ...SVT_BREVET],
-  histoire: [...HISTOIRE, ...HISTOIRE_BREVET],
+  maths: [...MATHS, ...MATHS_BREVET, ...HINTS_MATHS],
+  francais: [...FRANCAIS, ...FRANCAIS_BREVET, ...HINTS_FRANCAIS],
+  svt: [...SVT, ...SVT_BREVET, ...HINTS_SVT],
+  histoire: [...HISTOIRE, ...HISTOIRE_BREVET, ...HINTS_HISTOIRE],
   physique: [...PHYSIQUE, ...PHYSIQUE_BREVET],
   it: [],
   culture: [],

@@ -7,8 +7,8 @@ Instructions pour Claude Code dans ce repo.
 1. **150 lignes max par fichier** — extraire en sous-composant si dépassé
 2. **TypeScript strict** — `any` interdit, tout typer dans `src/types/`
 3. **TDD** — tests avant implémentation pour les hooks complexes
-4. **Lire `in-progress.md`** avant tout code — lire `README.md` pour l'état actuel
-5. **Mettre à jour `README.md`, `todo.md`, `in-progress.md`** à la fin de chaque Epic
+4. **Lire `in-progress.md`** avant tout code — lire `README.md` pour l'état actuel — consulter `code-index.md` pour localiser rapidement un fichier ou une fonction
+5. **Mettre à jour `README.md`, `todo.md`, `in-progress.md`, `code-index.md`** à la fin de chaque Epic
 
 ## Versionnement (SemVer)
 - **PATCH** (0.x.Y) : bug fix ou correction mineure
@@ -26,11 +26,22 @@ Instructions pour Claude Code dans ce repo.
 | Fichier | Rôle | Mise à jour |
 |---|---|---|
 | `CLAUDE.md` | Instructions Claude Code — règles, stack, composants, versionnement | Fin de chaque Epic |
-| `README.md` | État actuel du projet, routes, architecture | Fin de chaque Epic | ?
+| `README.md` | État actuel du projet, routes, architecture | Fin de chaque Epic |
 | `in-progress.md` | Epic en cours — lire AVANT de coder, noter ce qui est fait | En continu |
 | `todo.md` | Roadmap et backlog priorisé | Fin de chaque Epic |
-| `docs/business-plan.md` | Plan business  Play Perform | Si la stratégie change |
+| `code-index.md` | Index de tous les fichiers, exports, hooks, types, flux de données | **Chaque session** |
+| `docs/business-plan.md` | Plan business Play Perform | Si la stratégie change |
 | `knownBugs.md` | Bugs connus, workarounds, issues ouvertes | Au fur et à mesure |
+
+## Règles de maintenance du code-index
+
+1. **Lire `code-index.md`** en début de session — il donne l'état exact du codebase
+2. **Mettre à jour `code-index.md`** quand :
+   - Un fichier est créé ou supprimé → ajouter/retirer la ligne
+   - Un fichier dépasse ou repasse sous 150 lignes → mettre à jour le compteur et le tableau ⚠️
+   - Une fonction publique est ajoutée / renommée / supprimée → mettre à jour la signature
+   - Un flux de données change → mettre à jour la section "Flux de données clés"
+3. **Mettre à jour la date** en en-tête (`_Mis à jour : YYYY-MM-DD · vX.Y.Z_`) à chaque modification
 
 ## Stack
 - Next.js 16.2.6 App Router · TypeScript strict · Tailwind v4
@@ -68,10 +79,11 @@ Jamais de code sans lire `in-progress.md` d'abord. Jamais de modification sans m
 ## Agent CODEUR (Exécutant)
 - LIT IMPERATIVEMENT `in-progress.md` avant toute ligne de code
 - LIT `README.md` pour comprendre l'état actuel du système
+- CONSULTE `code-index.md` pour localiser les fichiers, signatures et flux avant de toucher au code
 - Code les tâches décrites dans `in-progress.md`
 - Respecte la contrainte 150 lignes/fichier
 - Respecte TypeScript strict, pas de `any`
-- Met à jour `README.md` à la fin de chaque Epic pour refléter les changements
+- Met à jour `README.md` et `code-index.md` à la fin de chaque Epic pour refléter les changements
 - Marque les tâches `in-progress.md` comme terminées au fur et à mesure
 - Peut signaler un blocage dans `in-progress.md` pour transfert à un autre agent
 

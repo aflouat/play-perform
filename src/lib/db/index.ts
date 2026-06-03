@@ -8,3 +8,5 @@ export type { DbStudent, StudentMode, StudentLearningMode } from './students';
 export { fetchStudents, insertStudent, deleteStudent, updateStudent } from './students';
 export type { DbReleaseNote, ReleaseNoteFilter } from './releases';
 export { insertReleaseNote, fetchReleaseNotes } from './releases';
+export type { DbParcours, DbParcoursEnrollment } from './parcours';
+export { fetchAllParcours, fetchParcoursById, insertParcours, updateParcours, deleteParcours, fetchEnrollmentsForParcours, fetchEnrollmentsForStudent, enrollStudent, unenrollStudent } from './parcours';

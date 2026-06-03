@@ -87,9 +87,13 @@ export function QuizCard({
       </div>
 
       {mode === 'assisted' && hintUsed && !revealed && (
-        <div className="rounded-xl bg-amber-50 border border-amber-200 px-4 py-2.5 flex items-center gap-2">
-          <span className="text-amber-500">💡</span>
-          <span className="text-amber-700 text-sm font-medium">Une mauvaise réponse a été éliminée. Écoute la question encore !</span>
+        <div className="rounded-xl bg-amber-50 border border-amber-200 px-4 py-2.5 flex items-start gap-2">
+          <span className="text-amber-500 mt-0.5">💡</span>
+          <span className="text-amber-700 text-sm font-medium leading-snug">
+            {question.hint
+              ? question.hint
+              : 'Une mauvaise réponse a été éliminée. Écoute la question encore !'}
+          </span>
         </div>
       )}
 

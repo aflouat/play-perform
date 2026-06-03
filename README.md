@@ -1,4 +1,4 @@
-#  Play Perform · v0.5.6
+#  Play Perform · v0.6.0
 
 Plateforme d'apprentissage ludique pour enfants. Le parent crée un compte, ajoute ses élèves, et chaque enfant joue dans le mode adapté à son profil. la ptf dispose d'un acces admin pour gerer les questions sur la GUI et ou batch API / CSV
 
@@ -26,6 +26,9 @@ Plateforme d'apprentissage ludique pour enfants. Le parent crée un compte, ajou
 | `/admin/questions` | Liste et édition questions importées (admin) |
 | `/releases` | Historique des versions (recherche date / version / fulltext) |
 | `/faq` | Guide utilisateur |
+| `/parcours/[id]` | Session de jeu d'un parcours multi-discipline |
+| `/admin/parcours` | Gestion des parcours (admin) |
+| `/admin/parcours/[id]` | Édition parcours + inscriptions élèves (admin) |
 
 ## Modes de jeu
 
@@ -56,8 +59,8 @@ src/
 │   └── ui/               # XpGainToast, QuizTimer, AvatarCard, ScoreBadge…
 ├── hooks/                # useScore, useAvatar, useLearningMode, useSpacedRepetition
 ├── lib/
-│   ├── db/               # client, scores, questions, students, releases
-│   ├── question-banks/   # ~200+ questions (100+ brevet + autres sujets)
+│   ├── db/               # client, scores, questions, students, releases, parcours
+│   ├── question-banks/   # ~220+ questions (100+ brevet + 20 avec indices)
 │   ├── admin-auth.ts     # isAdminAuthorized (JWT Supabase + ADMIN_EMAILS)
 │   ├── students-api.ts   # Client → /api/students (bypass RLS)
 │   ├── learning-mode.ts  # LearningMode, STUDENT_MODE_LABELS

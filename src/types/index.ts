@@ -64,8 +64,30 @@ export interface QuizQuestion {
   emoji?: string; imageUrl?: string;
   options: [QuizOption, QuizOption, QuizOption, QuizOption];
   correctOptionId: QuizOptionId;
+  hint?: string;
   explanation: string; explanationAssisted?: string;
   difficulty: QuizDifficulty; xpReward: number;
+}
+
+// ── Parcours ──────────────────────────────────────────────────────────────────
+
+export interface Parcours {
+  id: string;
+  name: string;
+  emoji: string;
+  description?: string;
+  subjects: Subject[];
+  questionsPerSubject: number;
+  createdAt: string;
+}
+
+export interface ParcoursEnrollment {
+  id: string;
+  studentId: string;
+  studentName?: string;
+  parcoursId: string;
+  parcoursName?: string;
+  enrolledAt: string;
 }
 
 // ── Spaced Repetition ─────────────────────────────────────────────────────────
