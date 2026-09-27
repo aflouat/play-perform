@@ -10,7 +10,7 @@ import { AvatarPicker } from '@/components/shared/AvatarPicker';
 import { ProfileHeader } from '@/components/shared/ProfileHeader';
 import { ParcoursCard } from '@/components/shared/ParcoursCard';
 import { clearActiveProfile, getProfileById, getActiveProfileMeta } from '@/lib/profiles';
-import { useActiveProfileId } from '@/hooks/useActiveProfileId';
+import { useActiveProfileId, isProfileReady } from '@/hooks/useActiveProfileId';
 import { ALL_QUIZ_SUBJECTS, getSubjectLabel } from '@/lib/quiz-data';
 import { getQuestions } from '@/lib/question-banks';
 import { SUBJECT_META } from '@/lib/subjects';
@@ -25,6 +25,7 @@ export default function HomePage() {
 
   useEffect(() => {
     if (profileId === '__none__') { router.replace('/'); return; }
+    if (!isProfileReady(profileId)) return;
     fetch(`/api/parcours/student/${profileId}`)
       .then((r) => r.ok ? r.json() as Promise<{ parcours: DbParcours[] }> : Promise.resolve({ parcours: [] }))
       .then((d) => setMyParcours(d.parcours ?? []))
@@ -33,11 +34,11 @@ export default function HomePage() {
 
   const { score, xpToNextLevel } = useScore(profileId);
   const { avatar, avatarId, allAvatars, selectAvatar } = useAvatar(profileId, score.xp);
-  const { mode, setMode } = useLearningMode(profileId === '__none__' ? 'omar' : profileId);
+  const { mode, setMode } = useLearningMode(isProfileReady(profileId) ? profileId : 'omar');
   const profile = getProfileById(profileId);
   const profileMeta = getActiveProfileMeta();
 
-  if (profileId === '__none__') {
+  if (!isProfileReady(profileId)) {
     return <div className="min-h-screen flex items-center justify-center text-slate-400 text-sm">Chargement…</div>;
   }
 

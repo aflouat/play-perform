@@ -1,4 +1,4 @@
-export type ProfileMode = 'quiz' | 'keyboard' | 'words';
+export type ProfileMode = 'quiz' | 'keyboard' | 'words' | 'reading';
 
 export interface Profile {
   id: string;
@@ -90,5 +90,6 @@ export function getProfileById(id: string): Profile | undefined {
 export function getHomeRouteForProfile(profile: Profile): string {
   if (profile.mode === 'keyboard') return '/keyboard';
   if (profile.mode === 'words') return '/esma';
+  if (profile.mode === 'reading') return '/lecture';
   return '/home';
 }

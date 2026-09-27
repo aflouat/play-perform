@@ -10,7 +10,7 @@ import { useScore } from '@/hooks/useScore';
 import { useAvatar } from '@/hooks/useAvatar';
 import { useLearningMode } from '@/hooks/useLearningMode';
 import { useQuizSession } from '@/hooks/useQuizSession';
-import { useActiveProfileId } from '@/hooks/useActiveProfileId';
+import { useActiveProfileId, isProfileReady } from '@/hooks/useActiveProfileId';
 import { getSubjectLabel } from '@/lib/quiz-data';
 import { getQuestions } from '@/lib/question-banks';
 import { getProfileById, getActiveProfileMeta } from '@/lib/profiles';
@@ -57,7 +57,7 @@ export default function QuizPage() {
       </div>
     );
   }
-  if (profileId === '__none__' || !questionsLoaded) {
+  if (!isProfileReady(profileId) || !questionsLoaded) {
     return <div className="min-h-screen flex items-center justify-center text-slate-400 text-sm">Chargement…</div>;
   }
   if (questions.length === 0) {

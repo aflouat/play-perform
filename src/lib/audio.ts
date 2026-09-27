@@ -62,7 +62,7 @@ function pickEnthusiasm(lang: string): string {
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
-function getBestVoice(lang: string): SpeechSynthesisVoice | null {
+export function getBestVoice(lang: string): SpeechSynthesisVoice | null {
   if (!('speechSynthesis' in window)) return null;
   const voices = window.speechSynthesis.getVoices();
   const langCode = lang.split('-')[0];

@@ -6,7 +6,7 @@ import type { DbParcours } from '@/lib/db';
 import { ParcoursSession } from '@/components/shared/ParcoursSession';
 import { useLearningMode } from '@/hooks/useLearningMode';
 import { useScore } from '@/hooks/useScore';
-import { useActiveProfileId } from '@/hooks/useActiveProfileId';
+import { useActiveProfileId, isProfileReady } from '@/hooks/useActiveProfileId';
 import { SUBJECT_META } from '@/lib/subjects';
 import type { Subject } from '@/types';
 
@@ -28,6 +28,7 @@ export default function ParcoursPage() {
 
   useEffect(() => {
     if (profileId === '__none__') { router.replace('/'); return; }
+    if (!isProfileReady(profileId)) return;
     fetch(`/api/parcours/${id}`)
       .then((r) => r.json() as Promise<{ parcours: DbParcours }>)
       .then((d) => setParcours(d.parcours));

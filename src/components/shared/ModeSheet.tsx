@@ -39,7 +39,7 @@ export function ModeSheet({ profile, onSelect, onClose }: ModeSheetProps) {
           <p className="text-xs text-slate-500">C&apos;est la répétition espacée : répéter les mêmes notions aide à mieux apprendre et évite d&apos;oublier trop vite.</p>
         </div>
 
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 gap-3">
           {Object.entries(STUDENT_MODE_LABELS).map(([key, meta]) => (
             <button key={key} onClick={() => onSelect(meta.route)}
               className={`rounded-2xl p-4 text-center transition-all border-2 ${meta.route === profile.homeRoute ? 'border-violet-500 bg-violet-50' : 'border-slate-100 bg-slate-50 hover:bg-slate-100'}`}>

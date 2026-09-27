@@ -13,7 +13,7 @@ export function LandingScreen() {
             La plateforme d&apos;apprentissage ludique pour tous les enfants.
           </p>
         </div>
-        <div className="grid grid-cols-3 gap-3 text-center">
+        <div className="grid grid-cols-2 gap-3 text-center">
           {Object.values(STUDENT_MODE_LABELS).map((meta) => (
             <div key={meta.label} className="rounded-2xl bg-white shadow-sm border border-slate-100 p-3">
               <div className="text-2xl mb-1">{meta.emoji}</div>

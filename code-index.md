@@ -1,5 +1,5 @@
 # Code Index — Play Perform
-_Mis à jour : 2026-09-27 · v0.6.0_
+_Mis à jour : 2026-09-28 · v0.7.0_
 > Lire avant de coder. Mettre à jour quand un fichier est créé, supprimé ou dépasse 150 lignes.
 
 ---
@@ -34,6 +34,7 @@ _Mis à jour : 2026-09-27 · v0.6.0_
 | `app/releases/page.tsx` | — | Historique versions |
 | `app/faq/page.tsx` | 122 | Guide utilisateur |
 | `app/esma/page.tsx` | — | Mode Esma (expérimental) |
+| `app/lecture/page.tsx` | 68 | Lecture syllabique — orchestre toolbar + activités |
 
 ---
 
@@ -60,6 +61,7 @@ _Mis à jour : 2026-09-27 · v0.6.0_
 | `docker/supabase/kong.yml` | Routes passerelle `/auth/v1`, `/rest/v1`, `/pg` |
 | `docker/supabase/migrate.sh` | Applique les migrations non jouées (table `_local_migrations`) + seed au 1er run |
 | `supabase/migrations/20260927000000_initial_schema.sql` | Schéma complet (10 tables + RLS) reconstruit depuis la prod |
+| `supabase/migrations/20260928000000_reading_mode.sql` | CHECK `students.mode` accepte `reading` |
 | `supabase/seed.sql` | Données démo : parent `demo@playperform.local`, 3 élèves, 1 parcours |
 | `supabase/local.env.example` | Variables pour `npm run dev` sur l'hôte contre la stack compose |
 
@@ -119,6 +121,14 @@ _Mis à jour : 2026-09-27 · v0.6.0_
 |---|---|---|
 | `WordChallenge.tsx` | 92 | Défi mot (mode Esma expérimental) |
 
+### reading/ (lecture syllabique)
+| Fichier | Lignes | Rôle |
+|---|---|---|
+| `SyllableWord.tsx` | 56 | Mot en syllabes colorées + arcs + lettres muettes grises, tap-to-speak, surlignage karaoké |
+| `DiscoverView.tsx` | 61 | Activité Découvrir — image, karaoké (auto en assisté), « J'ai lu » |
+| `ReadChooseView.tsx` | 85 | Activité Lire et choisir — 3 images, indice (karaoké + image grisée) |
+| `ReadingToolbar.tsx` | 58 | Onglets activité, niveaux 1-4, progression |
+
 ### home/
 | Fichier | Lignes | Rôle |
 |---|---|---|
@@ -139,13 +149,26 @@ _Mis à jour : 2026-09-27 · v0.6.0_
 | `useLetterGame.ts` | — | `useLetterGame({ profileId, onFinish })` → game state | Logique jeu Lettres |
 | `useWordSession.ts` | — | `useWordSession({ addXp, triggerGain })` → session state | Logique session Mots |
 | `useEngagement.ts` | 123 | `useEngagement({ userId, contentId, ... })` → `{ ping }` | Pings engagement, calcul bricks |
-| `useActiveProfileId.ts` | — | `useActiveProfileId()` → `string` | Lit le profileId actif depuis localStorage |
+| `useActiveProfileId.ts` | 38 | `useActiveProfileId()` → `string` · `useActiveProfileName()` · `isProfileReady(id)` | Profil actif (localStorage) : `'__loading__'` pendant l'hydratation, `'__none__'` si absent |
+| `useReadingSession.ts` | 78 | `useReadingSession({ addXp, triggerGain })` → session, `markRead`, `select`, `setActivity`, `setLevel` | Session lecture syllabique (XP 5 / 10) |
 
 ---
 
 ## Lib · `src/lib/`
 
-### Audio · `audio.ts` (121 lignes)
+### Lecture · `reading/`
+| Fichier | Rôle |
+|---|---|
+| `syllable-notation.ts` | `parseSyllables(notation, say?)` → `{ word, syllables }` — lève une erreur si notation invalide |
+| `reading-words.ts` | `READING_WORDS` (40 mots, 4 niveaux), `READING_LEVELS`, `getWordsForLevel(level)` |
+| `reading-session.ts` | `buildReadingSession(level, length?, random?)` → `ReadingChallenge[]` (cible + 3 images) |
+| `reading-audio.ts` | `speakSyllables(syllables, word, { onSyllable, onEnd })` karaoké, `stopSpeaking()` |
+| `reading-colors.ts` | Classes couleurs syllabes / arcs / muet / surlignage |
+| `reading-font.ts` | `readingFont` (Andika) |
+
+Types : `src/types/reading.ts` (`ReadingWord`, `Syllable`, `ParsedWord`, `ReadingLevel`, `ReadingActivity`).
+
+### Audio · `audio.ts` (121 lignes, `getBestVoice` exporté)
 | Fonction | Rôle |
 |---|---|
 | `playSound(type)` | Web Audio API — correct / wrong / levelup / complete / click |
