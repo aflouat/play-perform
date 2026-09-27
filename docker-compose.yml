@@ -1,0 +1,202 @@
+# Stack de développement local : Next.js (dev, hot reload) + Supabase (Postgres, Auth, REST, Studio).
+#   docker compose up            → http://localhost:3000   (compte démo : demo@playperform.local / demo1234)
+#   docker compose down -v       → arrêt + suppression de la base (re-seed au prochain up)
+#   docker compose --profile prod up app-prod --build  → image de production (branchée sur .env.local)
+#
+# Les clés/secrets ci-dessous sont les valeurs de démo publiques de Supabase : développement local uniquement.
+
+x-supabase-env: &supabase-env
+  POSTGRES_PASSWORD: postgres
+  JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
+  ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
+  SERVICE_ROLE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU
+
+services:
+  # ── Application (next dev) ───────────────────────────────────
+  app:
+    image: node:24-alpine
+    working_dir: /app
+    command: sh -c "npm install --no-audit --no-fund && npm run dev -- -H 0.0.0.0"
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules   # binaires Linux, séparés de ceux du Mac
+      - next_cache:/app/.next
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_TELEMETRY_DISABLED: 1
+      WATCHPACK_POLLING: "true"
+      # Navigateur → Kong exposé sur l'hôte ; serveur Next (dans le conteneur) → Kong via le réseau Docker
+      NEXT_PUBLIC_SUPABASE_URL: http://localhost:54321
+      SUPABASE_INTERNAL_URL: http://kong:8000
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
+      SUPABASE_SERVICE_ROLE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU
+      ADMIN_EMAILS: demo@playperform.local
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+      kong:
+        condition: service_started
+
+  # ── Postgres (image Supabase : rôles anon/authenticated, schéma auth…) ──
+  db:
+    image: public.ecr.aws/supabase/postgres:17.6.1.171
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+    ports:
+      - "54322:5432"
+    environment:
+      <<: *supabase-env
+      POSTGRES_USER: supabase_admin
+      POSTGRES_DB: postgres
+      POSTGRES_HOST: /var/run/postgresql
+      JWT_EXP: 3600
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./docker/supabase/roles.sql:/etc/postgresql.schema.sql:ro
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-h", "localhost"]
+      interval: 3s
+      timeout: 5s
+      retries: 20
+
+  # ── Migrations + seed (one-shot, rejoué à chaque `up`, idempotent) ──
+  db-init:
+    image: public.ecr.aws/supabase/postgres:17.6.1.171
+    entrypoint: ["/bin/sh", "/migrate.sh"]
+    environment:
+      <<: *supabase-env
+    volumes:
+      - ./docker/supabase/migrate.sh:/migrate.sh:ro
+      - ./supabase/migrations:/migrations:ro
+      - ./supabase/seed.sql:/seed.sql:ro
+    depends_on:
+      auth:
+        condition: service_healthy
+
+  # ── Auth (GoTrue) ────────────────────────────────────────────
+  auth:
+    image: public.ecr.aws/supabase/gotrue:v2.197.0
+    environment:
+      GOTRUE_API_HOST: 0.0.0.0
+      GOTRUE_API_PORT: 9999
+      API_EXTERNAL_URL: http://localhost:54321/auth/v1
+      GOTRUE_DB_DRIVER: postgres
+      GOTRUE_DB_DATABASE_URL: postgresql://supabase_auth_admin:postgres@db:5432/postgres
+      GOTRUE_SITE_URL: http://localhost:3000
+      GOTRUE_URI_ALLOW_LIST: http://localhost:3000/**,http://127.0.0.1:3000/**
+      GOTRUE_DISABLE_SIGNUP: "false"
+      GOTRUE_JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
+      GOTRUE_JWT_EXP: 3600
+      GOTRUE_JWT_AUD: authenticated
+      GOTRUE_JWT_DEFAULT_GROUP_NAME: authenticated
+      GOTRUE_JWT_ADMIN_ROLES: service_role
+      GOTRUE_EXTERNAL_EMAIL_ENABLED: "true"
+      GOTRUE_MAILER_AUTOCONFIRM: "false"         # les emails de confirmation arrivent dans Mailpit
+      GOTRUE_SMTP_HOST: mailpit
+      GOTRUE_SMTP_PORT: 1025
+      GOTRUE_SMTP_ADMIN_EMAIL: noreply@playperform.local
+      GOTRUE_SMTP_SENDER_NAME: Play Perform
+      GOTRUE_MAILER_URLPATHS_CONFIRMATION: /auth/v1/verify
+      GOTRUE_MAILER_URLPATHS_RECOVERY: /auth/v1/verify
+      GOTRUE_MAILER_URLPATHS_INVITE: /auth/v1/verify
+      GOTRUE_MAILER_URLPATHS_EMAIL_CHANGE: /auth/v1/verify
+      GOTRUE_RATE_LIMIT_EMAIL_SENT: 360000
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9999/health"]
+      interval: 3s
+      timeout: 5s
+      retries: 20
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # ── API REST (PostgREST) ─────────────────────────────────────
+  rest:
+    image: public.ecr.aws/supabase/postgrest:v16.3
+    environment:
+      PGRST_DB_URI: postgresql://authenticator:postgres@db:5432/postgres
+      PGRST_DB_SCHEMAS: public,graphql_public
+      PGRST_DB_EXTRA_SEARCH_PATH: public,extensions
+      PGRST_DB_ANON_ROLE: anon
+      PGRST_DB_MAX_ROWS: 1000
+      PGRST_JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # ── Passerelle (URL unique http://localhost:54321) ───────────
+  kong:
+    image: public.ecr.aws/supabase/kong:2.8.1
+    ports:
+      - "54321:8000"
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /home/kong/kong.yml
+      KONG_PLUGINS: cors
+      KONG_DNS_ORDER: LAST,A,CNAME
+      KONG_NGINX_PROXY_PROXY_BUFFER_SIZE: 160k
+      KONG_NGINX_PROXY_PROXY_BUFFERS: 64 160k
+    volumes:
+      - ./docker/supabase/kong.yml:/home/kong/kong.yml:ro
+    depends_on:
+      - auth
+      - rest
+
+  # ── Studio (admin BDD) http://localhost:54323 ────────────────
+  studio:
+    image: public.ecr.aws/supabase/studio:2026.09.14-sha-4dd8a95
+    ports:
+      - "54323:3000"
+    environment:
+      STUDIO_PG_META_URL: http://meta:8080
+      POSTGRES_PASSWORD: postgres
+      SUPABASE_URL: http://kong:8000
+      SUPABASE_PUBLIC_URL: http://localhost:54321
+      SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
+      SUPABASE_SERVICE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU
+      AUTH_JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
+      DEFAULT_ORGANIZATION_NAME: Play Perform
+      DEFAULT_PROJECT_NAME: play-perform (local)
+    depends_on:
+      - meta
+
+  meta:
+    image: public.ecr.aws/supabase/postgres-meta:v0.99.0
+    environment:
+      PG_META_PORT: 8080
+      PG_META_DB_HOST: db
+      PG_META_DB_PORT: 5432
+      PG_META_DB_NAME: postgres
+      PG_META_DB_USER: postgres
+      PG_META_DB_PASSWORD: postgres
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # ── Emails d'auth (confirmation, reset) http://localhost:54324 ──
+  mailpit:
+    image: public.ecr.aws/supabase/mailpit:v1.30.2
+    ports:
+      - "54324:8025"
+
+  # ── Image de production (inchangée, hors stack dev) ──────────
+  app-prod:
+    profiles: [prod]
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL:-}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY:-}
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-}
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-}
+    env_file:
+      - .env.local
+    ports:
+      - "3000:3000"
+
+volumes:
+  db_data:
+  node_modules:
+  next_cache:

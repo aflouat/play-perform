@@ -1,11 +1,12 @@
 import { createClient } from '@supabase/supabase-js';
 import type { NextRequest } from 'next/server';
+import { getServerSupabaseUrl } from '@/lib/db/client';
 
 export async function isAdminAuthorized(req: NextRequest): Promise<boolean> {
   const token = (req.headers.get('authorization') ?? '').replace('Bearer ', '');
   if (!token) return false;
 
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
+  const url = getServerSupabaseUrl();
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? '';
 
   // Script / CLI access via service role key

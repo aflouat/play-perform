@@ -78,6 +78,7 @@ export const ALL_QUESTIONS: Record<Subject, QuizQuestion[]> = {
   espagnol: [...ESPAGNOL_ORIGINAL, ...ESPAGNOL_BREVET],
   informatique: INFORMATIQUE,
   telecom: TELECOM,
+  italien: [],
 };
 
 export function getQuestions(subject: Subject): QuizQuestion[] {

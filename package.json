@@ -12,7 +12,13 @@
     "test:coverage": "jest --coverage",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "release": "node --env-file=.env.local scripts/create-release.mjs"
+    "release": "node --env-file=.env.local scripts/create-release.mjs",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f app",
+    "db:reset": "docker compose down && docker volume rm -f play-perform_db_data && docker compose up -d",
+    "db:migrate": "docker compose run --rm db-init",
+    "db:psql": "docker compose exec db psql -U postgres"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.106.2",

@@ -11,8 +11,13 @@ export function getClient(): SupabaseClient | null {
   return _client;
 }
 
+/** URL Supabase vue du serveur : SUPABASE_INTERNAL_URL (réseau Docker) sinon l'URL publique. */
+export function getServerSupabaseUrl(): string {
+  return process.env.SUPABASE_INTERNAL_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
+}
+
 export function getServerClient(): SupabaseClient {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
+  const url = getServerSupabaseUrl();
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY ?? '';
   return createClient(url, key);
 }

@@ -9,7 +9,7 @@ interface ImportResult {
   errors: RowError[];
 }
 
-const CSV_SUBJECTS = 'maths | francais | svt | histoire | physique | anglais | espagnol | it | culture | espace | meteo | chimie | mecanique | geo | informatique | telecom';
+const CSV_SUBJECTS = 'maths | francais | svt | histoire | physique | anglais | espagnol | italien | it | culture | espace | meteo | chimie | mecanique | geo | informatique | telecom';
 
 function downloadTemplate() {
   const lines = [

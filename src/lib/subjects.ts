@@ -26,6 +26,7 @@ export const SUBJECT_META: Record<Subject, { emoji: string; bg: string }> = {
   espagnol: { emoji: '🇪🇸', bg: 'bg-red-500' },
   informatique: { emoji: '💻', bg: 'bg-slate-500' },
   telecom: { emoji: '📡', bg: 'bg-purple-500' },
+  italien: { emoji: '🇮🇹', bg: 'bg-green-500' },
 };
 
 export const ALL_SUBJECT_IDS = Object.keys(SUBJECT_META) as Subject[];
@@ -53,6 +54,7 @@ const SUBJECT_LABELS: Record<Subject, string> = {
   espagnol: 'Espagnol',
   informatique: 'Informatique',
   telecom: 'Télécom',
+  italien: 'Italien',
 };
 
 export function getSubjectLabel(subject: Subject): string {

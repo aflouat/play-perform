@@ -1,0 +1,51 @@
+subject,difficulty,question,option_a,option_b,option_c,option_d,correct_option_id,explanation,xp_reward
+italien,1,Comment dit-on "Bonjour" en italien ?,Ciao,Buongiorno,Arrivederci,Grazie,B,Buongiorno est la salutation formelle pour le matin.,10
+italien,1,Que signifie "Grazie" ?,Bonjour,S'il vous plaît,Merci,De rien,C,Grazie est le mot courant pour remercier.,10
+italien,1,Comment se présente-t-on avec "Je m'appelle" ?,Mi chiamo,Io sono,Come ti chiami,Piacere,A,Mi chiamo est la forme utilisée pour dire je m'appelle.,10
+italien,1,Quelle est la traduction de "Oui" ?,No,Grazie,Si,Prego,C,Si signifie oui en italien.,10
+italien,1,Comment dit-on "L'eau" ?,Il pane,L'acqua,Il vino,Il latte,B,L'acqua signifie l'eau.,10
+italien,1,Quel est le pluriel de "ragazzo" (garçon) ?,Ragazzi,Ragazze,Ragazza,Ragazzos,A,En italien le o final devient i au pluriel.,15
+italien,1,Comment dit-on "Au revoir" ?,Ciao,Buongiorno,Arrivederci,Piacere,C,Arrivederci est la manière standard de dire au revoir.,10
+italien,1,Comment traduit-on "La pomme" ?,Il mela,La mela,Le mele,La melo,B,Mela est féminin singulier.,15
+italien,1,Comment dit-on "Un chat" en italien ?,Un gatto,Un cane,Un topo,Un pesce,A,Gatto signifie chat.,10
+italien,1,Comment dit-on "Il est" (3ème personne singulier) ?,Sono,Sei,È,Siamo,C,È est la forme du verbe être.,15
+italien,1,Comment dit-on "Comment ça va ?" ?,Come stai,Come va,Chi sei,Dove vai,B,Come va est une façon très courante de demander comment ça va.,10
+italien,1,Quel est le féminin de "italiano" ?,Italiana,Italiane,Italiano,Italiani,A,Les adjectifs en o deviennent a au féminin.,15
+italien,1,Comment dit-on "le livre" ?,La libro,Il libro,Lo libro,Li libro,B,Libro est masculin singulier.,15
+italien,1,Traduction de "Je suis" ?,Tu sei,Lui è,Io sono,Noi siamo,C,Io sono signifie je suis.,15
+italien,1,Comment dit-on "10" en italien ?,Otto,Nove,Dieci,Undici,C,Dieci signifie dix.,10
+italien,1,Quel est le pluriel de "casa" (maison) ?,Case,Casi,Casae,Casi,A,Le a final devient e au féminin pluriel.,15
+italien,1,Comment dit-on "S'il vous plaît" ?,Prego,Grazie,Per favore,Scusa,C,Per favore signifie s'il vous plaît.,10
+italien,1,Comment dit-on "Le chien" ?,Il gatto,Il cane,Il lupo,Il cavallo,B,Cane signifie chien.,10
+italien,1,Comment dit-on "Aujourd'hui" ?,Ieri,Oggi,Domani,Adesso,B,Oggi signifie aujourd'hui.,10
+italien,1,Comment dit-on "Beaucoup" ?,Poco,Tanto,Male,Bene,B,Tanto signifie beaucoup.,15
+italien,1,Comment dit-on "Le père" ?,La madre,Il padre,Il fratello,La sorella,B,Padre signifie père.,10
+italien,1,Comment dit-on "La mère" ?,Il padre,La madre,La sorella,Il fratello,B,Madre signifie mère.,10
+italien,1,Comment dit-on "1" ?,Uno,Due,Tre,Quattro,A,Uno est le chiffre un.,10
+italien,1,Comment dit-on "2" ?,Uno,Due,Tre,Quattro,B,Due est le chiffre deux.,10
+italien,1,Comment dit-on "3" ?,Due,Tre,Quattro,Cinque,B,Tre est le chiffre trois.,10
+italien,1,Comment dit-on "4" ?,Tre,Quattro,Cinque,Sei,B,Quattro est le chiffre quatre.,10
+italien,1,Comment dit-on "5" ?,Quattro,Cinque,Sei,Sette,B,Cinque est le chiffre cinq.,10
+italien,1,Comment dit-on "6" ?,Cinque,Sei,Sette,Otto,B,Sei est le chiffre six.,10
+italien,1,Comment dit-on "7" ?,Sei,Sette,Otto,Nove,B,Sette est le chiffre sept.,10
+italien,1,Comment dit-on "8" ?,Sette,Otto,Nove,Dieci,B,Otto est le chiffre huit.,10
+italien,1,Comment dit-on "9" ?,Otto,Nove,Dieci,Undici,B,Nove est le chiffre neuf.,10
+italien,1,Comment dit-on "La voiture" ?,La macchina,Il treno,L'aereo,La nave,A,Macchina signifie voiture.,10
+italien,1,Comment dit-on "Bleu" ?,Rosso,Verde,Blu,Giallo,C,Blu signifie bleu.,10
+italien,1,Comment dit-on "Rouge" ?,Blu,Rosso,Nero,Bianco,B,Rosso signifie rouge.,10
+italien,1,Comment dit-on "Vert" ?,Rosso,Verde,Blu,Giallo,B,Verde signifie vert.,10
+italien,1,Comment dit-on "Jaune" ?,Verde,Giallo,Blu,Nero,B,Giallo signifie jaune.,10
+italien,1,Comment dit-on "Noir" ?,Bianco,Nero,Rosso,Blu,B,Nero signifie noir.,10
+italien,1,Comment dit-on "Blanc" ?,Nero,Bianco,Verde,Giallo,B,Bianco signifie blanc.,10
+italien,1,Comment dit-on "Ami" (masculin) ?,Amica,Amico,Amici,Amiche,B,Amico est le masculin.,15
+italien,1,Comment dit-on "Amie" (féminin) ?,Amico,Amica,Amici,Amiche,B,Amica est le féminin.,15
+italien,1,Comment dit-on "Grande" ?,Piccolo,Grande,Bello,Brutto,B,Grande signifie grand.,10
+italien,1,Comment dit-on "Petit" ?,Grande,Piccolo,Bello,Brutto,B,Piccolo signifie petit.,10
+italien,1,Comment dit-on "Beau" ?,Bello,Brutto,Buono,Cattivo,A,Bello signifie beau.,10
+italien,1,Comment dit-on "Moche" ?,Bello,Brutto,Buono,Cattivo,B,Brutto signifie moche.,10
+italien,1,Comment dit-on "Oui, merci" ?,No, grazie,Si, grazie,Si, prego,No, prego,B,Si, grazie signifie oui, merci.,15
+italien,1,Comment dit-on "Non" ?,Si,No,Forse,Sicuro,B,No signifie non.,10
+italien,1,Comment dit-on "D'accord" ?,Va bene,Non va,Così così,Male,A,Va bene signifie d'accord.,15
+italien,1,Comment dit-on "Je m'appelle..." ?,Mi chiamo...,Io sono...,Tu sei...,Lui è...,A,Mi chiamo est la forme réflexive.,15
+italien,1,Quelle est la traduction de "Piacere" ?,Bonjour,Merci,Enchanté,Au revoir,C,Piacere est utilisé pour dire enchanté.,15
+italien,1,Comment dit-on "La ville" ?,La città,Il paese,La strada,Il ponte,A,Città signifie ville.,15

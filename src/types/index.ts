@@ -17,7 +17,8 @@ export type Zone = 'lab' | 'clubs' | 'hub';
 export type Subject =
   | 'maths' | 'francais' | 'svt' | 'histoire' | 'physique'
   | 'it' | 'culture' | 'espace' | 'meteo' | 'chimie'
-  | 'mecanique' | 'geo' | 'anglais' | 'espagnol' | 'informatique' | 'telecom';
+  | 'mecanique' | 'geo' | 'anglais' | 'espagnol' | 'informatique' | 'telecom'
+  | 'italien';
 
 export interface Content {
   id: string; title: string; description: string;

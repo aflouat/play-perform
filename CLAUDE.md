@@ -46,7 +46,7 @@ Instructions pour Claude Code dans ce repo.
 ## Stack
 - Next.js 16.2.6 App Router · TypeScript strict · Tailwind v4
 - Jest 30 + @testing-library/react + Playwright
-- Supabase (Auth + DB) · localStorage (scores + progression SRS)
+- Supabase (Auth + DB) — schéma versionné dans `supabase/migrations/`, stack locale via `docker compose up` · localStorage (scores + progression SRS)
 
 ## Audio
 - `playSound(type)` — Web Audio API (correct/wrong/levelup/complete/click)
@@ -60,7 +60,9 @@ npm run dev           # Dev server
 npm run test          # Tests unit + intégration
 npm run test:e2e      # E2E Playwright
 npm run build         # Build prod
- 
+docker compose up -d  # Stack locale : app dev + Supabase (voir README « Développement local »)
+npm run db:reset      # Recrée la BDD locale (migrations + seed)
+npm run db:migrate    # Applique les nouvelles migrations supabase/migrations/
 ```
 
 #  Play Perform — Rôles Agentiques

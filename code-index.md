@@ -1,5 +1,5 @@
 # Code Index — Play Perform
-_Mis à jour : 2026-06-03 · v0.5.6_
+_Mis à jour : 2026-09-27 · v0.6.0_
 > Lire avant de coder. Mettre à jour quand un fichier est créé, supprimé ou dépasse 150 lignes.
 
 ---
@@ -48,6 +48,22 @@ _Mis à jour : 2026-06-03 · v0.5.6_
 | `api/students/route.ts` | GET, POST | Liste élèves / création |
 | `api/students/[id]/route.ts` | DELETE, PATCH | Suppression / mise à jour élève |
 | `api/releases/route.ts` | GET, POST | Historique releases — lecture / écriture |
+
+---
+
+## Stack locale · `docker-compose.yml`, `docker/`, `supabase/`
+
+| Fichier | Rôle |
+|---|---|
+| `docker-compose.yml` | app (next dev) + db, auth, rest, kong, studio, meta, mailpit, db-init ; `app-prod` (profil prod) |
+| `docker/supabase/roles.sql` | Init Postgres : mots de passe des rôles + secret JWT |
+| `docker/supabase/kong.yml` | Routes passerelle `/auth/v1`, `/rest/v1`, `/pg` |
+| `docker/supabase/migrate.sh` | Applique les migrations non jouées (table `_local_migrations`) + seed au 1er run |
+| `supabase/migrations/20260927000000_initial_schema.sql` | Schéma complet (10 tables + RLS) reconstruit depuis la prod |
+| `supabase/seed.sql` | Données démo : parent `demo@playperform.local`, 3 élèves, 1 parcours |
+| `supabase/local.env.example` | Variables pour `npm run dev` sur l'hôte contre la stack compose |
+
+`getServerSupabaseUrl()` (`src/lib/db/client.ts`) : `SUPABASE_INTERNAL_URL ?? NEXT_PUBLIC_SUPABASE_URL` — utilisé par `getServerClient`, `admin-auth.ts`, `api/students/*`.
 
 ---
 
