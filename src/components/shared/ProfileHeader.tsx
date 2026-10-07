@@ -48,7 +48,7 @@ export function ProfileHeader({
           <div>
             <div className="font-black text-[#1a1a2e] text-base leading-tight">{name}</div>
             <div className="flex items-center gap-1.5">
-              <span className="text-amber-500 text-xs font-bold">Niv.{score.level}</span>
+              <span className="text-amber-500 text-xs font-bold">Rang {score.level}</span>
               <span className="text-slate-400 text-xs">· {score.xp} XP</span>
             </div>
           </div>
@@ -65,8 +65,8 @@ export function ProfileHeader({
         />
       </div>
       <div className="flex justify-between mt-1">
-        <span className="text-xs text-slate-400">Niveau {score.level}</span>
-        <span className="text-xs text-slate-400">{xpToNextLevel} XP → niv.{score.level + 1}</span>
+        <span className="text-xs text-slate-400">Rang {score.level}</span>
+        <span className="text-xs text-slate-400">{xpToNextLevel} XP → rang {score.level + 1}</span>
       </div>
     </div>
   );

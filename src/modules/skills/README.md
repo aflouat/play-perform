@@ -5,6 +5,7 @@
 ## API publique (`index.ts`)
 - `getSkills()`, `getSkillById(id)` — compétences (seed local pour le POC)
 - `SKILL_LEVELS`, `getSkillLevel(n)` — libellés des 5 niveaux
+- `getSkillLevelFor`, `setSkillLevel`, `advanceSkillLevel`, `getAllSkillLevels` — niveau 1→5 par profil et par compétence (localStorage ; l'XP, elle, reste au compte)
 - Types : `Skill`, `SkillLevelNumber`, `SkillLevelInfo`
 
 ## Structure

@@ -32,6 +32,7 @@ Instructions pour Claude Code dans ce repo.
 | `code-index.md` | Index de tous les fichiers, exports, hooks, types, flux de données | **Chaque session** |
 | `docs/business-plan.md` | Plan business Play Perform | Si la stratégie change |
 | `knownBugs.md` | Bugs connus, workarounds, issues ouvertes | Au fur et à mesure |
+| `docs/deploiement.md` | Plan Vercel + Mac mini, SMTP | Si l'infra change |
 
 ## Règles de maintenance du code-index
 

@@ -12,3 +12,5 @@ export function getSkills(): readonly Skill[] {
 export function getSkillById(id: string): Skill | undefined {
   return SKILLS_SEED.find((s) => s.id === id);
 }
+
+export { getAllSkillLevels, getSkillLevelFor, setSkillLevel, advanceSkillLevel } from './application/skill-progress';

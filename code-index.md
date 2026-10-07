@@ -1,5 +1,5 @@
 # Code Index — Play Perform
-_Mis à jour : 2026-10-07 · v0.7.0 (→ 0.8.0)_
+_Mis à jour : 2026-10-07 · v0.7.0_
 > Lire avant de coder. Mettre à jour quand un fichier est créé, supprimé ou dépasse 150 lignes.
 
 ---
@@ -76,7 +76,7 @@ _Mis à jour : 2026-10-07 · v0.7.0 (→ 0.8.0)_
 
 | Module | Fichiers | API publique |
 |---|---|---|
-| `skills` | `domain/skill.ts`, `infra/skills-seed.ts` | `getSkills()`, `getSkillById(id)`, `SKILL_LEVELS`, `getSkillLevel(n)`, types `Skill`, `SkillLevelNumber` |
+| `skills` | `domain/skill.ts`, `infra/skills-seed.ts` | `getSkills()`, `getSkillById(id)`, `SKILL_LEVELS`, `getSkillLevel(n)`, `getSkillLevelFor/setSkillLevel/advanceSkillLevel/getAllSkillLevels(profileId, skillId)` (niveau par compétence), types `Skill`, `SkillLevelNumber` |
 | `quizzes` | `domain/placement.ts`, `infra/placement-bank-{a,b}.ts`, `infra/placement-question.ts` | `getPlacementTest(skillId)`, `scoreAnswer(q, index\|null)`, `estimateStartLevel(answers)`, types `PlacementQuestion`, `PlacementAnswer`, `PlacementResult` |
 | `pricing` | `domain/plan.ts`, `infra/pricing-client.ts`, `infra/pricing-repository.ts` (serveur), `ui/{PricingSection,PlanEditor}.tsx`, `server.ts` | `formatPrice`, `billingSuffix`, `eurosToCents`, `centsToEuros`, `yearlySavingPercent`, `validatePlanUpdate`, `fetchActivePlans`, `fetchAllPlans`, `savePlan`, `PricingSection`, `PlanEditor` · `server.ts` : `fetchPlans`, `updatePlan` |
 | `landing` | `application/useLandingFlow.ts`, `infra/placement-storage.ts`, `ui/{LandingPage,Hero,FlowStepper,ModeChoice,SkillPicker,PlacementTest,PlacementResultView,ParentsSection}.tsx` | `LandingPage` |
