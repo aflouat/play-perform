@@ -94,9 +94,12 @@ services:
       GOTRUE_JWT_ADMIN_ROLES: service_role
       GOTRUE_EXTERNAL_EMAIL_ENABLED: "true"
       GOTRUE_MAILER_AUTOCONFIRM: "false"         # les emails de confirmation arrivent dans Mailpit
-      GOTRUE_SMTP_HOST: mailpit
-      GOTRUE_SMTP_PORT: 1025
-      GOTRUE_SMTP_ADMIN_EMAIL: noreply@playperform.local
+      # Par défaut Mailpit ; pour tester Brevo en local, renseigner SMTP_* dans l'environnement (voir .env.example)
+      GOTRUE_SMTP_HOST: ${SMTP_HOST:-mailpit}
+      GOTRUE_SMTP_PORT: ${SMTP_PORT:-1025}
+      GOTRUE_SMTP_USER: ${SMTP_USER:-}
+      GOTRUE_SMTP_PASS: ${SMTP_PASS:-}
+      GOTRUE_SMTP_ADMIN_EMAIL: ${SMTP_FROM:-noreply@playperform.local}
       GOTRUE_SMTP_SENDER_NAME: Play Perform
       GOTRUE_MAILER_URLPATHS_CONFIRMATION: /auth/v1/verify
       GOTRUE_MAILER_URLPATHS_RECOVERY: /auth/v1/verify

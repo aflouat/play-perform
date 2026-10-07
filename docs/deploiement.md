@@ -57,5 +57,17 @@ NEXT_PUBLIC_SITE_URL=https://<domaine du site>
 ## Décisions à prendre
 1. Nom de domaine (et DNS chez Cloudflare ?)
 2. Tunnel : Cloudflare Tunnel (recommandé) ou Tailscale Funnel
-3. Fournisseur SMTP pour les emails d'inscription
+3. ~~Fournisseur SMTP~~ : **Brevo** (`smtp-relay.brevo.com`, port 587) — voir ci-dessous
 4. Garder Supabase cloud en secours ou non
+
+## Emails d'inscription (Brevo)
+
+Les mails de confirmation / reset sont envoyés par Supabase Auth (GoTrue) ; Brevo en est le relais SMTP.
+1. Brevo → *SMTP & API* → créer une **clé SMTP** (≠ mot de passe du compte) ; valider l'expéditeur (ou le domaine : SPF + DKIM) dans *Expéditeurs, domaines*
+2. Supabase (prod) → *Authentication → Emails → SMTP Settings* → activer le SMTP personnalisé :
+   host `smtp-relay.brevo.com` · port `587` · user = identifiant SMTP Brevo (`…@smtp-brevo.com`) · password = clé SMTP · sender = expéditeur validé
+3. *Authentication → Rate Limits* : relever la limite d'emails (le défaut est très bas)
+4. *Authentication → URL Configuration* : Site URL = domaine Vercel, et `…/auth/confirm` dans les Redirect URLs
+5. Test : créer un compte avec une adresse neuve, puis consulter *Brevo → Transactionnel → Logs*
+
+Auto-hébergé (Mac mini) : mêmes valeurs dans `GOTRUE_SMTP_*` (variables `SMTP_*` lues par `docker-compose.yml`). Ne jamais commiter la clé SMTP.
