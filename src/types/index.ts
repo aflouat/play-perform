@@ -109,3 +109,6 @@ export interface QuizSession {
   questions: QuizQuestion[]; answers: QuizAnswer[];
   startedAt: Date; completedAt: Date | null; totalXpEarned: number;
 }
+
+// ── Lecture syllabique ──────────────────────────────────────────────────────
+export * from './reading';

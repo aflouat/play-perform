@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect } from 'react';
 import type { QuizQuestion, QuizAnswer, QuizOptionId, XpGain } from '@/types';
 import { QUIZ_TIMER_SECONDS } from '@/components/shared/QuizCard';
 import { playSound, speakEnthusiastic } from '@/lib/audio';
+import { isProfileReady } from '@/hooks/useActiveProfileId';
 
 interface UseQuizSessionParams {
   profileId: string;
@@ -33,7 +34,7 @@ export function useQuizSession({
   // Sélection SRS = mélange aléatoire (Math.random) : impossible en render
   // (règle purity), donc effectuée en side-effect après résolution du profil.
   useEffect(() => {
-    if (profileId === '__none__' || allForSubject.length === 0) return;
+    if (!isProfileReady(profileId) || allForSubject.length === 0) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setQuestions(srsSelect(allForSubject, 5, bypassRecent));
     setCurrentIndex(0); setAnswers([]); setFinished(false);

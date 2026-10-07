@@ -7,7 +7,7 @@ test.describe('Sélection d\'avatar', () => {
   });
 
   test('affiche la page d\'accueil avec le titre', async ({ page }) => {
-    await expect(page.getByText('Bonjour, Omar !')).toBeVisible();
+    await expect(page.getByText(/Bonjour, /)).toBeVisible();
   });
 
   test('affiche le sélecteur d\'avatar', async ({ page }) => {

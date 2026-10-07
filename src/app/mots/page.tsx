@@ -6,21 +6,23 @@ import { useScore } from '@/hooks/useScore';
 import { useAvatar } from '@/hooks/useAvatar';
 import { useLearningMode } from '@/hooks/useLearningMode';
 import { useWordSession } from '@/hooks/useWordSession';
-import { useActiveProfileId } from '@/hooks/useActiveProfileId';
-import { clearActiveProfile } from '@/lib/profiles';
+import { useActiveProfileId, useActiveProfileName } from '@/hooks/useActiveProfileId';
+import { clearActiveProfile, getProfileById } from '@/lib/profiles';
 import { LANG_LABELS, type WordLang } from '@/lib/word-data';
 import { XpGainToast, useXpGain } from '@/components/ui/XpGainToast';
 import { ProfileHeader } from '@/components/shared/ProfileHeader';
-import { WordChallenge } from '@/components/esma/WordChallenge';
+import { WordChallenge } from '@/components/words/WordChallenge';
 
-export default function EsmaPage() {
+export default function WordsPage() {
   const router = useRouter();
   const profileId = useActiveProfileId();
+  const storedName = useActiveProfileName();
   useEffect(() => {
     if (profileId === '__none__') router.replace('/');
   }, [profileId, router]);
 
   const { score, xpToNextLevel, addXp } = useScore(profileId);
+  const name = storedName ?? getProfileById(profileId)?.name ?? 'Élève';
   const { avatar } = useAvatar(profileId, score.xp);
   const { mode, setMode } = useLearningMode(profileId);
   const { lastGain, popKey, triggerGain } = useXpGain();
@@ -35,7 +37,7 @@ export default function EsmaPage() {
         <XpGainToast gain={lastGain} />
         <div className="w-full max-w-sm space-y-6">
           <div className="text-7xl">{scoreGame === sessionLength ? '🌟' : scoreGame >= 4 ? '🎀' : '💪'}</div>
-          <h1 className="text-3xl font-black text-[#1a1a2e]">{scoreGame === sessionLength ? 'Parfait, Esma !' : 'Bien joué !'}</h1>
+          <h1 className="text-3xl font-black text-[#1a1a2e]">{scoreGame === sessionLength ? 'Parfait !' : 'Bien joué !'}</h1>
           <p className={`text-3xl font-black text-pink-500 score-pop`} key={popKey}>{scoreGame}/{sessionLength}</p>
           <div className="flex gap-3">
             <button onClick={() => { clearActiveProfile(); router.push('/'); }} className="flex-1 rounded-2xl bg-slate-100 py-4 font-bold text-slate-600">Accueil</button>
@@ -58,7 +60,7 @@ export default function EsmaPage() {
     <div className="min-h-screen flex flex-col">
       <XpGainToast gain={lastGain} />
       <div className="max-w-sm mx-auto w-full px-5 pt-8 pb-6 flex-1 flex flex-col">
-        <ProfileHeader name="Esma" avatarEmoji={avatar?.emoji ?? '🌸'}
+        <ProfileHeader name={name} avatarEmoji={avatar?.emoji ?? '🌸'}
           score={score} xpToNextLevel={xpToNextLevel} mode={mode} onModeChange={setMode}
           onBack={() => { clearActiveProfile(); router.push('/'); }} accentColor="bg-pink-400" />
 

@@ -1,36 +1,41 @@
-# IN PROGRESS — v0.6.0 : Indices assistés + Parcours multi-discipline
+# IN PROGRESS — Landing visiteur + monolithe modulaire (POC)
 
-## Statut : ✅ COMPLÉTÉ
+Branche : `feat/landing-modules` · Pilotage par étapes, « go » utilisateur entre chaque étape.
 
-### Réalisé
+## Décisions (Étape 0, validées)
+- Approche « strangler » : `src/modules/` + `src/shared/` créés à côté de l'existant ; les anciens `lib/*` deviennent des ré-exports
+- Lint des frontières : `eslint-plugin-boundaries` (règle index-only + couches domain / application / infra / ui)
+- Constellation : coordonnées fixes dans le seed (pas de d3-force pour 8-12 étoiles)
+- Types métier dans `modules/*/domain`, types communs dans `src/shared/types`, `src/types` = legacy
+- Nouveau code et commentaires en anglais, textes UI en français ; pas de traduction de l'existant
+- Modes primaire (lecture, clavier, mots) laissés hors modules pour cette itération
+- POC : données mockées / seed local, aucun nouveau backend
 
-**Feature A — 20 questions supplémentaires avec indices**
-- ✅ `src/types/index.ts` : champ `hint?: string` ajouté à `QuizQuestion`
-- ✅ `src/lib/question-banks/hints-questions.ts` : 20 questions réparties sur 4 matières (maths, français, histoire, SVT), chacune avec un indice textuel pédagogique
-- ✅ Importées dans `index.ts` — s'ajoutent aux banques existantes
+## Étapes
+- [x] Étape 0 — Audit
+- [x] Étape 1 — Nettoyage des prénoms + check automatisé (`npm run check:names`, test Jest)
+- [ ] Étape 2 — Architecture modulaire (shared, boundaries, spaced-repetition, rewards, quizzes, contrats)
+- [ ] Étape 3 — Modèle de données skills + seed
+- [ ] Étape 4 — Page d'accueil visiteur (**v1 livrée** : mode sans/avec compte, choix compétence, test de niveau, résultat 1→5, section parents ; reste : constellation, célébrations + XP via `rewards`, badge « Premier pas »)
 
-**Feature B — Affichage de l'indice en mode assisté**
-- ✅ `useQuizCard.ts` : si `question.hint` existe, on parle l'indice (TTS) + affiche son texte. Sinon, fallback sur l'élimination d'une mauvaise réponse (comportement précédent)
-- ✅ `QuizCard.tsx` : panneau 💡 affiche le texte de l'indice au lieu du message générique
+## Notes Étape 1
+- Route `/esma` → `/mots` (pas de redirection : elle aurait gardé le prénom dans le dépôt)
+- Profils statiques : ids `demo-quiz`, `demo-words`, `demo-keyboard` (progression locale des anciens ids perdue)
+- `LICENSE` et `package-lock.json` exclus du check (titulaire du copyright)
+- Base locale : `npm run db:reset` pour appliquer les nouveaux libellés du seed
+- Base de prod : les élèves déjà créés gardent leurs prénoms (données, pas dépôt) — non modifiés
+- Historique git non réécrit
 
-**Feature C — Système de Parcours multi-discipline**
-- ✅ Migration Supabase : tables `parcours` + `parcours_enrollments` créées (RLS activé)
-- ✅ Types `Parcours`, `ParcoursEnrollment` dans `src/types/index.ts`
-- ✅ `src/lib/db/parcours.ts` : CRUD complet (fetchAll, fetchById, insert, update, delete, enroll, unenroll)
-- ✅ API routes : `/api/parcours`, `/api/parcours/[id]`, `/api/parcours/[id]/enroll`, `/api/parcours/student/[studentId]`
-- ✅ Admin nav : lien "🗺️ Parcours" dans le layout admin
-- ✅ `/admin/parcours` : liste des parcours + formulaire création + boutons Inscrire/Modifier/Supprimer
-- ✅ `/admin/parcours/[id]` : édition du parcours + gestion des inscriptions
-- ✅ `EnrollModal.tsx` : modal avec toggle inscription par élève
-- ✅ `ParcoursForm.tsx` : formulaire sélection matières, emoji, nom, questions/matière
+## Notes page d'accueil (v1, faite avant l'Étape 2 à la demande)
+- Modules `landing`, `skills`, `quizzes` créés dans la structure cible (index-only), sans lint de frontières ni bus d'événements (Étape 2)
+- `LandingScreen.tsx` supprimé, remplacé par `LandingPage` sur `/` pour les visiteurs non connectés
+- Check des prénoms (script + test) retiré côté utilisateur
 
-**Feature D — Jeu Parcours côté élève**
-- ✅ `ParcoursCard.tsx` : carte parcours sur la home (si inscrit)
-- ✅ `ParcoursSession.tsx` : session multi-sujets avec transition animée entre matières, barre de progression, écran de fin avec scores par matière
-- ✅ `/parcours/[id]` : écran d'intro avec liste des matières + XP max, bouton démarrer
-- ✅ `home/page.tsx` : section "🗺️ Mes parcours" si l'élève a des inscriptions
-
-### Vérifications
-- `npm run test` : 62/62 verts ✅
-- `npm run build` : 0 erreur TypeScript ✅
-- Version : 0.5.6 → 0.6.0 ✅
+## Release git + tarifs + plan de déploiement
+- [x] `scripts/release-tag.mjs` (`npm run release:tag`) : semver, notes groupées, CHANGELOG, commit + tag annoté, `--dry-run` / `--push` / `--github` — 8 tests
+- [x] Version affichée en bas de page (`AppVersion`, `SiteFooter`)
+- [x] Module `pricing` : table `pricing_plans`, API publique + admin, `/admin/pricing`, section « Nos abonnements » — 13 tests
+- [x] Plan Vercel + Mac mini : `docs/deploiement.md` (décisions en attente)
+- [ ] Tag de référence `v0.7.0` avant la 1re release (sinon la note reprend tout l'historique, qui contient d'anciens prénoms)
+- [ ] Vérification visuelle tarifs / admin (Docker arrêté pendant la session)
+- [ ] Paiement en ligne (non demandé pour l'instant)

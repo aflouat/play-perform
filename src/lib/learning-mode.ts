@@ -29,6 +29,7 @@ export const MODE_LABELS: Record<LearningMode, { label: string; emoji: string; d
 
 export const STUDENT_MODE_LABELS: Record<string, { label: string; emoji: string; description: string; route: string }> = {
   quiz:     { label: 'Quiz',    emoji: '📚', description: 'Matières scolaires, brevet',        route: '/home'     },
-  words:    { label: 'Mots',    emoji: '🌸', description: 'Mots illustrés FR/EN/ES, phrases',  route: '/esma'     },
+  words:    { label: 'Mots',    emoji: '🌸', description: 'Mots illustrés FR/EN/ES, phrases',  route: '/mots'     },
   keyboard: { label: 'Clavier', emoji: '⌨️', description: 'Lettres, mots, sciences',            route: '/keyboard' },
+  reading:  { label: 'Lecture', emoji: '📖', description: 'Lire par syllabes, sons et images', route: '/lecture'  },
 };

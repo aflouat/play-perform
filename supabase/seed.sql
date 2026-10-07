@@ -32,11 +32,11 @@ values (
 -- ── Élèves de démonstration ────────────────────────────────────
 insert into public.students (id, parent_id, name, emoji, gradient, grade, tagline, age, mode, learning_mode) values
   ('22222222-0000-0000-0000-000000000001', '11111111-1111-1111-1111-111111111111',
-   'Léa', '🧑‍🎓', 'from-sky-400 to-blue-500', '3ème', 'Objectif : brevet', 14, 'quiz', 'advanced'),
+   'Élève démo · Quiz', '🧑‍🎓', 'from-sky-400 to-blue-500', '3ème', 'Objectif : brevet', 14, 'quiz', 'advanced'),
   ('22222222-0000-0000-0000-000000000002', '11111111-1111-1111-1111-111111111111',
-   'Sami', '🌸', 'from-pink-400 to-rose-500', 'CE2', 'J''apprends les mots', 8, 'words', 'assisted'),
+   'Élève démo · Mots', '🌸', 'from-pink-400 to-rose-500', 'CE2', 'J''apprends les mots', 8, 'words', 'assisted'),
   ('22222222-0000-0000-0000-000000000003', '11111111-1111-1111-1111-111111111111',
-   'Inès', '🚀', 'from-emerald-400 to-teal-500', 'CP', 'Je découvre le clavier', 6, 'keyboard', 'assisted');
+   'Élève démo · Clavier', '🚀', 'from-emerald-400 to-teal-500', 'CP', 'Je découvre le clavier', 6, 'keyboard', 'assisted');
 
 insert into public.profiles (id, name, emoji, grade, mode)
 select id::text, name, emoji, grade, mode from public.students;

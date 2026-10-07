@@ -18,6 +18,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           className="text-sm font-semibold text-slate-600 hover:text-violet-600 transition-colors">
           🗺️ Parcours
         </Link>
+        <Link href="/admin/pricing"
+          className="text-sm font-semibold text-slate-600 hover:text-violet-600 transition-colors">
+          💶 Tarifs
+        </Link>
         <Link href="/parent"
           className="text-sm font-semibold text-slate-600 hover:text-violet-600 transition-colors">
           👨‍👧 Élèves

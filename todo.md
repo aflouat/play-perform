@@ -3,6 +3,8 @@
 
 ## Priorité 1 — Contenu
 
+- [ ] **Epic Lecture syllabique** (v0.7.0 en cours → voir in-progress.md) ; v0.7.x : Assembler, Compter, niveaux 3-4, estompage, SRS, import CSV mots, audio enregistré
+
 - [ ] Plus de mots pour le niveau initié (actuellement 8 par langue) → 30+ par langue
 - [ ] Phrases simples pour le mode assisté (pas seulement mots isolés)
 - [ ] Niveaux 3-4  mots à taper pour le niveau initié

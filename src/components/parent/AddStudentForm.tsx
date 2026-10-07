@@ -7,7 +7,7 @@ import { apiInsertStudent } from '@/lib/students-api';
 
 const GRADIENTS = ['from-sky-400 to-blue-500', 'from-pink-400 to-rose-500', 'from-emerald-400 to-teal-500', 'from-amber-400 to-orange-500', 'from-violet-400 to-purple-500'];
 const EMOJIS = ['🧑‍🎓', '🌸', '🚀', '⭐', '🦁', '🐬', '🎨', '🎸'];
-const MODES: StudentMode[] = ['quiz', 'words', 'keyboard'];
+const MODES: StudentMode[] = ['quiz', 'words', 'keyboard', 'reading'];
 
 interface Props { onAdded: (student: DbStudent) => void; }
 
@@ -56,7 +56,7 @@ export function AddStudentForm({ onAdded }: Props) {
 
       <div>
         <p className="text-xs font-bold text-slate-500 mb-2">Activité par défaut</p>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-4 gap-2">
           {MODES.map((m) => { const meta = STUDENT_MODE_LABELS[m]; return (
             <button key={m} type="button" onClick={() => setMode(m)}
               className={`rounded-xl p-2.5 text-center transition-all border ${mode === m ? 'border-violet-500 bg-violet-50 ring-2 ring-violet-300' : 'border-slate-200 bg-slate-50 hover:bg-slate-100'}`}>

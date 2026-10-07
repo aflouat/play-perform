@@ -15,7 +15,7 @@ Instructions pour Claude Code dans ce repo.
 - **MINOR** (0.X.0) : nouvelle fonctionnalité rétro-compatible
 - **MAJOR** (X.0.0) : changement structurel majeur ou rupture API
 - Version dans `package.json` — source de vérité unique
-- **Avant chaque déploiement** : bumper la version dans `package.json`
+- **Avant chaque déploiement** : `npm run release:tag -- patch|minor|major` (ou `x.y.z`) — bump `package.json`, génère la note de version dans `CHANGELOG.md`, commit `chore(release): vX.Y.Z` + tag git annoté (`--dry-run` pour prévisualiser, `--push` pour publier, `--github` pour une Release GitHub via `gh`). La version est affichée en bas de page (`NEXT_PUBLIC_APP_VERSION`)
 - **Après chaque déploiement** : exécuter `npm run release -- --title "..." --changes "A,B,C"`
   pour insérer une ligne dans la table `release_notes` Supabase (visible sur `/releases`)
 - faire un git add . puis git commit -m "message" et git push origin main

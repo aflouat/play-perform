@@ -1,4 +1,4 @@
-export type ProfileMode = 'quiz' | 'keyboard' | 'words';
+export type ProfileMode = 'quiz' | 'keyboard' | 'words' | 'reading';
 
 export interface Profile {
   id: string;
@@ -13,8 +13,8 @@ export interface Profile {
 
 export const PROFILES: Profile[] = [
   {
-    id: 'omar',
-    name: 'Omar',
+    id: 'demo-quiz',
+    name: 'Élève démo · Quiz',
     emoji: '🧑‍🎓',
     gradient: 'from-sky-400 to-blue-500',
     grade: '6ème',
@@ -23,8 +23,8 @@ export const PROFILES: Profile[] = [
     age: 12,
   },
   {
-    id: 'esma',
-    name: 'Esma',
+    id: 'demo-words',
+    name: 'Élève démo · Mots',
     emoji: '🌸',
     gradient: 'from-pink-400 to-rose-500',
     grade: 'CP adapté',
@@ -33,8 +33,8 @@ export const PROFILES: Profile[] = [
     age: 9,
   },
   {
-    id: 'mohamed',
-    name: 'Mohamed',
+    id: 'demo-keyboard',
+    name: 'Élève démo · Clavier',
     emoji: '🚀',
     gradient: 'from-emerald-400 to-teal-500',
     grade: 'CP',
@@ -89,6 +89,7 @@ export function getProfileById(id: string): Profile | undefined {
 
 export function getHomeRouteForProfile(profile: Profile): string {
   if (profile.mode === 'keyboard') return '/keyboard';
-  if (profile.mode === 'words') return '/esma';
+  if (profile.mode === 'words') return '/mots';
+  if (profile.mode === 'reading') return '/lecture';
   return '/home';
 }

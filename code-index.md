@@ -1,5 +1,5 @@
 # Code Index — Play Perform
-_Mis à jour : 2026-09-27 · v0.6.0_
+_Mis à jour : 2026-10-07 · v0.7.0 (→ 0.8.0)_
 > Lire avant de coder. Mettre à jour quand un fichier est créé, supprimé ou dépasse 150 lignes.
 
 ---
@@ -16,7 +16,7 @@ _Mis à jour : 2026-09-27 · v0.6.0_
 
 | Fichier | Lignes | Rôle |
 |---|---|---|
-| `app/page.tsx` | 127 | Accueil — liste élèves, sélection profil, footer admin |
+| `app/page.tsx` | 127 | Accueil — visiteur : `LandingPage` (module landing) · parent : liste élèves, sélection profil |
 | `app/layout.tsx` | — | Layout racine, providers |
 | `app/globals.css` | — | Variables Tailwind v4 |
 | `app/auth/page.tsx` | 143 | Connexion / Inscription / Mot de passe oublié |
@@ -33,7 +33,8 @@ _Mis à jour : 2026-09-27 · v0.6.0_
 | `app/admin/questions/[id]/page.tsx` | 124 | Édition question |
 | `app/releases/page.tsx` | — | Historique versions |
 | `app/faq/page.tsx` | 122 | Guide utilisateur |
-| `app/esma/page.tsx` | — | Mode Esma (expérimental) |
+| `app/mots/page.tsx` | — | Mode Mots — mots illustrés FR/EN/ES |
+| `app/lecture/page.tsx` | 68 | Lecture syllabique — orchestre toolbar + activités |
 
 ---
 
@@ -48,6 +49,8 @@ _Mis à jour : 2026-09-27 · v0.6.0_
 | `api/students/route.ts` | GET, POST | Liste élèves / création |
 | `api/students/[id]/route.ts` | DELETE, PATCH | Suppression / mise à jour élève |
 | `api/releases/route.ts` | GET, POST | Historique releases — lecture / écriture |
+| `api/pricing/route.ts` | GET | Offres actives (public) ; `?all=1` toutes (admin) |
+| `api/pricing/[id]/route.ts` | PUT | Mise à jour d'une offre (admin, validée) |
 
 ---
 
@@ -60,10 +63,29 @@ _Mis à jour : 2026-09-27 · v0.6.0_
 | `docker/supabase/kong.yml` | Routes passerelle `/auth/v1`, `/rest/v1`, `/pg` |
 | `docker/supabase/migrate.sh` | Applique les migrations non jouées (table `_local_migrations`) + seed au 1er run |
 | `supabase/migrations/20260927000000_initial_schema.sql` | Schéma complet (10 tables + RLS) reconstruit depuis la prod |
+| `supabase/migrations/20260928000000_reading_mode.sql` | CHECK `students.mode` accepte `reading` |
+| `supabase/migrations/20261007000000_pricing_plans.sql` | Table `pricing_plans` + 3 offres par défaut |
 | `supabase/seed.sql` | Données démo : parent `demo@playperform.local`, 3 élèves, 1 parcours |
 | `supabase/local.env.example` | Variables pour `npm run dev` sur l'hôte contre la stack compose |
 
 `getServerSupabaseUrl()` (`src/lib/db/client.ts`) : `SUPABASE_INTERNAL_URL ?? NEXT_PUBLIC_SUPABASE_URL` — utilisé par `getServerClient`, `admin-auth.ts`, `api/students/*`.
+
+---
+
+## Modules · `src/modules/` (API publique = `index.ts` uniquement)
+
+| Module | Fichiers | API publique |
+|---|---|---|
+| `skills` | `domain/skill.ts`, `infra/skills-seed.ts` | `getSkills()`, `getSkillById(id)`, `SKILL_LEVELS`, `getSkillLevel(n)`, types `Skill`, `SkillLevelNumber` |
+| `quizzes` | `domain/placement.ts`, `infra/placement-bank-{a,b}.ts`, `infra/placement-question.ts` | `getPlacementTest(skillId)`, `scoreAnswer(q, index\|null)`, `estimateStartLevel(answers)`, types `PlacementQuestion`, `PlacementAnswer`, `PlacementResult` |
+| `pricing` | `domain/plan.ts`, `infra/pricing-client.ts`, `infra/pricing-repository.ts` (serveur), `ui/{PricingSection,PlanEditor}.tsx`, `server.ts` | `formatPrice`, `billingSuffix`, `eurosToCents`, `centsToEuros`, `yearlySavingPercent`, `validatePlanUpdate`, `fetchActivePlans`, `fetchAllPlans`, `savePlan`, `PricingSection`, `PlanEditor` · `server.ts` : `fetchPlans`, `updatePlan` |
+| `landing` | `application/useLandingFlow.ts`, `infra/placement-storage.ts`, `ui/{LandingPage,Hero,FlowStepper,ModeChoice,SkillPicker,PlacementTest,PlacementResultView,ParentsSection}.tsx` | `LandingPage` |
+
+Partagé (`src/shared/ui`) : `AppVersion` (version depuis `NEXT_PUBLIC_APP_VERSION`), `SiteFooter`.
+
+Flux tarifs : `/admin/pricing` → `PlanEditor` → `PUT /api/pricing/:id` (`isAdminAuthorized` + `validatePlanUpdate`) → `pricing_plans` ; accueil → `PricingSection` → `GET /api/pricing`.
+
+Flux visiteur : `LandingPage` → `useLandingFlow` (mode → skill → test → result) → `getPlacementTest` / `estimateStartLevel` → `savePlacement` (localStorage `pp:placements`).
 
 ---
 
@@ -75,7 +97,6 @@ _Mis à jour : 2026-09-27 · v0.6.0_
 | `QuizCard.tsx` | 129 | Carte question QCM avec timer, hint, options A/B/C/D |
 | `QuizResultScreen.tsx` | 117 | Écran résultat — score, XP, bouton Anki si erreurs |
 | `AnkiReviewSession.tsx` | 66 | Révision Anki — reboucle sur les erreurs jusqu'à 0 |
-| `LandingScreen.tsx` | 42 | Écran d'accueil élève après sélection profil |
 | `ModeSheet.tsx` | 55 | Sheet sélection mode (quiz / clavier) |
 | `ProfileHeader.tsx` | 73 | En-tête profil — avatar, nom, XP, niveau |
 | `AvatarPicker.tsx` | 39 | Sélecteur avatar (débloqués par XP) |
@@ -114,10 +135,18 @@ _Mis à jour : 2026-09-27 · v0.6.0_
 | `XpGainToast.tsx` | 63 | Toast animation gain XP |
 | `ZoneCard.tsx` | 64 | Carte zone (Lab / Clubs / Hub) |
 
-### esma/
+### words/
 | Fichier | Lignes | Rôle |
 |---|---|---|
-| `WordChallenge.tsx` | 92 | Défi mot (mode Esma expérimental) |
+| `WordChallenge.tsx` | 92 | Défi mot (mode Mots) |
+
+### reading/ (lecture syllabique)
+| Fichier | Lignes | Rôle |
+|---|---|---|
+| `SyllableWord.tsx` | 56 | Mot en syllabes colorées + arcs + lettres muettes grises, tap-to-speak, surlignage karaoké |
+| `DiscoverView.tsx` | 61 | Activité Découvrir — image, karaoké (auto en assisté), « J'ai lu » |
+| `ReadChooseView.tsx` | 85 | Activité Lire et choisir — 3 images, indice (karaoké + image grisée) |
+| `ReadingToolbar.tsx` | 58 | Onglets activité, niveaux 1-4, progression |
 
 ### home/
 | Fichier | Lignes | Rôle |
@@ -139,13 +168,26 @@ _Mis à jour : 2026-09-27 · v0.6.0_
 | `useLetterGame.ts` | — | `useLetterGame({ profileId, onFinish })` → game state | Logique jeu Lettres |
 | `useWordSession.ts` | — | `useWordSession({ addXp, triggerGain })` → session state | Logique session Mots |
 | `useEngagement.ts` | 123 | `useEngagement({ userId, contentId, ... })` → `{ ping }` | Pings engagement, calcul bricks |
-| `useActiveProfileId.ts` | — | `useActiveProfileId()` → `string` | Lit le profileId actif depuis localStorage |
+| `useActiveProfileId.ts` | 38 | `useActiveProfileId()` → `string` · `useActiveProfileName()` · `isProfileReady(id)` | Profil actif (localStorage) : `'__loading__'` pendant l'hydratation, `'__none__'` si absent |
+| `useReadingSession.ts` | 78 | `useReadingSession({ addXp, triggerGain })` → session, `markRead`, `select`, `setActivity`, `setLevel` | Session lecture syllabique (XP 5 / 10) |
 
 ---
 
 ## Lib · `src/lib/`
 
-### Audio · `audio.ts` (121 lignes)
+### Lecture · `reading/`
+| Fichier | Rôle |
+|---|---|
+| `syllable-notation.ts` | `parseSyllables(notation, say?)` → `{ word, syllables }` — lève une erreur si notation invalide |
+| `reading-words.ts` | `READING_WORDS` (40 mots, 4 niveaux), `READING_LEVELS`, `getWordsForLevel(level)` |
+| `reading-session.ts` | `buildReadingSession(level, length?, random?)` → `ReadingChallenge[]` (cible + 3 images) |
+| `reading-audio.ts` | `speakSyllables(syllables, word, { onSyllable, onEnd })` karaoké, `stopSpeaking()` |
+| `reading-colors.ts` | Classes couleurs syllabes / arcs / muet / surlignage |
+| `reading-font.ts` | `readingFont` (Andika) |
+
+Types : `src/types/reading.ts` (`ReadingWord`, `Syllable`, `ParsedWord`, `ReadingLevel`, `ReadingActivity`).
+
+### Audio · `audio.ts` (121 lignes, `getBestVoice` exporté)
 | Fonction | Rôle |
 |---|---|
 | `playSound(type)` | Web Audio API — correct / wrong / levelup / complete / click |

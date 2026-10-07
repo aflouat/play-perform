@@ -1,6 +1,6 @@
 import { getClient } from './client';
 
-export type StudentMode = 'quiz' | 'words' | 'keyboard';
+export type StudentMode = 'quiz' | 'words' | 'keyboard' | 'reading';
 export type StudentLearningMode = 'assisted' | 'advanced';
 
 export interface DbStudent {

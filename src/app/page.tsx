@@ -9,7 +9,8 @@ import type { DbStudent } from '@/lib/db';
 import { useScore } from '@/hooks/useScore';
 import { saveMode, type LearningMode, STUDENT_MODE_LABELS } from '@/lib/learning-mode';
 import { apiFetchStudents, apiInsertStudent } from '@/lib/students-api';
-import { LandingScreen } from '@/components/shared/LandingScreen';
+import { LandingPage } from '@/modules/landing';
+import { AppVersion } from '@/shared/ui/AppVersion';
 
 interface DisplayProfile {
   id: string; name: string; emoji: string; gradient: string;
@@ -21,9 +22,9 @@ function getSupabase() {
 }
 
 const DEFAULT_STUDENTS_SEED = [
-  { name: 'Omar',    emoji: '🧑‍🎓', gradient: 'from-sky-400 to-blue-500',     grade: '6ème',      tagline: 'Objectif : brevet',      age: 12, mode: 'quiz'     as const, learning_mode: 'advanced' as const },
-  { name: 'Esma',   emoji: '🌸',   gradient: 'from-pink-400 to-rose-500',    grade: 'CP adapté', tagline: 'Mots & phrases (assisté)', age: 9,  mode: 'words'    as const, learning_mode: 'assisted' as const },
-  { name: 'Mohamed',emoji: '🚀',   gradient: 'from-emerald-400 to-teal-500', grade: 'CP',        tagline: 'Clavier, mots, sciences',  age: 6,  mode: 'keyboard' as const, learning_mode: 'advanced' as const },
+  { name: 'Élève démo · Quiz',    emoji: '🧑‍🎓', gradient: 'from-sky-400 to-blue-500',     grade: '6ème',      tagline: 'Objectif : brevet',      age: 12, mode: 'quiz'     as const, learning_mode: 'advanced' as const },
+  { name: 'Élève démo · Mots',    emoji: '🌸',   gradient: 'from-pink-400 to-rose-500',    grade: 'CP adapté', tagline: 'Mots & phrases (assisté)', age: 9,  mode: 'words'    as const, learning_mode: 'assisted' as const },
+  { name: 'Élève démo · Clavier', emoji: '🚀',   gradient: 'from-emerald-400 to-teal-500', grade: 'CP',        tagline: 'Clavier, mots, sciences',  age: 6,  mode: 'keyboard' as const, learning_mode: 'advanced' as const },
 ];
 
 function toDisplayProfile(s: DbStudent): DisplayProfile {
@@ -98,7 +99,7 @@ export default function WelcomePage() {
   }
 
   if (!ready) return <div className="min-h-screen flex items-center justify-center text-slate-400 text-sm">Chargement…</div>;
-  if (!authed) return <LandingScreen />;
+  if (!authed) return <LandingPage />;
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-5 py-12">
@@ -120,6 +121,7 @@ export default function WelcomePage() {
           <Link href="/releases" className="hover:text-slate-600">📋 Versions</Link>
           <Link href="/parent" className="hover:text-slate-600">👤 Espace parent</Link>
           {isAdmin && <Link href="/admin/questions" className="hover:text-violet-600 text-violet-400 font-semibold">⚙️ Admin</Link>}
+          <AppVersion className="hover:text-slate-600" />
         </div>
       </div>
     </div>
