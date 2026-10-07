@@ -31,3 +31,8 @@ body {
   100% { opacity: 1; transform: scale(1) translateY(0); }
 }
 .level-up { animation: levelup 0.5s ease-out forwards; }
+
+/* Respect the user's reduced-motion preference for decorative animations */
+@media (prefers-reduced-motion: reduce) {
+  .score-pop, .level-up { animation: none; }
+}

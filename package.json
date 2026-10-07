@@ -18,7 +18,8 @@
     "docker:logs": "docker compose logs -f app",
     "db:reset": "docker compose down && docker volume rm -f play-perform_db_data && docker compose up -d",
     "db:migrate": "docker compose run --rm db-init",
-    "db:psql": "docker compose exec db psql -U postgres"
+    "db:psql": "docker compose exec db psql -U postgres",
+    "release:tag": "node scripts/release-tag.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.106.2",

@@ -34,7 +34,7 @@ export default function HomePage() {
 
   const { score, xpToNextLevel } = useScore(profileId);
   const { avatar, avatarId, allAvatars, selectAvatar } = useAvatar(profileId, score.xp);
-  const { mode, setMode } = useLearningMode(isProfileReady(profileId) ? profileId : 'omar');
+  const { mode, setMode } = useLearningMode(isProfileReady(profileId) ? profileId : 'demo-quiz');
   const profile = getProfileById(profileId);
   const profileMeta = getActiveProfileMeta();
 

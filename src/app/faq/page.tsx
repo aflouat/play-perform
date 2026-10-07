@@ -57,7 +57,7 @@ export default function FaqPage() {
 
         <Section title="1. Les profils">
           <Q q="Quels profils sont disponibles ?">
-            <Table rows={[['Profil','Âge','Activité','Route'],['🧑‍🎓 Omar','12 ans','Quiz 14 matières','/home → /quiz'],['🌸 Esma','9 ans','Mots FR / EN / ES','/esma'],['🚀 Mohamed','6 ans','Clavier, Mots, Sciences','/keyboard']]} />
+            <Table rows={[['Mode','Niveau','Activité','Route'],['📚 Quiz','Collège','Quiz 14 matières','/home → /quiz'],['🌸 Mots','Primaire','Mots FR / EN / ES','/mots'],['⌨️ Clavier','CP','Clavier, Mots, Sciences','/keyboard'],['📖 Lecture','CP','Lecture par syllabes','/lecture']]} />
           </Q>
           <Q q="Le profil est-il sauvegardé entre les sessions ?">Oui. Score et profil mémorisés en localStorage, synchronisés avec Supabase en arrière-plan.</Q>
           <Q q="Comment revenir à la sélection ?">Flèche ← en haut à gauche.</Q>
@@ -91,7 +91,7 @@ export default function FaqPage() {
           </Q>
         </Section>
 
-        <Section title="6. Les matières (Omar — 14)">
+        <Section title="6. Les matières (14)">
           <Q q="Combien de questions par session ?"><strong>5 questions</strong> sélectionnées par SRS.</Q>
           <Q q="4 niveaux de difficulté">🌱 Initié → 📖 Apprenti → ⚡ Expert → 🔥 Gourou</Q>
         </Section>
@@ -99,14 +99,14 @@ export default function FaqPage() {
         <Section title="7. Astuces">
           <Q q="Comment progresser le plus vite ?">
             <ol className="list-decimal pl-4 space-y-1">
-              <li>Sessions Sciences Mohamed (15 XP × 5 = 75 XP)</li>
-              <li>Quiz parfaits Omar (+20 XP bonus)</li>
+              <li>Sessions Sciences du mode Clavier (15 XP × 5 = 75 XP)</li>
+              <li>Quiz parfaits (+20 XP bonus)</li>
               <li>Répondre rapidement (sablier = XP maximum)</li>
             </ol>
           </Q>
           <Q q="La plateforme fonctionne-t-elle hors connexion ?">Oui — toute la logique est côté client.</Q>
           <Q q="Comment réinitialiser le SRS ?">
-            Console : <code className="bg-slate-100 px-2 py-0.5 rounded text-xs">{`localStorage.removeItem('srs:omar:maths')`}</code>
+            Console : <code className="bg-slate-100 px-2 py-0.5 rounded text-xs">{`localStorage.removeItem('srs:<id-élève>:maths')`}</code>
           </Q>
         </Section>
 

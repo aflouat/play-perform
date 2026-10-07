@@ -18,7 +18,7 @@ interface UseWordSessionParams {
 }
 
 /**
- * Session de mots d'Esma. L'état par question (indice, option barrée) vit dans
+ * Session de mots de l'élève. L'état par question (indice, option barrée) vit dans
  * <WordChallenge>, remonté via key={current.target.id} — pas d'effet de reset ici.
  */
 export function useWordSession({ addXp, triggerGain }: UseWordSessionParams) {

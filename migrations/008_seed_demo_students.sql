@@ -1,7 +1,7 @@
 -- =============================================================
 -- 008 — seed_demo_students
--- Insère les 3 élèves de démonstration : Omar, Esma, Mohamed
--- associés au compte parent aflouat@gmail.com.
+-- Insère les 3 élèves de démonstration : Élève démo · Quiz, · Mots, · Clavier
+-- associés au compte parent indiqué dans v_email.
 --
 -- Idempotent : ne recrée pas un élève si son nom existe déjà
 -- pour ce parent.
@@ -15,7 +15,7 @@
 
 DO $$
 DECLARE
-  v_email  text    := 'aflouat@gmail.com';
+  v_email  text    := 'parent@example.com'; -- à remplacer
   v_parent uuid;
 BEGIN
 
@@ -32,12 +32,12 @@ BEGIN
       v_email;
   END IF;
 
-  -- ── Omar — 12 ans, quiz brevet, mode avancé ──────────────
+  -- ── Élève démo · Quiz — 12 ans, quiz brevet, mode avancé ──────────────
   INSERT INTO students
     (parent_id, name, emoji, gradient, grade, tagline, age, mode, learning_mode)
   SELECT
     v_parent,
-    'Omar',
+    'Élève démo · Quiz',
     '🧑‍🎓',
     'from-sky-400 to-blue-500',
     '6ème',
@@ -47,15 +47,15 @@ BEGIN
     'advanced'
   WHERE NOT EXISTS (
     SELECT 1 FROM students
-    WHERE  parent_id = v_parent AND name = 'Omar'
+    WHERE  parent_id = v_parent AND name = 'Élève démo · Quiz'
   );
 
-  -- ── Esma — 9 ans, mots FR/EN/ES, mode assisté ───────────
+  -- ── Élève démo · Mots — 9 ans, mots FR/EN/ES, mode assisté ───────────
   INSERT INTO students
     (parent_id, name, emoji, gradient, grade, tagline, age, mode, learning_mode)
   SELECT
     v_parent,
-    'Esma',
+    'Élève démo · Mots',
     '🌸',
     'from-pink-400 to-rose-500',
     'CP adapté',
@@ -65,15 +65,15 @@ BEGIN
     'assisted'
   WHERE NOT EXISTS (
     SELECT 1 FROM students
-    WHERE  parent_id = v_parent AND name = 'Esma'
+    WHERE  parent_id = v_parent AND name = 'Élève démo · Mots'
   );
 
-  -- ── Mohamed — 6 ans, clavier, mode assisté ───────────────
+  -- ── Élève démo · Clavier — 6 ans, clavier, mode assisté ───────────────
   INSERT INTO students
     (parent_id, name, emoji, gradient, grade, tagline, age, mode, learning_mode)
   SELECT
     v_parent,
-    'Mohamed',
+    'Élève démo · Clavier',
     '🚀',
     'from-emerald-400 to-teal-500',
     'CP',
@@ -83,7 +83,7 @@ BEGIN
     'assisted'
   WHERE NOT EXISTS (
     SELECT 1 FROM students
-    WHERE  parent_id = v_parent AND name = 'Mohamed'
+    WHERE  parent_id = v_parent AND name = 'Élève démo · Clavier'
   );
 
   RAISE NOTICE 'Seed terminé — parent: % (id: %)', v_email, v_parent;
