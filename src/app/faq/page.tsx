@@ -68,7 +68,7 @@ export default function FaqPage() {
           <Q q="Comment fonctionne l'XP ?">
             <Table rows={[['Action','XP'],['Bonne réponse (Initié)','10'],['Bonne réponse (Apprenti)','15'],['Bonne réponse (Expert)','20'],['Bonne réponse (Gourou)','30'],['Quiz parfait','+20 bonus'],['Réponse rapide','jusqu\'à 100% du XP de base']]} />
           </Q>
-          <Q q="Comment progresser en rang ?"><strong>100 XP = 1 rang</strong>. L'XP est attaché au compte de l'élève. La barre dorée dans le header montre la progression vers le rang suivant. XP décroissants selon le temps (sablier 30s).</Q>
+          <Q q="Comment progresser en rang ?"><strong>100 XP = 1 rang</strong>. L&apos;XP est attaché au compte de l&apos;élève. La barre dorée dans le header montre la progression vers le rang suivant. XP décroissants selon le temps (sablier 30s).</Q>
           <Q q="Quels badges peut-on débloquer ?">
             <Table rows={[['Badge','Condition'],['🎯 Premier Quiz','Premier gain d\'XP'],['⭐ Quiz parfait','Toutes correctes en une session'],['🔍 Chercheur·euse','500 XP cumulés']]} />
           </Q>
@@ -98,8 +98,8 @@ export default function FaqPage() {
         </Section>
 
         <Section title="7. Niveaux par compétence">
-          <Q q="Le niveau dépend-il de l'XP ?">Non. L'XP et le rang sont ceux du compte ; le <strong>niveau d'avancement (1 → 5) est propre à chaque compétence</strong> et au projet d'apprentissage de l'élève.</Q>
-          <Q q="Comment connaître son niveau de départ ?">Sur la page d'accueil, le test de niveau (5 questions) donne un niveau de 1 à 5 pour la compétence choisie. Il est gratuit et fonctionne sans compte.</Q>
+          <Q q="Le niveau dépend-il de l'XP ?">Non. L&apos;XP et le rang sont ceux du compte ; le <strong>niveau d&apos;avancement (1 → 5) est propre à chaque compétence</strong> et au projet d&apos;apprentissage de l&apos;élève.</Q>
+          <Q q="Comment connaître son niveau de départ ?">Sur la page d&apos;accueil, le test de niveau (5 questions) donne un niveau de 1 à 5 pour la compétence choisie. Il est gratuit et fonctionne sans compte.</Q>
         </Section>
 
         <Section title="8. Abonnements">

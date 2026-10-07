@@ -3,7 +3,7 @@
 Fichier unique de pilotage : **en cours**, **backlog** et **bugs connus** (remplace `in-progress.md` et `knownBugs.md`). Supprimer les lignes une fois réalisées ; l'état du projet est dans `README.md`.
 
 ## En cours — Landing visiteur + monolithe modulaire (POC)
-Branche `feat/landing-modules`. Nouveau code en anglais, textes UI en français. Approche « strangler » : `src/modules/` à côté de l'existant, anciens `lib/*` = ré-exports. Modes primaires (lecture, clavier, mots) hors modules. POC : données mockées / seed local.
+ Nouveau code en anglais, textes UI en français. Approche « strangler » : `src/modules/` à côté de l'existant, anciens `lib/*` = ré-exports. Modes primaires (lecture, clavier, mots) hors modules. POC : données mockées / seed local.
 
 **Règle produit : l'XP est au compte ; le niveau d'avancement (1 → 5) est par compétence et par élève** (`skills/application/skill-progress.ts`, clé `pp:skill-levels:<profileId>`). Le niveau déduit de l'XP s'appelle « Rang ».
 
@@ -13,7 +13,7 @@ Branche `feat/landing-modules`. Nouveau code en anglais, textes UI en français.
 - [ ] Brancher `advanceSkillLevel` / `setSkillLevel` (résultat du test de niveau, fin de palier) dans les parcours connectés
 
 ## Release, abonnements, déploiement
-- [ ] **Appliquer en prod les migrations `20260928000000_reading_mode` et `20261007000000_pricing_plans`** : la table `pricing_plans` n'existe pas sur le Supabase de prod, donc la section « Nos abonnements » et `/admin/pricing` y sont vides/masqués
+- [ ] **Appliquer en prod les migrations `20260928000000_reading_mode`, `20261007000000_pricing_plans` et `20261008000000_profiles_extra_columns`** : la table `pricing_plans` n'existe pas sur le Supabase de prod, donc la section « Nos abonnements » et `/admin/pricing` y sont vides/masqués
 - [ ] **Emails d'inscription prod** : SMTP perso dans Supabase (Auth → SMTP) — le SMTP par défaut est limité (~2 mails/h, membres de l'équipe seulement) ; vérifier `NEXT_PUBLIC_SITE_URL` sur Vercel. Voir `docs/deploiement.md`
 - [ ] Prod : activer RLS sur `questions` et `release_notes` (alerte sécurité Supabase) avec les policies adaptées
 - [ ] Configurer env vars prod (`SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SITE_URL`, `ADMIN_EMAILS`)
@@ -32,13 +32,14 @@ Branche `feat/landing-modules`. Nouveau code en anglais, textes UI en français.
 - [ ] Revue façon Anki après chaque quiz avec erreur ; SRS : intervalle × facteur de facilité (réussite parfaite ×2-3, lacunes → 1 jour)
 - [ ] Streak quotidien visible sur la page d'accueil
 - [ ] Tests e2e Playwright à jour
+- feature en tant que joueur sur une compétence j'ai une espece de barre d'avancement avec mon niveau actuel vs niveau de maitrise(5)
+- tableau de board du jouer avec une carte ludique sur les compétence dans son programme sous forme d'un chateau ou ville avec infra, au click sur une compétence il visualise son niveau actuel  + une synthese sur les revisions passés et à venir avec objectif de date  
 
 ## Backlog — Futur
 - [ ] Compétition live (strike entre joueurs, récompenses supervisées) et classement
 - [ ] Dashboard parent avec suivi de chaque élève
 - [ ] Export portfolio de compétences d'un élève
+- c'est un SAAS de centre de formation pour vendre le modele en tant que franchise
 
 ## Bugs connus (supprimer une fois corrigé)
-- **Table `profiles` sans colonnes `gradient`, `tagline`, `age`** : `/api/students` (POST/PATCH) les envoie dans l'upsert → l'upsert échoue silencieusement (`Promise.allSettled`) → pas de ligne `profiles`, donc l'upsert `scores` (FK) échoue aussi. Constaté en prod et en local.
-- **`/api/releases` ne lit jamais la BDD** : `fetchReleaseNotes` utilise `getClient()` (null côté serveur) → retombe toujours sur les notes statiques.
-- **Hydration mismatch sur `/mots` et `/keyboard`** : sessions tirées avec `Math.random()` dans un `useState` initial (serveur ET client). Correctif : ne rendre la session qu'une fois `isProfileReady(profileId)` (comme `/lecture`).
+_Aucun bug ouvert._ (profiles/scores, `/api/releases` et hydration `/mots` `/keyboard` corrigés, à livrer en 0.7.1 ; la migration `20261008000000_profiles_extra_columns` reste à appliquer en prod.)

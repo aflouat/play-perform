@@ -21,3 +21,12 @@ export function getServerClient(): SupabaseClient {
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY ?? '';
   return createClient(url, key);
 }
+
+/** Client de lecture publique : navigateur, ou serveur (clé anon) pour les API routes. */
+export function getReadClient(): SupabaseClient | null {
+  const browser = getClient();
+  if (browser) return browser;
+  const url = getServerSupabaseUrl();
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  return url && key ? createClient(url, key) : null;
+}

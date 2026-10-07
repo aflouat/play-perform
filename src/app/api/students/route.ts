@@ -39,10 +39,13 @@ async function createSupportRecords(db: ReturnType<typeof dbForUser>, student: R
 
   const profile = pickFields(student, ['id', 'parent_id', 'name', 'emoji', 'gradient', 'grade', 'tagline', 'age', 'mode']);
 
-  await Promise.allSettled([
-    db.from('scores').upsert(score, { onConflict: 'profile_id' }),
-    db.from('profiles').upsert(profile, { onConflict: 'id' }),
-  ]);
+  // profiles must exist before scores (FK). Older databases lack gradient/tagline/age: retry with base columns.
+  let { error } = await db.from('profiles').upsert(profile, { onConflict: 'id' });
+  if (error) {
+    ({ error } = await db.from('profiles').upsert(
+      pickFields(student, ['id', 'name', 'emoji', 'grade', 'mode']), { onConflict: 'id' }));
+  }
+  if (!error) await db.from('scores').upsert(score, { onConflict: 'profile_id' });
 }
 
 export async function GET(req: NextRequest): Promise<NextResponse> {

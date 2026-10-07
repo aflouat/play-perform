@@ -1,4 +1,4 @@
-import { getClient, getServerClient } from './client';
+import { getReadClient, getServerClient } from './client';
 
 export interface DbReleaseNote {
   id?: string;
@@ -25,7 +25,7 @@ export async function insertReleaseNote(note: Omit<DbReleaseNote, 'id' | 'deploy
 }
 
 export async function fetchReleaseNotes(filter: ReleaseNoteFilter = {}): Promise<DbReleaseNote[]> {
-  const db = getClient();
+  const db = getReadClient();
   if (!db) return [];
   let q = db.from('release_notes').select('*').order('deployed_at', { ascending: false });
   if (filter.version) q = q.eq('version', filter.version);

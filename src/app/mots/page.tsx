@@ -6,7 +6,7 @@ import { useScore } from '@/hooks/useScore';
 import { useAvatar } from '@/hooks/useAvatar';
 import { useLearningMode } from '@/hooks/useLearningMode';
 import { useWordSession } from '@/hooks/useWordSession';
-import { useActiveProfileId, useActiveProfileName } from '@/hooks/useActiveProfileId';
+import { useActiveProfileId, useActiveProfileName, isProfileReady } from '@/hooks/useActiveProfileId';
 import { clearActiveProfile, getProfileById } from '@/lib/profiles';
 import { LANG_LABELS, type WordLang } from '@/lib/word-data';
 import { XpGainToast, useXpGain } from '@/components/ui/XpGainToast';
@@ -78,9 +78,12 @@ export default function WordsPage() {
           </div>
         </div>
 
-        <WordChallenge key={current.target.id} current={current} challenges={challenges}
-          currentIdx={currentIdx} mode={mode} lang={lang} feedback={feedback}
-          selectedId={selectedId} onSelect={handleSelect} />
+        {/* Session tirée au hasard : rendue côté client uniquement (évite l'hydration mismatch) */}
+        {isProfileReady(profileId) && (
+          <WordChallenge key={current.target.id} current={current} challenges={challenges}
+            currentIdx={currentIdx} mode={mode} lang={lang} feedback={feedback}
+            selectedId={selectedId} onSelect={handleSelect} />
+        )}
       </div>
     </div>
   );

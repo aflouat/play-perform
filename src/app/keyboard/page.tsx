@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { clearActiveProfile, getProfileById } from '@/lib/profiles';
-import { useActiveProfileId } from '@/hooks/useActiveProfileId';
+import { useActiveProfileId, isProfileReady } from '@/hooks/useActiveProfileId';
 import { useScore } from '@/hooks/useScore';
 import { useAvatar } from '@/hooks/useAvatar';
 import { useLearningMode } from '@/hooks/useLearningMode';
@@ -30,7 +30,7 @@ function FinishScreen({ onReplay, onHome, xp, level, name }: { onReplay: () => v
         <h2 className="text-3xl font-black text-[#1a1a2e]">Mission accomplie !</h2>
         <p className="text-slate-500 mt-1">Tu es super fort, {name} !</p>
         <div className="mt-3 inline-flex items-center gap-2 rounded-2xl bg-amber-50 border border-amber-100 px-4 py-2">
-          <span className="text-amber-500 font-black">⭐ Niv.{level}</span>
+          <span className="text-amber-500 font-black">⭐ Rang {level}</span>
           <span className="text-amber-400 text-sm">· {xp} XP</span>
         </div>
       </div>
@@ -96,7 +96,8 @@ export default function KeyboardPage() {
             name={profile?.name ?? profileId}
             onReplay={() => { setFinished(false); setKey(k=>k+1); }}
             onHome={() => { clearActiveProfile(); router.push('/'); }} />
-        ) : (
+        ) : !isProfileReady(profileId) ? null : (
+          // Session tirée au hasard : rendue côté client uniquement (évite l'hydration mismatch)
           <div key={key}>
             {gameMode==='letters' && <LetterMode profileId={profileId} mode={mode} onFinish={() => setFinished(true)} />}
             {gameMode==='words' && <WordMode profileId={profileId} mode={mode} onFinish={() => setFinished(true)} />}
