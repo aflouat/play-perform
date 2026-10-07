@@ -3,6 +3,38 @@ import type { DbReleaseNote } from '@/lib/db';
 // Historique statique — fallback si Supabase non configuré
 export const STATIC_RELEASE_NOTES: DbReleaseNote[] = [
   {
+    id: 'static-v0.7.0',
+    version: '0.7.0',
+    deployed_at: '2026-10-07T20:00:00Z',
+    title: 'Lecture syllabique, accueil visiteur, abonnements et niveaux par compétence',
+    summary: 'Nouveau mode Lecture pour le CP, page d\'accueil avec test de niveau, tarifs éditables et niveau d\'avancement propre à chaque compétence (l\'XP reste au compte).',
+    changes: [
+      'Mode Lecture /lecture : syllabes colorées, lettres muettes, Découvrir / Lire et choisir, 4 niveaux',
+      'Accueil visiteur : choix d\'une compétence et test de niveau de 5 questions (résultat 1 → 5, sans compte)',
+      'Abonnements 1 mois / 1 an / à vie : section sur l\'accueil et édition dans /admin/pricing',
+      'Niveau d\'avancement par compétence et par élève ; l\'XP reste attaché au compte (affiché comme rang)',
+      'Outil de release : npm run release:tag (semver, CHANGELOG, tag git)',
+      'FAQ alignée sur les fonctionnalités, avec test de cohérence',
+    ],
+    tags: ['feature'],
+    deployed_by: 'Claude Code',
+  },
+  {
+    id: 'static-v0.6.0',
+    version: '0.6.0',
+    deployed_at: '2026-06-03T20:00:00Z',
+    title: 'Indices assistés et parcours multi-discipline',
+    summary: 'Indices pédagogiques en mode assisté, 20 nouvelles questions et parcours enchaînant plusieurs matières.',
+    changes: [
+      'Indices (hint) affichés en mode assisté',
+      '20 nouvelles questions avec indices (maths, français, histoire, SVT)',
+      'Parcours multi-matières créés en admin, avec inscription des élèves',
+      'Home élève : section Mes parcours',
+    ],
+    tags: ['feature'],
+    deployed_by: 'Claude Code',
+  },
+  {
     id: 'static-v0.5.0',
     version: '0.5.0',
     deployed_at: '2026-05-31T22:00:00Z',

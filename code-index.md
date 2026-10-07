@@ -332,6 +332,7 @@ Types : `src/types/reading.ts` (`ReadingWord`, `Syllable`, `ParsedWord`, `Readin
 
 | Fichier | Type | Ce qui est testé |
 |---|---|---|
+| `integration/faq-alignment.test.tsx` | Intégration | FAQ alignée sur README, version, avatars, XP, matières, fonctionnalités |
 | `unit/useScore.test.ts` | Unit | `useScore` — XP, niveau, badges, streak |
 | `unit/useAvatar.test.ts` | Unit | `useAvatar` — débloquage selon XP |
 | `unit/useEngagement.test.ts` | Unit | `useEngagement` — pings, bricks, throttle |

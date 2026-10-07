@@ -1,4 +1,4 @@
-#  Play Perform · v0.6.0
+#  Play Perform · v0.7.0
 
 Plateforme d'apprentissage ludique pour les ados & jeunes. Le parent crée un compte, ajoute ses élèves, et chaque enfant joue dans le mode adapté à son profil. la ptf dispose d'un acces admin pour gerer les questions sur la GUI et ou batch API / CSV
 
@@ -135,7 +135,7 @@ landing ──► skills    (compétences, niveaux 1 → 5)
    └──────► pricing   (abonnements, éditables en admin)
 ```
 - `landing` : page d'accueil visiteur — hero + CTA, choix du mode, choix de la compétence, test de niveau (5 questions), résultat sur le chemin 1 → 5, section parents. Résultats sans compte en localStorage (`pp:placements`).
-- `skills` : 8 compétences collège / lycée (seed local), libellés des 5 niveaux.
+- `skills` : 8 compétences collège / lycée (seed local), libellés des 5 niveaux, **niveau d'avancement par élève et par compétence** (l'XP reste au compte, affiché comme « Rang »).
 - `quizzes` : 40 questions de positionnement (8 × 5 niveaux), niveau de départ = 1 + bonnes réponses (max 5).
 - `pricing` : abonnements 1 mois / 1 an / à vie (table `pricing_plans`), section « Nos abonnements » sur l'accueil, édition dans `/admin/pricing`. API : `GET /api/pricing` (public), `PUT /api/pricing/:id` (admin). `index.ts` = API client, `server.ts` = accès base (API routes uniquement).
 

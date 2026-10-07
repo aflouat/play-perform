@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import type { Metadata } from 'next';
+import { AppVersion } from '@/shared/ui/AppVersion';
 
 export const metadata: Metadata = {
   title: 'FAQ — Play & Perform',
@@ -67,7 +68,7 @@ export default function FaqPage() {
           <Q q="Comment fonctionne l'XP ?">
             <Table rows={[['Action','XP'],['Bonne réponse (Initié)','10'],['Bonne réponse (Apprenti)','15'],['Bonne réponse (Expert)','20'],['Bonne réponse (Gourou)','30'],['Quiz parfait','+20 bonus'],['Réponse rapide','jusqu\'à 100% du XP de base']]} />
           </Q>
-          <Q q="Comment progresser en niveaux ?"><strong>100 XP = 1 niveau</strong>. La barre dorée dans le header montre la progression. XP décroissants selon le temps (sablier 30s).</Q>
+          <Q q="Comment progresser en rang ?"><strong>100 XP = 1 rang</strong>. L'XP est attaché au compte de l'élève. La barre dorée dans le header montre la progression vers le rang suivant. XP décroissants selon le temps (sablier 30s).</Q>
           <Q q="Quels badges peut-on débloquer ?">
             <Table rows={[['Badge','Condition'],['🎯 Premier Quiz','Premier gain d\'XP'],['⭐ Quiz parfait','Toutes correctes en une session'],['🔍 Chercheur·euse','500 XP cumulés']]} />
           </Q>
@@ -75,7 +76,7 @@ export default function FaqPage() {
 
         <Section title="3. Avatars">
           <Q q="Quels avatars sont disponibles ?">
-            <Table rows={[['Avatar','XP requis'],['🧑‍🚀 Astronaute','0'],['🧪 Scientifique','0'],['🥷 Ninja','0'],['🗺️ Explorateur','100'],['🧙 Sorcier','250'],['🤖 Robot','500']]} />
+            <Table rows={[['Avatar','XP requis'],['🧑‍🚀 Astronaute','0'],['🧪 Scientifique','0'],['🥷 Ninja','0'],['🗺️ Explorateur·ice','100'],['🧙 Sorcier·ère','250'],['🤖 Robot','500']]} />
           </Q>
         </Section>
 
@@ -96,7 +97,16 @@ export default function FaqPage() {
           <Q q="4 niveaux de difficulté">🌱 Initié → 📖 Apprenti → ⚡ Expert → 🔥 Gourou</Q>
         </Section>
 
-        <Section title="7. Astuces">
+        <Section title="7. Niveaux par compétence">
+          <Q q="Le niveau dépend-il de l'XP ?">Non. L'XP et le rang sont ceux du compte ; le <strong>niveau d'avancement (1 → 5) est propre à chaque compétence</strong> et au projet d'apprentissage de l'élève.</Q>
+          <Q q="Comment connaître son niveau de départ ?">Sur la page d'accueil, le test de niveau (5 questions) donne un niveau de 1 à 5 pour la compétence choisie. Il est gratuit et fonctionne sans compte.</Q>
+        </Section>
+
+        <Section title="8. Abonnements">
+          <Q q="Quelles formules existent ?">Abonnement <strong>1 mois</strong>, <strong>1 an</strong> ou <strong>à vie</strong>, affichés sur la page d'accueil. Le test de niveau reste gratuit.</Q>
+        </Section>
+
+        <Section title="9. Astuces">
           <Q q="Comment progresser le plus vite ?">
             <ol className="list-decimal pl-4 space-y-1">
               <li>Sessions Sciences du mode Clavier (15 XP × 5 = 75 XP)</li>
@@ -111,7 +121,7 @@ export default function FaqPage() {
         </Section>
 
         <div className="rounded-2xl bg-slate-50 border border-slate-200 p-5 text-center">
-          <p className="text-slate-400 text-xs">Play & Perform · v0.5.0</p>
+          <p className="text-slate-400 text-xs">Play & Perform · <AppVersion /></p>
           <Link href="/" className="mt-3 inline-flex rounded-xl bg-sky-500 text-white font-bold px-5 py-2.5 text-sm hover:bg-sky-400 transition-colors">
             Commencer à jouer →
           </Link>

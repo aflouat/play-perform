@@ -1,27 +1,44 @@
-# TODO — Play Perform - supprimer les actions réalisées
+# TODO — Play Perform
 
+Fichier unique de pilotage : **en cours**, **backlog** et **bugs connus** (remplace `in-progress.md` et `knownBugs.md`). Supprimer les lignes une fois réalisées ; l'état du projet est dans `README.md`.
 
-## Priorité 1 — Contenu
+## En cours — Landing visiteur + monolithe modulaire (POC)
+Branche `feat/landing-modules`. Nouveau code en anglais, textes UI en français. Approche « strangler » : `src/modules/` à côté de l'existant, anciens `lib/*` = ré-exports. Modes primaires (lecture, clavier, mots) hors modules. POC : données mockées / seed local.
 
-- [ ] **Epic Lecture syllabique** (v0.7.0 en cours → voir in-progress.md) ; v0.7.x : Assembler, Compter, niveaux 3-4, estompage, SRS, import CSV mots, audio enregistré
+**Règle produit : l'XP est au compte ; le niveau d'avancement (1 → 5) est par compétence et par élève** (`skills/application/skill-progress.ts`, clé `pp:skill-levels:<profileId>`). Le niveau déduit de l'XP s'appelle « Rang ».
 
-- [ ] Plus de mots pour le niveau initié (actuellement 8 par langue) → 30+ par langue
+- [ ] Étape 2 — Architecture modulaire : shared, `eslint-plugin-boundaries`, spaced-repetition, rewards, quizzes, contrats
+- [ ] Étape 3 — Modèle de données skills + seed, **persistance BDD des niveaux par compétence**
+- [ ] Étape 4 — Landing : constellation, célébrations + XP via `rewards`, badge « Premier pas »
+- [ ] Brancher `advanceSkillLevel` / `setSkillLevel` (résultat du test de niveau, fin de palier) dans les parcours connectés
+
+## Release, abonnements, déploiement
+- [ ] **Appliquer en prod les migrations `20260928000000_reading_mode` et `20261007000000_pricing_plans`** : la table `pricing_plans` n'existe pas sur le Supabase de prod, donc la section « Nos abonnements » et `/admin/pricing` y sont vides/masqués
+- [ ] **Emails d'inscription prod** : SMTP perso dans Supabase (Auth → SMTP) — le SMTP par défaut est limité (~2 mails/h, membres de l'équipe seulement) ; vérifier `NEXT_PUBLIC_SITE_URL` sur Vercel. Voir `docs/deploiement.md`
+- [ ] Prod : activer RLS sur `questions` et `release_notes` (alerte sécurité Supabase) avec les policies adaptées
+- [ ] Configurer env vars prod (`SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SITE_URL`, `ADMIN_EMAILS`)
+- [ ] Tag de référence `v0.7.0` avant la 1re release (sinon la note reprend tout l'historique)
+- [ ] Vérification visuelle tarifs / admin (Docker arrêté)
+- [ ] Paiement en ligne (non demandé pour l'instant)
+
+## Backlog — Contenu
+- [ ] Lecture syllabique v0.7.x : Assembler, Compter, niveaux 3-4, estompage, SRS, import CSV mots, audio enregistré
+- [ ] Plus de mots pour le niveau initié (8 par langue → 30+)
 - [ ] Phrases simples pour le mode assisté (pas seulement mots isolés)
-- [ ] Niveaux 3-4  mots à taper pour le niveau initié
+- [ ] Niveaux 3-4 : mots à taper pour le niveau initié
 
-## Priorité 2 — Admin / Qualité
-- ajouter un lien vers l'admin accessible pour les users de type admin
-- ajouter un template csv telechargeable pour aider a l'import de données avec un onglet sur les regles a respecter pour que l'import des questions passe
-- ajouter un exercice de revision accessible apres chaque quiz pour lequel au moins une question a eu une reponse fausse pour aider a reviser comme anki
-- Pour calculer la prochaine date de révision, on applique un coefficient multiplicateur (Facteur de Facilité ou Ease Factor) à l'intervalle actuel dès qu'une session se termine sans faute.{Nouvel Intervalle} = {Intervalle Précédent} * {Facteur d'Ajustement}$$ Si l'enfant réussit tout parfaitement, l'intervalle double ou triple (ex: 1 jour ➔ 3 jours ➔ 7 jours). S'il a des lacunes, l'intervalle retombe à 1 jour.
-- [ ] Configurer env vars prod (SUPABASE_SERVICE_ROLE_KEY, NEXT_PUBLIC_SITE_URL, ADMIN_EMAILS)
-- [ ] Checklist item 6 : admin liste élèves avec suivi progression
+## Backlog — Admin / Qualité
+- [ ] Admin : liste des élèves avec suivi de progression
+- [ ] Revue façon Anki après chaque quiz avec erreur ; SRS : intervalle × facteur de facilité (réussite parfaite ×2-3, lacunes → 1 jour)
 - [ ] Streak quotidien visible sur la page d'accueil
 - [ ] Tests e2e Playwright à jour
 
-## Priorité 3 — Features futures
+## Backlog — Futur
+- [ ] Compétition live (strike entre joueurs, récompenses supervisées) et classement
+- [ ] Dashboard parent avec suivi de chaque élève
+- [ ] Export portfolio de compétences d'un élève
 
-- [ ] Compétition live (strike entre joueurs, récompenses supervisées)
-- [ ] Mode compétition classement
-- [ ] Dashboard parent avec suivi progression de chaque élève
-- [ ] Export portfolio compétences d'un eleve
+## Bugs connus (supprimer une fois corrigé)
+- **Table `profiles` sans colonnes `gradient`, `tagline`, `age`** : `/api/students` (POST/PATCH) les envoie dans l'upsert → l'upsert échoue silencieusement (`Promise.allSettled`) → pas de ligne `profiles`, donc l'upsert `scores` (FK) échoue aussi. Constaté en prod et en local.
+- **`/api/releases` ne lit jamais la BDD** : `fetchReleaseNotes` utilise `getClient()` (null côté serveur) → retombe toujours sur les notes statiques.
+- **Hydration mismatch sur `/mots` et `/keyboard`** : sessions tirées avec `Math.random()` dans un `useState` initial (serveur ET client). Correctif : ne rendre la session qu'une fois `isProfileReady(profileId)` (comme `/lecture`).
