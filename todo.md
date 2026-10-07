@@ -13,7 +13,7 @@ Fichier unique de pilotage : **en cours**, **backlog** et **bugs connus** (rempl
 - [ ] Brancher `advanceSkillLevel` / `setSkillLevel` (résultat du test de niveau, fin de palier) dans les parcours connectés
 
 ## Release, abonnements, déploiement
-- [ ] **Appliquer en prod les migrations `20260928000000_reading_mode`, `20261007000000_pricing_plans` et `20261008000000_profiles_extra_columns`** : la table `pricing_plans` n'existe pas sur le Supabase de prod, donc la section « Nos abonnements » et `/admin/pricing` y sont vides/masqués
+- [ ] **Appliquer en prod `20260928000000_reading_mode` et `20261008000000_profiles_extra_columns`** (`pricing_plans` appliquée le 2026-10-07) : la table `pricing_plans` n'existe pas sur le Supabase de prod, donc la section « Nos abonnements » et `/admin/pricing` y sont vides/masqués
 - [ ] **Emails d'inscription prod** : SMTP perso dans Supabase (Auth → SMTP) — le SMTP par défaut est limité (~2 mails/h, membres de l'équipe seulement) ; vérifier `NEXT_PUBLIC_SITE_URL` sur Vercel. Voir `docs/deploiement.md`
 - [ ] Prod : activer RLS sur `questions` et `release_notes` (alerte sécurité Supabase) avec les policies adaptées
 - [ ] Configurer env vars prod (`SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SITE_URL`, `ADMIN_EMAILS`)
