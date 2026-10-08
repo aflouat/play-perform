@@ -50,6 +50,7 @@ export function ProfileHeader({
             <div className="flex items-center gap-1.5">
               <span className="text-amber-500 text-xs font-bold">Rang {score.level}</span>
               <span className="text-slate-400 text-xs">· {score.xp} XP</span>
+              {score.streak > 0 && <span className="text-orange-500 text-xs font-bold" title="Jours consécutifs">🔥 {score.streak}</span>}
             </div>
           </div>
         </div>

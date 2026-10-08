@@ -5,6 +5,7 @@ import FaqPage from '@/app/faq/page';
 import { AVATARS } from '@/lib/avatars';
 import { XP_PER_LEVEL } from '@/lib/score-storage';
 import { NAV_SUBJECTS } from '@/lib/subjects';
+import { ALL_BADGES } from '@/lib/score-badges';
 import { STATIC_RELEASE_NOTES } from '@/lib/release-notes-static';
 
 const root = join(__dirname, '../../..');
@@ -43,6 +44,11 @@ describe('FAQ / README / version alignment', () => {
     AVATARS.forEach((a) => {
       expect(faq).toContain(`${a.name}${a.unlockXp}`);
     });
+  });
+
+  it('lists every badge the app can actually unlock', () => {
+    const unlockable = ['first-quiz', 'streak-3', 'streak-7', 'perfect-quiz', 'knowledge-seeker'];
+    ALL_BADGES.filter((b) => unlockable.includes(b.id)).forEach((b) => expect(faq).toContain(b.name));
   });
 
   it('announces the real number of subjects', () => {

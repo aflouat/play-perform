@@ -3,7 +3,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import type { Score, XpGain } from '@/types';
 import { syncScoreToDb, syncBadgeToDb } from '@/lib/db';
-import { XP_PER_LEVEL, calcLevel, initScore, loadFromStorage, saveToStorage } from '@/lib/score-storage';
+import { XP_PER_LEVEL, calcLevel, computeStreak, initScore, loadFromStorage, saveToStorage } from '@/lib/score-storage';
 import { unlockBadge } from '@/lib/score-badges';
 
 interface UseScoreReturn {
@@ -45,12 +45,18 @@ export function useScore(userId: string): UseScoreReturn {
         newBadges = unlockBadge(newBadges, 'knowledge-seeker');
       }
 
+      const now = new Date();
+      const newStreak = computeStreak(prev.streak, prev.lastActivityAt, now);
+      if (newStreak >= 3) newBadges = unlockBadge(newBadges, 'streak-3');
+      if (newStreak >= 7) newBadges = unlockBadge(newBadges, 'streak-7');
+
       const updated: Score = {
         ...prev,
         xp: newXp,
         level: newLevel,
+        streak: newStreak,
         badges: newBadges,
-        lastActivityAt: new Date(),
+        lastActivityAt: now,
       };
       saveToStorage(updated);
 

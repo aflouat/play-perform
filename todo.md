@@ -29,7 +29,7 @@ Fichier unique de pilotage : **en cours**, **backlog** et **bugs connus** (rempl
 ## Backlog — Admin / Qualité
 - [ ] Admin : liste des élèves avec suivi de progression
 - [ ] Revue façon Anki après chaque quiz avec erreur ; SRS : intervalle × facteur de facilité (réussite parfaite ×2-3, lacunes → 1 jour)
-- [ ] Streak quotidien visible sur la page d'accueil
+- [ ] Badge « Rapide ! » (`fast-learner`) défini mais jamais débloqué
 - [ ] Tests e2e Playwright à jour
 - feature en tant que joueur sur une compétence j'ai une espece de barre d'avancement avec mon niveau actuel vs niveau de maitrise(5)
 - tableau de board du jouer avec une carte ludique sur les compétence dans son programme sous forme d'un chateau ou ville avec infra, au click sur une compétence il visualise son niveau actuel  + une synthese sur les revisions passés et à venir avec objectif de date  

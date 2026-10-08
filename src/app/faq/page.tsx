@@ -70,7 +70,7 @@ export default function FaqPage() {
           </Q>
           <Q q="Comment progresser en rang ?"><strong>100 XP = 1 rang</strong>. L&apos;XP est attaché au compte de l&apos;élève. La barre dorée dans le header montre la progression vers le rang suivant. XP décroissants selon le temps (sablier 30s).</Q>
           <Q q="Quels badges peut-on débloquer ?">
-            <Table rows={[['Badge','Condition'],['🎯 Premier Quiz','Premier gain d\'XP'],['⭐ Quiz parfait','Toutes correctes en une session'],['🔍 Chercheur·euse','500 XP cumulés']]} />
+            <Table rows={[['Badge','Condition'],['🎯 Premier Quiz','Premier gain d\'XP'],['⭐ Quiz parfait','Toutes correctes en une session'],['🔥 3 jours de suite','3 jours consécutifs d\'activité'],['⚡ Une semaine !','7 jours consécutifs'],['🔍 Chercheur·euse','500 XP cumulés']]} />
           </Q>
         </Section>
 

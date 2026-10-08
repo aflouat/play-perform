@@ -40,3 +40,14 @@ export function saveToStorage(score: Score): void {
   if (typeof window === 'undefined') return;
   localStorage.setItem(STORAGE_KEY(score.userId), JSON.stringify(score));
 }
+
+const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/** Consecutive-days streak after an activity at `now`, given the previous streak and last activity. */
+export function computeStreak(streak: number, lastActivityAt: Date | null, now: Date): number {
+  if (!lastActivityAt) return 1;
+  const gapDays = Math.round((startOfDay(now) - startOfDay(lastActivityAt)) / DAY_MS);
+  if (gapDays <= 0) return Math.max(streak, 1);
+  return gapDays === 1 ? streak + 1 : 1;
+}
