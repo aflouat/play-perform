@@ -87,4 +87,25 @@ describe('release-tag', () => {
     expect(result.status).toBe(1);
     expect(result.stderr).toMatch(/pas commit/i);
   });
+
+  it('persists the release note in the generated file and syncs the README title in the release commit', () => {
+    writeFileSync(path.join(repo, 'README.md'), '#  Demo · v0.1.0\n');
+    git('add', '.'); git('commit', '-q', '-m', 'docs: readme');
+    commit('feat: nouvelle fonction');
+    const result = release('minor', '--no-db');
+    expect(result.status).toBe(0);
+    const notes = JSON.parse(readFileSync(path.join(repo, 'src/lib/release-notes-generated.json'), 'utf8')) as { version: string; title: string; changes: string[] }[];
+    expect(notes[0]).toMatchObject({ version: '0.2.0', title: 'nouvelle fonction' });
+    expect(notes[0].changes).toContain('feat : nouvelle fonction');
+    expect(readFileSync(path.join(repo, 'README.md'), 'utf8')).toContain('v0.2.0');
+    expect(git('show', '--name-only', '--pretty=format:', 'HEAD')).toContain('src/lib/release-notes-generated.json');
+    expect(git('status', '--porcelain')).toBe('');
+  });
+
+  it('warns but still succeeds when the database is not configured', () => {
+    commit('fix: x');
+    const result = release('patch');
+    expect(result.status).toBe(0);
+    expect(result.stderr + result.stdout).toMatch(/non insérée en base/);
+  });
 });

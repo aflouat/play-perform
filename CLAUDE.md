@@ -91,3 +91,5 @@ Jamais de code sans lire `todo.md` d'abord. Jamais de modification sans mettre �
 ## Règles de mise à jour des fichiers
 `README.md` : mis à jour à chaque fin d'Epic pour refléter l'état tech + features
 `todo.md` : vivant ; le RESP gère les intentions, la section « En cours » est effacée quand l'Epic est finie, les bugs corrigés sont supprimés
+
+le contenu de la page /releases doit etre actualisée et persistée avec le script npm release:tag pour maintenir la release note. 

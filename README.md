@@ -144,7 +144,8 @@ landing ──► skills    (compétences, niveaux 1 → 5)
 - Version unique dans `package.json`, affichée en bas de page (lien vers `/releases`)
 - `npm run release:tag -- minor --dry-run` : prévisualise la prochaine version et la note de version (commits depuis le dernier tag, groupés feat / fix / …)
 - `npm run release:tag -- minor` : bump + `CHANGELOG.md` + commit + tag `vX.Y.Z` · `--push` pour publier · `--github` pour une Release GitHub (CLI `gh`)
-- `npm run release -- --title … --changes …` : note de version en base (page `/releases`)
+- `release:tag` persiste aussi la note affichée sur `/releases` : `src/lib/release-notes-generated.json` (commité avec la release), titre du README synchronisé, insertion dans `release_notes` si `SUPABASE_SERVICE_ROLE_KEY` est présent (`--no-db` pour désactiver)
+- `npm run release -- --title … --changes …` : note rédigée à la main en base (cas particulier)
 
 ## Déploiement
 

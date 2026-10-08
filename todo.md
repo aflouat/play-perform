@@ -39,6 +39,7 @@ Fichier unique de pilotage : **en cours**, **backlog** et **bugs connus** (rempl
 - [ ] Dashboard parent avec suivi de chaque élève
 - [ ] Export portfolio de compétences d'un élève
 - c'est un SAAS de centre de formation pour vendre le modele en tant que franchise
+- [ ] mise en place de backoffice pour le centre de formation
 
 ## Bugs connus (supprimer une fois corrigé)
 _Aucun bug ouvert._ (profiles/scores, `/api/releases` et hydration `/mots` `/keyboard` corrigés, à livrer en 0.7.1 ; migrations prod appliquées le 2026-10-07.)
