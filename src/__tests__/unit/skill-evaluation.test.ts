@@ -4,7 +4,7 @@ import {
 } from '@/modules/skills';
 
 const evalOf = (level: 1 | 2 | 3 | 4 | 5, status: SkillEvaluation['status']): SkillEvaluation => ({
-  id: `e${level}${status}`, profileId: 'p1', skillId: 'logique', level, prompt: 'p', answer: 'a', status,
+  id: `e${level}${status}`, profileId: 'p1', organizationId: 'org', skillId: 'logique', level, prompt: 'p', answer: 'a', status,
   examinerComment: null, createdAt: '2026-10-08T10:00:00Z', correctedAt: null,
 });
 

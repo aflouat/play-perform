@@ -3,7 +3,7 @@ import {
 } from '@/modules/skills';
 
 const enrollment = (status: SkillEnrollment['status'], skillId = 'logique'): SkillEnrollment => ({
-  id: 'e1', profileId: 'p1', skillId, motivation: 'm'.repeat(40), status, centerComment: null, createdAt: '2026-10-08T10:00:00Z', decidedAt: null,
+  id: 'e1', profileId: 'p1', organizationId: 'org', skillId, motivation: 'm'.repeat(40), status, centerComment: null, createdAt: '2026-10-08T10:00:00Z', decidedAt: null,
 });
 
 describe('validateEnrollmentRequest', () => {

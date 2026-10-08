@@ -6,6 +6,8 @@ export type EvaluationStatus = 'pending' | 'passed' | 'failed';
 export interface SkillEvaluation {
   id: string;
   profileId: string;
+  /** Training centre whose examiners correct it */
+  organizationId: string;
   skillId: string;
   level: SkillLevelNumber;
   prompt: string;

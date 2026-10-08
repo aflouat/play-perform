@@ -13,6 +13,14 @@ Fichier unique de pilotage : **en cours**, **backlog** et **bugs connus** (rempl
 - [ ] Rôle examinateur dédié (aujourd'hui = admin `ADMIN_EMAILS`) ; contenu quiz/flashcards pour « Logique » et « Méthode » (évaluation seule pour l'instant)
 - [ ] Notifier l'élève / le parent quand une évaluation est corrigée
 
+## Franchise / multi-organisations (voir docs/saas-franchise.md)
+- [ ] **Avant le 1er centre externe** : limiter les politiques `anon` (profiles, scores, badges, quiz_answers, keyboard_progress) aux lignes de la société mère et synchroniser les scores des autres centres via API (jeton apprenant)
+- [ ] Catalogue de compétences, questions, parcours et tarifs **par organisation** (Étape 3 : catalogue en base)
+- [ ] Libre-service : page publique d'un centre + code du centre → l'apprenant crée son profil et demande ses cours
+- [ ] Nommer un responsable pour la société mère elle-même (aujourd'hui : super admin via `ADMIN_EMAILS`) ; ajouter `platform_admins` côté UI
+- [ ] Marque par centre (logo, couleurs, sous-domaine) ; facturation par centre
+- [ ] RLS sur `parcours` / `parcours_enrollments` / `questions` / `release_notes`
+
 ## Release, abonnements, déploiement
 - [ ] **Définir `LEARNER_TOKEN_SECRET`** (Vercel) : signe les sessions apprenant ; à défaut, la clé service role sert de secret
 - [ ] **Web Push en prod** : variables VAPID + `CRON_SECRET` sur Vercel, planificateur toutes les 5 min vers `/api/push/dispatch` (procédure : `docs/deploiement.md`)

@@ -7,6 +7,8 @@ export type EnrollmentStatus = 'pending' | 'approved' | 'rejected';
 export interface SkillEnrollment {
   id: string;
   profileId: string;
+  /** Training centre the learner belongs to (the one that decides) */
+  organizationId: string;
   skillId: string;
   motivation: string;
   status: EnrollmentStatus;

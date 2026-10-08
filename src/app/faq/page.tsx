@@ -106,6 +106,7 @@ export default function FaqPage() {
 
         <Section title="8. Accès enseignant et apprenant">
           <Q q="Qui crée les comptes ?">L&apos;<strong>enseignant</strong> (ou un tuteur) s&apos;inscrit, ajoute ses élèves et génère pour chacun un <strong>code d&apos;accès</strong>.</Q>
+          <Q q="Qui fait quoi dans un centre de formation ?">Un <strong>centre de formation</strong> a ses élèves et ses <strong>enseignants</strong>. Les <strong>examinateurs</strong> corrigent les évaluations ; un examinateur peut être rattaché à plusieurs centres. Le <strong>responsable du centre</strong> recrute son équipe.</Q>
           <Q q="Comment un apprenant se connecte-t-il ?">Dans l&apos;<strong>Espace apprenant</strong>, il saisit son code à 8 caractères et retrouve ses compétences. Il n&apos;a accès qu&apos;à son propre profil.</Q>
           <Q q="Comment s&apos;inscrire à un cours ?">Depuis la ville des compétences, l&apos;apprenant lit la <strong>fiche du cours</strong> puis envoie une <strong>demande d&apos;inscription</strong> avec ses motivations au centre de formation. Le cours s&apos;ouvre une fois la demande acceptée.</Q>
         </Section>

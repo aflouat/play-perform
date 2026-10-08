@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getServerSupabaseUrl } from '@/lib/db/client';
 import { generateAccessCode } from '@/lib/access-code';
+import { getAccessContext } from '@/lib/access-context';
+import { DEFAULT_ORGANIZATION_ID, studentOrganization } from '@/modules/organizations';
 
 const URL = getServerSupabaseUrl();
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? '';
@@ -38,7 +40,7 @@ async function createSupportRecords(db: ReturnType<typeof dbForUser>, student: R
     updated_at: new Date().toISOString(),
   };
 
-  const profile = pickFields(student, ['id', 'parent_id', 'name', 'emoji', 'gradient', 'grade', 'tagline', 'age', 'mode']);
+  const profile = pickFields(student, ['id', 'parent_id', 'organization_id', 'name', 'emoji', 'gradient', 'grade', 'tagline', 'age', 'mode']);
 
   // profiles must exist before scores (FK). Older databases lack gradient/tagline/age: retry with base columns.
   let { error } = await db.from('profiles').upsert(profile, { onConflict: 'id' });
@@ -64,7 +66,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   if (!userId) return NextResponse.json({ error: 'Non autorisé.' }, { status: 401 });
 
   const body = await req.json() as Record<string, unknown>;
-  const payload = { ...body, parent_id: userId, access_code: generateAccessCode() };
+  const ctx = await getAccessContext(req);
+  const organization_id = ctx ? studentOrganization(ctx) : DEFAULT_ORGANIZATION_ID;
+  const payload = { ...body, parent_id: userId, access_code: generateAccessCode(), organization_id };
   const db = dbForUser(token);
 
   async function insertStudent(payloadData: Record<string, unknown>) {
@@ -77,7 +81,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
     student = await insertStudent(payload);
   } catch {
-    const { mode: _m, learning_mode: _lm, access_code: _ac, ...base } = payload as Record<string, unknown>;
+    const { mode: _m, learning_mode: _lm, access_code: _ac, organization_id: _org, ...base } = payload as Record<string, unknown>;
     try {
       student = await insertStudent(base);
     } catch (fallbackError: unknown) {

@@ -1,4 +1,6 @@
 /** Server-only API of the skills module (used by API routes). */
+export { organizationOfEvaluation } from './infra/evaluation-repository';
+export { organizationOfEnrollment } from './infra/enrollment-repository';
 export {
   listEvaluationsForProfile, listPendingEvaluations, createEvaluation, correctEvaluation,
 } from './infra/evaluation-repository';

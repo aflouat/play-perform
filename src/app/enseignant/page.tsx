@@ -7,6 +7,7 @@ import { createClient } from '@supabase/supabase-js';
 import type { DbStudent } from '@/lib/db';
 import { StudentCard } from '@/components/enseignant/StudentCard';
 import { apiFetchStudents } from '@/lib/students-api';
+import { TeamLinks } from '@/modules/organizations';
 
 function getClient() {
   return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL ?? '', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '');
@@ -37,6 +38,8 @@ export default function TeacherPage() {
           <button onClick={() => getClient().auth.signOut().then(() => router.push('/'))}
             className="text-xs text-slate-400 hover:text-rose-500 font-semibold transition-colors">Déconnexion</button>
         </div>
+
+        <TeamLinks />
 
         <div className="space-y-3">
           {students.map((s) => <StudentCard key={s.id} student={s} onDelete={handleDelete} onUpdated={handleUpdated} />)}

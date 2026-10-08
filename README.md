@@ -8,7 +8,8 @@ Plateforme d'apprentissage ludique pour les ados & jeunes. L'enseignant (ou le t
 |---|---|
 | Enseignant | S'inscrit sur `/auth`, ajoute ses élèves et génère leur code d'accès sur `/enseignant` |
 | Apprenant | Saisit son code (8 caractères) sur `/apprenant` → session signée de 30 jours sur son appareil ; accède à ses compétences uniquement |
-| Centre de formation / examinateur | Email dans `ADMIN_EMAILS` → accès `/admin/*` : décide des inscriptions aux cours, corrige les évaluations |
+| Super admin (société mère) | Email dans `ADMIN_EMAILS` ou table `platform_admins` → crée les centres, voit tout |
+| Responsable de centre / enseignant / examinateur | Rôles dans `memberships` (un examinateur peut appartenir à plusieurs centres) : le centre décide des inscriptions de ses élèves, l'examinateur corrige leurs évaluations — voir [docs/saas-franchise.md](docs/saas-franchise.md) |
 
 Avant de travailler un cours, l'apprenant lit sa **fiche** et présente une **demande d'inscription** avec ses motivations ; le centre l'accepte ou la refuse. Un niveau déjà acquis (test de niveau) vaut inscription.
 
@@ -23,7 +24,8 @@ Avant de travailler un cours, l'apprenant lit sa **fiche** et présente une **de
 | `/enseignant`, `/enseignant/new` | Espace enseignant : gestion des élèves (ajout / édition / suppression) et de leur code d'accès (`/parent` redirige ici) |
 | `/apprenant` | Espace apprenant : saisie du code d'accès |
 | `/competences/[skillId]/fiche` | Fiche du cours + demande d'inscription (motivations) |
-| `/admin/inscriptions` | Centre de formation : accepter / refuser les demandes d'inscription |
+| `/admin/inscriptions` | Centre : accepter / refuser les demandes d'inscription de ses élèves |
+| `/admin/organisations` | Super admin : créer des centres ; responsable de centre : recruter enseignants et examinateurs |
 | `/home` | Dashboard quiz eleve (toutes matières) |
 | `/quiz/[subject]` | Quiz interactif avec sablier 30s et XP décroissants |
 | `/keyboard` | Jeu d'enfant initié — Lettres / Mots / Sciences /Mots illustrés FR/EN/ES|
@@ -143,11 +145,13 @@ Chaque module expose une seule API publique (`index.ts`) ; les autres modules n'
 ```
 landing ──► skills    (compétences, niveaux 1 → 5)
    ├──────► quizzes   (tests de positionnement, estimateStartLevel)
-   └──────► pricing   (abonnements, éditables en admin)
+   ├──────► pricing   (abonnements, éditables en admin)
+   └──────► (hors module) organizations : qui peut décider / corriger / recruter, par centre
 ```
 - `landing` : page d'accueil visiteur — hero + CTA, choix du mode, choix de la compétence, test de niveau (5 questions), résultat sur le chemin 1 → 5, section enseignants. Résultats sans compte en localStorage (`pp:placements`).
 - `skills` : 9 compétences (dont « Claude Platform (docs) ») collège / lycée (seed local), libellés des 5 niveaux, **niveau d'avancement par élève et par compétence** (ville des compétences, objectifs de date, planning de révisions repris du SRS) (l'XP reste au compte, affiché comme « Rang »), **plan de travail** par compétence (effort quotidien en minutes → date de victoire, ou date visée → minutes par jour) et **rappels quotidiens** à l'heure choisie (**Web Push**, y compris application fermée : abonnements `push_subscriptions`, envoi par `GET /api/push/dispatch` appelé toutes les 5 min ; repli sur les notifications du navigateur application ouverte), activités pour progresser (quiz, flashcards depuis les banques de questions existantes, évaluation rédigée corrigée par un examinateur). **Niveaux persistés** en base (table `skill_levels`, `GET/PUT /api/skill-levels`, jamais abaissés) et synchronisés avec l'appareil à l'entrée dans `/competences` ; le résultat du test visiteur devient le niveau de départ du premier profil qui ouvre ses compétences. API : `GET/POST /api/skill-enrollments` + `PATCH /:id` (admin) ; `POST /api/learner/login` ; `POST /api/students/:id/access-code` ; `GET/POST /api/skill-evaluations`, `PATCH /api/skill-evaluations/:id` (admin, valider relève aussi le niveau en base) ; tables `skill_evaluations`, `skill_enrollments`, `skill_levels`. `server.ts` = accès base (API routes uniquement).
 - `quizzes` : 45 questions de positionnement (9 × 5 niveaux), niveau de départ = 1 + bonnes réponses (max 5).
+- `organizations` : société mère + centres de formation (franchise), membres et rôles (`org_admin`, `teacher`, `examiner`), permissions pures testées ; routes `GET/POST /api/organizations`, `GET/POST/DELETE /api/organizations/:id/members`, `GET /api/me` ; `server.ts` = accès base.
 - `pricing` : abonnements 1 mois / 1 an / à vie (table `pricing_plans`), section « Nos abonnements » sur l'accueil, édition dans `/admin/pricing`. API : `GET /api/pricing` (public), `PUT /api/pricing/:id` (admin). `index.ts` = API client, `server.ts` = accès base (API routes uniquement).
 
 ## Versions et releases
