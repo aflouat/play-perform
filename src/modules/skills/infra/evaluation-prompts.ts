@@ -51,6 +51,13 @@ const PROMPTS: Record<string, readonly string[]> = {
     'Voici une affirmation : « Tous les élèves de la classe aiment les maths ». Comment montrer qu’elle est fausse ?',
     'Construis un raisonnement par l’absurde pour montrer qu’il n’existe pas de plus grand nombre entier.',
   ],
+  'claude-platform-docs': [
+    'Explique avec tes mots ce qu’est une clé d’API et où on la crée pour utiliser Claude.',
+    'Décris les éléments d’une requête vers l’API Messages : l’endpoint, les en-têtes obligatoires et les paramètres principaux.',
+    'Explique à quoi servent le champ stop_reason et deux de ses valeurs, et ce que ton code doit faire pour chacune.',
+    'Explique comment fonctionne une boucle d’appel d’outil (tool use) : qui fait quoi, et dans quel ordre.',
+    'Tu dois réduire le coût d’un assistant qui renvoie toujours le même long contexte. Explique le cache de prompt : où placer le point de cache, le TTL, les coûts, et ce qui l’invalide.',
+  ],
   methode: [
     'Décris comment tu prépares ton sac et ton bureau pour faire tes devoirs.',
     'Explique comment tu organises ta semaine pour réviser un contrôle dans cinq jours.',

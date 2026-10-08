@@ -1,6 +1,7 @@
 import type { QuizDifficulty, QuizQuestion, Subject } from '@/types';
 import { getQuestions } from '@/lib/question-banks';
 import type { SkillLevelNumber } from '../domain/skill';
+import { CLAUDE_PLATFORM_BANK } from './claude-platform-bank';
 
 /** Skill → existing question bank. Skills without a bank (logic, method) only offer the evaluation. */
 const SKILL_SUBJECT: Record<string, Subject> = {
@@ -17,6 +18,13 @@ export interface Flashcard {
   front: string;
   back: string;
   explanation: string;
+}
+
+/** Skills with their own question bank (no matching school subject). */
+const CUSTOM_BANKS: Record<string, QuizQuestion[]> = { 'claude-platform-docs': CLAUDE_PLATFORM_BANK };
+
+export function hasQuestionBank(skillId: string): boolean {
+  return skillId in CUSTOM_BANKS || skillId in SKILL_SUBJECT;
 }
 
 export function getSkillSubject(skillId: string): Subject | null {
@@ -42,9 +50,9 @@ export function pickSkillQuestions(
   skillId: string, level: SkillLevelNumber, count: number, random: () => number = Math.random,
 ): QuizQuestion[] {
   const subject = getSkillSubject(skillId);
-  if (!subject) return [];
+  const bank = CUSTOM_BANKS[skillId] ?? (subject ? getQuestions(subject) : []);
   const target = difficultyForLevel(level);
-  const byCloseness = shuffle(getQuestions(subject), random)
+  const byCloseness = shuffle(bank, random)
     .sort((a, b) => Math.abs(a.difficulty - target) - Math.abs(b.difficulty - target));
   return byCloseness.slice(0, count);
 }

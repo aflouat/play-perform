@@ -4,11 +4,13 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { SkillsDashboard } from '@/modules/skills';
 import { useActiveProfileId, isProfileReady } from '@/hooks/useActiveProfileId';
+import { useSkillBootstrap } from '@/hooks/useSkillBootstrap';
 
 export default function CompetencesPage() {
   const router = useRouter();
   const profileId = useActiveProfileId();
   useEffect(() => { if (profileId === '__none__') router.replace('/'); }, [profileId, router]);
+  useSkillBootstrap(profileId);
   if (!isProfileReady(profileId)) {
     return <div className="min-h-screen flex items-center justify-center text-slate-400 text-sm">Chargement…</div>;
   }

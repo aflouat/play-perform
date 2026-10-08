@@ -18,4 +18,6 @@ export const SKILLS_SEED: readonly Skill[] = [
     description: 'Repérer des suites, déduire et argumenter.' },
   { id: 'methode', name: 'Méthode de travail', domain: 'Méthode', emoji: '🗂️',
     description: 'Apprendre, réviser et s’organiser efficacement.' },
+  { id: 'claude-platform-docs', name: 'Claude Platform (docs)', domain: 'IA et développement', emoji: '🤖',
+    description: "Utiliser l'API Claude : messages, outils, cache de prompt, limites et bonnes pratiques." },
 ];

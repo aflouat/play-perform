@@ -23,6 +23,11 @@ function parse(raw: string | null): Record<string, SavedPlacement> {
   try { return JSON.parse(raw) as Record<string, SavedPlacement>; } catch { return {}; }
 }
 
+/** Saved results by skill id (non-reactive read). */
+export function readSavedPlacements(): Record<string, SavedPlacement> {
+  return parse(readRaw());
+}
+
 export function savePlacement(skillId: string, result: PlacementResult): void {
   const all = parse(readRaw());
   all[skillId] = { startLevel: result.startLevel, correct: result.correct, total: result.total, testedAt: new Date().toISOString() };

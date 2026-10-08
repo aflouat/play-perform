@@ -1,10 +1,10 @@
 import { getSkills, getSkillById, SKILL_LEVELS } from '@/modules/skills';
 
 describe('skills module', () => {
-  it('exposes 8 skills with unique ids', () => {
+  it('exposes 9 skills with unique ids', () => {
     const ids = getSkills().map((s) => s.id);
-    expect(ids).toHaveLength(8);
-    expect(new Set(ids).size).toBe(8);
+    expect(ids).toHaveLength(9);
+    expect(new Set(ids).size).toBe(9);
   });
 
   it('finds a skill by id', () => {

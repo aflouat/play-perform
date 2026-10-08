@@ -10,7 +10,7 @@
 
 ## Structure
 - `domain/skill.ts` — entités et niveaux (pur)
-- `infra/skills-seed.ts` — 8 compétences collège / lycée
+- `infra/skills-seed.ts` — 9 compétences (collège / lycée + Claude Platform)
 
 ## À venir (Étape 3)
 `SkillLink` (réseau étoilé), `SkillPath` / `Level` / `Step`, `Progress`, événements `StepCompleted`, `LevelCompleted`.

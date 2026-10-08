@@ -1,6 +1,7 @@
 import { getServerClient } from '@/lib/db/client';
 import type { EvaluationCorrection, EvaluationStatus, EvaluationSubmission, SkillEvaluation } from '../domain/evaluation';
 import type { SkillLevelNumber } from '../domain/skill';
+import { raiseLevel } from './levels-repository';
 
 interface Row {
   id: string; profile_id: string; skill_id: string; level: number; prompt: string; answer: string;
@@ -55,5 +56,9 @@ export async function correctEvaluation(id: string, correction: EvaluationCorrec
     .update({ status: correction.status, examiner_comment: correction.comment || null, corrected_at: new Date().toISOString() })
     .eq('id', id).eq('status', 'pending').select().maybeSingle();
   if (error) throw new Error(error.message);
-  return data ? toEvaluation(data as Row) : null;
+  if (!data) return null;
+  const evaluation = toEvaluation(data as Row);
+  // A validated evaluation raises the persisted level right away (the learner's device catches up on next visit)
+  if (evaluation.status === 'passed') await raiseLevel(evaluation.profileId, evaluation.skillId, Math.min(5, evaluation.level + 1) as SkillLevelNumber);
+  return evaluation;
 }

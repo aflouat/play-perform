@@ -4,9 +4,10 @@ import { useState } from 'react';
 import type { QuizQuestion } from '@/types';
 import type { LearningMode } from '@/lib/learning-mode';
 import { getSkillById } from '../infra/skills-repository';
+import { persistSkillLevel } from '../application/skill-sync';
 import { advanceSkillLevel, setSkillLevel, useSkillLevels } from '../application/skill-progress';
 import { FLASHCARDS_XP, QUIZ_LENGTH, QUIZ_PASS_XP, isQuizPassed, type SkillActivity } from '../domain/activity';
-import { getSkillSubject, pickSkillQuestions, toFlashcards } from '../infra/skill-content';
+import { hasQuestionBank, pickSkillQuestions, toFlashcards } from '../infra/skill-content';
 import { SkillLevelMeter } from './SkillLevelMeter';
 import { SkillQuiz } from './SkillQuiz';
 import { Flashcards } from './Flashcards';
@@ -33,7 +34,7 @@ export function SkillActivityView({ skillId, profileId, mode, addXp, triggerGain
   const level = levels[skillId] ?? null;
   const [activity, setActivity] = useState<SkillActivity | null>(null);
   const [round, setRound] = useState(0);
-  const hasBank = getSkillSubject(skillId) !== null;
+  const hasBank = hasQuestionBank(skillId);
 
   // Random draw happens in the click handler, never during render
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
@@ -44,6 +45,7 @@ export function SkillActivityView({ skillId, profileId, mode, addXp, triggerGain
     if (level === null) setSkillLevel(profileId, skillId, 1);
     if (isQuizPassed(correct, total)) {
       advanceSkillLevel(profileId, skillId);
+      persistSkillLevel(profileId, skillId);
       addXp(QUIZ_PASS_XP, 'quiz-perfect'); triggerGain(QUIZ_PASS_XP);
     }
   }

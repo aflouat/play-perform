@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { SkillActivityView } from '@/modules/skills';
 import { useActiveProfileId, isProfileReady } from '@/hooks/useActiveProfileId';
+import { useSkillBootstrap } from '@/hooks/useSkillBootstrap';
 import { useScore } from '@/hooks/useScore';
 import { useLearningMode } from '@/hooks/useLearningMode';
 import { XpGainToast, useXpGain } from '@/components/ui/XpGainToast';
@@ -13,6 +14,7 @@ export default function SkillPage() {
   const router = useRouter();
   const profileId = useActiveProfileId();
   useEffect(() => { if (profileId === '__none__') router.replace('/'); }, [profileId, router]);
+  useSkillBootstrap(profileId);
   const { addXp } = useScore(profileId);
   const { mode } = useLearningMode(isProfileReady(profileId) ? profileId : 'demo-quiz');
   const { lastGain, triggerGain } = useXpGain();

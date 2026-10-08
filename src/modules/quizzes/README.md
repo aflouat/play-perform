@@ -10,6 +10,6 @@
 
 ## Structure
 - `domain/placement.ts` — règles pures
-- `infra/placement-bank-{a,b}.ts` — 40 questions (8 compétences × 5 niveaux), reliées aux compétences par `skillId`
+- `infra/placement-bank-{a,b,c}.ts` — 45 questions (9 compétences × 5 niveaux), reliées aux compétences par `skillId`
 
 Ne dépend d'aucun autre module. Les quiz par matière existants (`src/lib/question-banks`) y seront migrés plus tard.
