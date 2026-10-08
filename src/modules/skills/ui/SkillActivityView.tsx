@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import type { QuizQuestion } from '@/types';
 import type { LearningMode } from '@/lib/learning-mode';
+import { recordSkillAnswer } from '../infra/skill-reviews';
 import { getSkillById } from '../infra/skills-repository';
 import { persistSkillLevel } from '../application/skill-sync';
 import { advanceSkillLevel, setSkillLevel, useSkillLevels } from '../application/skill-progress';
@@ -80,9 +81,10 @@ export function SkillActivityView({ skillId, profileId, mode, addXp, triggerGain
       </div>
 
       {activity === 'quiz' && questions.length > 0 && (
-        <SkillQuiz key={round} questions={questions} mode={mode} onFinish={finishQuiz} onCorrect={() => undefined} />
+        <SkillQuiz key={round} questions={questions} mode={mode} onFinish={finishQuiz} onAnswered={(q, ok) => recordSkillAnswer(profileId, q, ok)} />
       )}
-      {activity === 'flashcards' && questions.length > 0 && <Flashcards key={round} cards={toFlashcards(questions)} onFinish={finishCards} />}
+      {activity === 'flashcards' && questions.length > 0 && <Flashcards key={round} cards={toFlashcards(questions)} onFinish={finishCards}
+        onCardSeen={(card, known) => { const q = questions.find((x) => x.id === card.id); if (q) recordSkillAnswer(profileId, q, known); }} />}
       {activity === 'evaluation' && <EvaluationPanel profileId={profileId} skillId={skillId} level={level} />}
     </div>
   );

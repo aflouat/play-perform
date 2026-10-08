@@ -13,7 +13,7 @@ export function Hero({ onStart }: { onStart: () => void }) {
       <div aria-hidden="true" className="absolute inset-0 opacity-20 [background-image:radial-gradient(white_1px,transparent_1px)] [background-size:28px_28px]" />
       <div className="relative mx-auto max-w-3xl px-4 pt-14 pb-16 sm:pt-20 sm:pb-24 text-center">
         <p className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-bold tracking-wide uppercase">
-          ✨ Play Perform · Centre de formation
+          ✨ Play Perform · Centre de formation pour tous
         </p>
         <h1 className="mt-5 text-3xl sm:text-5xl font-black leading-tight tracking-tight">
           Progresse à ton rythme,<br className="hidden sm:block" /> compétence par compétence.

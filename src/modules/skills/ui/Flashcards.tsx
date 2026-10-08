@@ -5,12 +5,14 @@ import type { Flashcard } from '../infra/skill-content';
 
 interface Props {
   cards: Flashcard[];
+  /** Called with each card and whether it was known (to schedule its review) */
+  onCardSeen: (card: Flashcard, known: boolean) => void;
   /** Called once when the last card has been seen */
   onFinish: (known: number, total: number) => void;
 }
 
 /** Flip-through deck: read the question, reveal the answer, say if it was known. */
-export function Flashcards({ cards, onFinish }: Props) {
+export function Flashcards({ cards, onFinish, onCardSeen }: Props) {
   const [index, setIndex] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const [known, setKnown] = useState(0);
@@ -18,6 +20,7 @@ export function Flashcards({ cards, onFinish }: Props) {
   const card = cards[index];
 
   function next(wasKnown: boolean) {
+    onCardSeen(card, wasKnown);
     const total = known + (wasKnown ? 1 : 0);
     setKnown(total);
     setRevealed(false);

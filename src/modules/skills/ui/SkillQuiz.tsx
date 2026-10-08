@@ -11,11 +11,12 @@ interface Props {
   mode: LearningMode;
   /** Called once, when the last answer is given */
   onFinish: (correct: number, total: number) => void;
-  onCorrect: () => void;
+  /** Called with each answered question (to schedule its review) */
+  onAnswered: (question: QuizQuestion, correct: boolean) => void;
 }
 
 /** One-shot quiz on a skill: pass it (4/5) to move up a level. */
-export function SkillQuiz({ questions, mode, onFinish, onCorrect }: Props) {
+export function SkillQuiz({ questions, mode, onFinish, onAnswered }: Props) {
   const [index, setIndex] = useState(0);
   const [correct, setCorrect] = useState(0);
   const [done, setDone] = useState(false);
@@ -24,7 +25,8 @@ export function SkillQuiz({ questions, mode, onFinish, onCorrect }: Props) {
     const q = questions[index];
     const ok = optionId === q.correctOptionId;
     const total = correct + (ok ? 1 : 0);
-    if (ok) { setCorrect(total); onCorrect(); }
+    if (ok) setCorrect(total);
+    onAnswered(q, ok);
     setTimeout(() => {
       if (index >= questions.length - 1) { setDone(true); onFinish(total, questions.length); }
       else setIndex(index + 1);

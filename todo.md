@@ -44,3 +44,6 @@ Fichier unique de pilotage : **en cours**, **backlog** et **bugs connus** (rempl
 
 ## Bugs connus (supprimer une fois corrigé)
 _Aucun bug ouvert._ (profiles/scores, `/api/releases` et hydration `/mots` `/keyboard` corrigés, à livrer en 0.7.1 ; migrations prod appliquées le 2026-10-07.)
+erreur serveur lors de la soumission d'une reponse a un examinateur skill-evaluations 500 (error)
+- lentete et le footer doivent etre visible sur toutes pages
+- l'acces parent a remplacer par acces enseignant pour ajouter ses eleves et leur donner un acces

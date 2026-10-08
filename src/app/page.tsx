@@ -49,7 +49,7 @@ function ProfileCard({ profile, onSelect }: { profile: DisplayProfile; onSelect:
         <div className="text-slate-500 text-sm">{profile.tagline}</div>
         <div className="flex items-center gap-2 mt-1.5">
           <div className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 border border-amber-200">
-            <span className="text-amber-600 text-xs font-bold">⭐ Niv.{score.level}</span>
+            <span className="text-amber-600 text-xs font-bold">⭐ Rang {score.level}</span>
             <span className="text-amber-400 text-xs">· {score.xp} XP</span>
           </div>
           <span className="text-xs text-slate-400">{profile.learningMode === 'assisted' ? '🤝 Assisté' : '🚀 Avancé'}</span>

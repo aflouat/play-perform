@@ -45,12 +45,17 @@ function shuffle<T>(items: T[], random: () => number): T[] {
   return copy;
 }
 
+/** Every question of the skill's bank (SRS reviews are tracked on these). */
+export function getSkillBank(skillId: string): QuizQuestion[] {
+  const subject = getSkillSubject(skillId);
+  return CUSTOM_BANKS[skillId] ?? (subject ? getQuestions(subject) : []);
+}
+
 /** Questions of the skill's subject; the level's difficulty first, then the closest ones. */
 export function pickSkillQuestions(
   skillId: string, level: SkillLevelNumber, count: number, random: () => number = Math.random,
 ): QuizQuestion[] {
-  const subject = getSkillSubject(skillId);
-  const bank = CUSTOM_BANKS[skillId] ?? (subject ? getQuestions(subject) : []);
+  const bank = getSkillBank(skillId);
   const target = difficultyForLevel(level);
   const byCloseness = shuffle(bank, random)
     .sort((a, b) => Math.abs(a.difficulty - target) - Math.abs(b.difficulty - target));
