@@ -94,8 +94,9 @@ describe('release-tag', () => {
     commit('feat: nouvelle fonction');
     const result = release('minor', '--no-db');
     expect(result.status).toBe(0);
-    const notes = JSON.parse(readFileSync(path.join(repo, 'src/lib/release-notes-generated.json'), 'utf8')) as { version: string; title: string; changes: string[] }[];
-    expect(notes[0]).toMatchObject({ version: '0.2.0', title: 'nouvelle fonction' });
+    const notes = JSON.parse(readFileSync(path.join(repo, 'src/lib/release-notes-generated.json'), 'utf8')) as { version: string; title: string; summary: string; changes: string[] }[];
+    expect(notes[0]).toMatchObject({ version: '0.2.0', title: 'Version 0.2.0' })
+    expect(notes[0].summary).toContain('nouvelle fonction');
     expect(notes[0].changes).toContain('feat : nouvelle fonction');
     expect(readFileSync(path.join(repo, 'README.md'), 'utf8')).toContain('v0.2.0');
     expect(git('show', '--name-only', '--pretty=format:', 'HEAD')).toContain('src/lib/release-notes-generated.json');
