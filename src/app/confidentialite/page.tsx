@@ -31,8 +31,10 @@ export default function PrivacyPage() {
         <ul className="list-disc space-y-1 pl-5">
           <li>Adulte : adresse e-mail et mot de passe (chiffré par le service d&apos;authentification).</li>
           <li>Jeune : prénom, âge, classe, avatar, XP, série de jours, niveaux par compétence.</li>
+          <li>Accès apprenant : un code à 8 caractères, régénérable par l&apos;enseignant.</li>
+          <li>Cours : les demandes d&apos;inscription (motivations) et les réponses du centre de formation.</li>
           <li>Évaluations : les réponses rédigées, lues par un examinateur, avec son commentaire.</li>
-          <li>Sur l&apos;appareil (localStorage) : progression, planning de révisions, objectifs, résultats du test de niveau fait sans compte.</li>
+          <li>Sur l&apos;appareil (localStorage) : progression, planning de révisions, plans de travail et heures de rappel, résultats du test de niveau fait sans compte. Les rappels sont des notifications du navigateur, que tu peux refuser ou retirer à tout moment.</li>
         </ul>
       </Block>
       <Block title="Ce que nous ne faisons pas">

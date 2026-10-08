@@ -35,6 +35,7 @@ NEXT_PUBLIC_SUPABASE_URL=https://api.<ton-domaine>
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<clé anon régénérée>
 SUPABASE_SERVICE_ROLE_KEY=<clé service régénérée>   # jamais côté client
 ADMIN_EMAILS=<email admin>
+LEARNER_TOKEN_SECRET=<chaîne aléatoire longue>   # signe les sessions apprenant (sinon dérivé de SUPABASE_SERVICE_ROLE_KEY)
 NEXT_PUBLIC_SITE_URL=https://<domaine du site>
 ```
 `SUPABASE_INTERNAL_URL` ne doit **pas** être défini sur Vercel.

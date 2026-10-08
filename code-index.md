@@ -49,6 +49,10 @@ _Mis à jour : 2026-10-07 · v0.7.0_
 | `api/students/route.ts` | GET, POST | Liste élèves / création |
 | `api/students/[id]/route.ts` | DELETE, PATCH | Suppression / mise à jour élève |
 | `api/releases/route.ts` | GET, POST | Historique releases — lecture / écriture |
+| `api/learner/login/route.ts` | POST | Code d'accès → jeton apprenant signé + profil public (10 essais / 15 min / IP) |
+| `api/students/[id]/access-code/route.ts` | POST | (Re)génère le code d'accès d'un élève (enseignant) |
+| `api/skill-enrollments/route.ts` | GET, POST | Demandes d'inscription : liste (apprenant / admin `?status=pending`), envoi |
+| `api/skill-enrollments/[id]/route.ts` | PATCH | Décision du centre (admin) |
 | `api/skill-levels/route.ts` | GET, PUT | Niveaux par compétence persistés (parent) ; PUT relève sans jamais abaisser |
 | `api/skill-evaluations/route.ts` | GET, POST | Évaluations rédigées : liste (parent / admin `?status=pending`), envoi |
 | `api/skill-evaluations/[id]/route.ts` | PATCH | Correction par l'examinateur (admin) |
@@ -67,6 +71,8 @@ _Mis à jour : 2026-10-07 · v0.7.0_
 | `docker/supabase/migrate.sh` | Applique les migrations non jouées (table `_local_migrations`) + seed au 1er run |
 | `supabase/migrations/20260927000000_initial_schema.sql` | Schéma complet (10 tables + RLS) reconstruit depuis la prod |
 | `supabase/migrations/20260928000000_reading_mode.sql` | CHECK `students.mode` accepte `reading` |
+| `supabase/migrations/20261012000000_skill_enrollments.sql` | Table `skill_enrollments` |
+| `supabase/migrations/20261011000000_learner_access.sql` | `students.access_code` (unique) |
 | `supabase/migrations/20261010000000_skill_levels.sql` | Table `skill_levels` (profil × compétence → niveau) |
 | `supabase/migrations/20261009000000_skill_evaluations.sql` | Table `skill_evaluations` (RLS sans policy : API service role) |
 | `supabase/migrations/20261007000000_pricing_plans.sql` | Table `pricing_plans` + 3 offres par défaut |
@@ -81,7 +87,7 @@ _Mis à jour : 2026-10-07 · v0.7.0_
 
 | Module | Fichiers | API publique |
 |---|---|---|
-| `skills` | `domain/skill.ts`, `infra/skills-seed.ts` | `getSkills()`, `getSkillById(id)`, `SKILL_LEVELS`, `getSkillLevel(n)`, `syncSkillLevels/persistSkillLevel/mergeLevels/applyPlacements/validateLevelUpdate`, `useSkillLevels/getSkillLevelFor/setSkillLevel/advanceSkillLevel/getAllSkillLevels` (niveau par compétence), `pickSkillQuestions`, `toFlashcards`, `isQuizPassed`, `nextLevelAfterQuiz`, `validateSubmission`, `validateCorrection`, `levelAfterEvaluations`, `getEvaluationPrompt`, UI `SkillMap` (ville), `SkillDetailPanel`, `BuildingTile`, `GoalEditor`, `ReviewsSummary`, `masteryPercent/buildingFor/summarizeReviews/paceToGoal`, `loadSkillReviews/recordSkillAnswer`, `getSkillGoal/setSkillGoal`, `SkillActivityView`, `EvaluationPanel` · `server.ts` : évaluations (service role), types `Skill`, `SkillLevelNumber` |
+| `skills` | `domain/skill.ts`, `infra/skills-seed.ts` | `getSkills()`, `getSkillById(id)`, `SKILL_LEVELS`, `getSkillLevel(n)`, `syncSkillLevels/persistSkillLevel/mergeLevels/applyPlacements/validateLevelUpdate`, `getCourseSheet`, `CourseSheetView`, `EnrollmentForm`, `validateEnrollmentRequest/Decision`, `isEnrolled`, `useEnrollments`, `remainingMinutes/dailyMinutesNeeded/victoryDate/isReminderDue/reminderMessage`, `getSkillPlan/setSkillPlan`, `PlanEditor`, `sendDueReminders`, `ReminderRunner`, `useSkillLevels/getSkillLevelFor/setSkillLevel/advanceSkillLevel/getAllSkillLevels` (niveau par compétence), `pickSkillQuestions`, `toFlashcards`, `isQuizPassed`, `nextLevelAfterQuiz`, `validateSubmission`, `validateCorrection`, `levelAfterEvaluations`, `getEvaluationPrompt`, UI `SkillMap` (ville), `SkillDetailPanel`, `BuildingTile`, `GoalEditor`, `ReviewsSummary`, `masteryPercent/buildingFor/summarizeReviews/paceToGoal`, `loadSkillReviews/recordSkillAnswer`, `getSkillGoal/setSkillGoal`, `SkillActivityView`, `EvaluationPanel` · `server.ts` : évaluations (service role), types `Skill`, `SkillLevelNumber` |
 | `quizzes` | `domain/placement.ts`, `infra/placement-bank-{a,b}.ts`, `infra/placement-question.ts` | `getPlacementTest(skillId)`, `scoreAnswer(q, index\|null)`, `estimateStartLevel(answers)`, types `PlacementQuestion`, `PlacementAnswer`, `PlacementResult` |
 | `pricing` | `domain/plan.ts`, `infra/pricing-client.ts`, `infra/pricing-repository.ts` (serveur), `ui/{PricingSection,PlanEditor}.tsx`, `server.ts` | `formatPrice`, `billingSuffix`, `eurosToCents`, `centsToEuros`, `yearlySavingPercent`, `validatePlanUpdate`, `fetchActivePlans`, `fetchAllPlans`, `savePlan`, `PricingSection`, `PlanEditor` · `server.ts` : `fetchPlans`, `updatePlan` |
 | `landing` | `application/useLandingFlow.ts`, `infra/placement-storage.ts`, `ui/{LandingPage,Hero,FlowStepper,ModeChoice,SkillPicker,PlacementTest,PlacementResultView,ParentsSection}.tsx` | `LandingPage` |
@@ -339,6 +345,8 @@ Types : `src/types/reading.ts` (`ReadingWord`, `Syllable`, `ParsedWord`, `Readin
 |---|---|---|
 | `integration/faq-alignment.test.tsx` | Intégration | FAQ alignée sur README, version, avatars, XP, matières, fonctionnalités |
 | `unit/release-tag.test.ts` | Unit | Script `release:tag` — semver, CHANGELOG, tag, note persistée, README synchronisé |
+| `unit/learner-access.test.ts` | Unit | Jeton apprenant signé, codes d'accès, limiteur d'essais |
+| `unit/skill-enrollment.test.ts`, `unit/skill-effort.test.ts` | Unit | Inscriptions aux cours, effort quotidien, rappels |
 | `unit/skill-dashboard.test.ts` | Unit | Maîtrise, bâtiments, synthèse des révisions, rythme vers l'objectif |
 | `unit/skill-levels.test.ts`, `unit/claim-placements.test.ts` | Unit | Fusion/validation des niveaux, reprise du test visiteur, compétence Claude Platform |
 | `unit/skill-activities.test.ts`, `unit/skill-evaluation.test.ts`, `unit/skill-progress.test.ts` | Unit | Niveaux par compétence, quiz/flashcards, évaluations |

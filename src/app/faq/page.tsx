@@ -104,11 +104,22 @@ export default function FaqPage() {
           <Q q="Comment connaître son niveau de départ ?">Sur la page d&apos;accueil, le test de niveau (5 questions) donne un niveau de 1 à 5 pour la compétence choisie. Il est gratuit et fonctionne sans compte.</Q>
         </Section>
 
-        <Section title="8. Abonnements">
+        <Section title="8. Accès enseignant et apprenant">
+          <Q q="Qui crée les comptes ?">L&apos;<strong>enseignant</strong> (ou un tuteur) s&apos;inscrit, ajoute ses élèves et génère pour chacun un <strong>code d&apos;accès</strong>.</Q>
+          <Q q="Comment un apprenant se connecte-t-il ?">Dans l&apos;<strong>Espace apprenant</strong>, il saisit son code à 8 caractères et retrouve ses compétences. Il n&apos;a accès qu&apos;à son propre profil.</Q>
+          <Q q="Comment s&apos;inscrire à un cours ?">Depuis la ville des compétences, l&apos;apprenant lit la <strong>fiche du cours</strong> puis envoie une <strong>demande d&apos;inscription</strong> avec ses motivations au centre de formation. Le cours s&apos;ouvre une fois la demande acceptée.</Q>
+        </Section>
+
+        <Section title="9. Plan de travail et rappels">
+          <Q q="Combien de temps par jour ?">Pour chaque compétence, choisis ton <strong>effort quotidien en minutes</strong> : la date de victoire (niveau 5) s&apos;affiche. Ou fixe une date et vois combien de minutes par jour il te faut.</Q>
+          <Q q="Comment être rappelé ?">Choisis l&apos;<strong>heure du rappel</strong> et active les notifications : tu reçois chaque jour l&apos;heure, l&apos;effort et l&apos;objectif. L&apos;application doit être ouverte dans le navigateur.</Q>
+        </Section>
+
+        <Section title="10. Abonnements">
           <Q q="Quelles formules existent ?">Abonnement <strong>1 mois</strong>, <strong>1 an</strong> ou <strong>à vie</strong>, affichés sur la page d'accueil. Le test de niveau reste gratuit.</Q>
         </Section>
 
-        <Section title="9. Astuces">
+        <Section title="11. Astuces">
           <Q q="Comment progresser le plus vite ?">
             <ol className="list-decimal pl-4 space-y-1">
               <li>Sessions Sciences du mode Clavier (15 XP × 5 = 75 XP)</li>

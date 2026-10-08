@@ -1,24 +1,29 @@
 #  Play Perform · v0.8.0
 
-Plateforme d'apprentissage ludique pour les ados & jeunes. Le parent (ou l'adulte responsable) crée un compte, crée le profil de l'apprenant — plus aucun élève « démo » n'est ajouté d'office —, et chaque enfant joue dans le mode adapté à son profil. la ptf dispose d'un acces admin pour gerer les questions sur la GUI et ou batch API / CSV
+Plateforme d'apprentissage ludique pour les ados & jeunes. L'enseignant (ou le tuteur / adulte responsable) crée un compte, ajoute ses élèves et leur donne un **code d'accès** ; chaque apprenant ouvre alors ses compétences sur `/apprenant` — plus aucun élève « démo » n'est ajouté d'office. la ptf dispose d'un acces admin pour gerer les questions sur la GUI et ou batch API / CSV
 
 ## Authentification
 
 | Rôle | Accès |
 |---|---|
-| Parent | S'inscrit sur `/auth`, gère ses élèves sur `/parent` |
-| Élève | Sélectionné depuis la page d'accueil par le parent |
-| Admin | Email dans `ADMIN_EMAILS` → accès `/admin/*` |
+| Enseignant | S'inscrit sur `/auth`, ajoute ses élèves et génère leur code d'accès sur `/enseignant` |
+| Apprenant | Saisit son code (8 caractères) sur `/apprenant` → session signée de 30 jours sur son appareil ; accède à ses compétences uniquement |
+| Centre de formation / examinateur | Email dans `ADMIN_EMAILS` → accès `/admin/*` : décide des inscriptions aux cours, corrige les évaluations |
+
+Avant de travailler un cours, l'apprenant lit sa **fiche** et présente une **demande d'inscription** avec ses motivations ; le centre l'accepte ou la refuse. Un niveau déjà acquis (test de niveau) vaut inscription.
 
 ## Routes
 
 | Route | Description |
 |---|---|
-| `/` | Visiteur : page d'accueil (mode sans compte / avec compte, choix d'une compétence, test de niveau) · Parent connecté : liste des élèves |
+| `/` | Visiteur : page d'accueil (mode sans compte / avec compte, choix d'une compétence, test de niveau) · Enseignant connecté : liste des élèves |
 | `/auth` | Connexion / Inscription / Mot de passe oublié |
 | `/auth/confirm` | Activation de compte (lien email) |
 | `/auth/reset-password` | Réinitialisation mot de passe |
-| `/parent` | Gestion des élèves (add / edit / delete) |
+| `/enseignant`, `/enseignant/new` | Espace enseignant : gestion des élèves (ajout / édition / suppression) et de leur code d'accès (`/parent` redirige ici) |
+| `/apprenant` | Espace apprenant : saisie du code d'accès |
+| `/competences/[skillId]/fiche` | Fiche du cours + demande d'inscription (motivations) |
+| `/admin/inscriptions` | Centre de formation : accepter / refuser les demandes d'inscription |
 | `/home` | Dashboard quiz eleve (toutes matières) |
 | `/quiz/[subject]` | Quiz interactif avec sablier 30s et XP décroissants |
 | `/keyboard` | Jeu d'enfant initié — Lettres / Mots / Sciences /Mots illustrés FR/EN/ES|
@@ -66,12 +71,13 @@ src/
 │   ├── api/              # /api/students, /api/questions, /api/releases
 │   ├── home/             # Dashboard quiz
 │   ├── keyboard/         # Jeu clavier/sciences
-│   ├── parent/           # Gestion élèves
+│   ├── enseignant/       # Gestion élèves + codes d'accès
+│   ├── apprenant/        # Connexion par code
 │   └── quiz/[subject]/   # Quiz interactif
 ├── components/
 │   ├── admin/            # ImportDropzone
 │   ├── keyboard/         # LetterMode, WordMode, ScienceMode
-│   ├── parent/           # StudentCard
+│   ├── enseignant/       # StudentCard, AddStudentForm, AccessCodeBox
 │   ├── shared/           # QuizCard, QuizResultScreen, ModeSheet, LandingScreen
 │   └── ui/               # XpGainToast, QuizTimer, AvatarCard, ScoreBadge…
 ├── hooks/                # useScore, useAvatar, useLearningMode, useSpacedRepetition
@@ -90,7 +96,8 @@ src/
 ```
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=   # optionnel, améliore la fiabilité des inserts
+SUPABASE_SERVICE_ROLE_KEY=   # requis : API élèves, niveaux, évaluations, inscriptions
+LEARNER_TOKEN_SECRET=        # optionnel : signe les sessions apprenant (sinon dérivé de la clé service role)
 ADMIN_EMAILS=                # email(s) admin séparés par virgule
 NEXT_PUBLIC_SITE_URL=        # URL de prod pour les liens email Supabase
 ```
@@ -105,7 +112,7 @@ Le backend = **API routes Next.js** (`src/app/api/`) + **Supabase** (Postgres + 
 
 ```bash
 docker compose up -d        # ou npm run docker:up — 1er lancement : téléchargement des images + npm install
-open http://localhost:3000  # compte démo parent + admin : demo@playperform.local / demo1234
+open http://localhost:3000  # compte démo enseignant + admin : demo@playperform.local / demo1234
 ```
 
 | Service | URL | Rôle |
@@ -138,8 +145,8 @@ landing ──► skills    (compétences, niveaux 1 → 5)
    ├──────► quizzes   (tests de positionnement, estimateStartLevel)
    └──────► pricing   (abonnements, éditables en admin)
 ```
-- `landing` : page d'accueil visiteur — hero + CTA, choix du mode, choix de la compétence, test de niveau (5 questions), résultat sur le chemin 1 → 5, section parents. Résultats sans compte en localStorage (`pp:placements`).
-- `skills` : 9 compétences (dont « Claude Platform (docs) ») collège / lycée (seed local), libellés des 5 niveaux, **niveau d'avancement par élève et par compétence** (ville des compétences, objectifs de date, planning de révisions repris du SRS) (l'XP reste au compte, affiché comme « Rang »), activités pour progresser (quiz, flashcards depuis les banques de questions existantes, évaluation rédigée corrigée par un examinateur). **Niveaux persistés** en base (table `skill_levels`, `GET/PUT /api/skill-levels`, jamais abaissés) et synchronisés avec l'appareil à l'entrée dans `/competences` ; le résultat du test visiteur devient le niveau de départ du premier profil qui ouvre ses compétences. API : `GET/POST /api/skill-evaluations`, `PATCH /api/skill-evaluations/:id` (admin, valider relève aussi le niveau en base) ; table `skill_evaluations`. `server.ts` = accès base (API routes uniquement).
+- `landing` : page d'accueil visiteur — hero + CTA, choix du mode, choix de la compétence, test de niveau (5 questions), résultat sur le chemin 1 → 5, section enseignants. Résultats sans compte en localStorage (`pp:placements`).
+- `skills` : 9 compétences (dont « Claude Platform (docs) ») collège / lycée (seed local), libellés des 5 niveaux, **niveau d'avancement par élève et par compétence** (ville des compétences, objectifs de date, planning de révisions repris du SRS) (l'XP reste au compte, affiché comme « Rang »), **plan de travail** par compétence (effort quotidien en minutes → date de victoire, ou date visée → minutes par jour) et **rappels quotidiens** à l'heure choisie (notifications du navigateur, application ouverte — voir `todo.md` pour le push application fermée), activités pour progresser (quiz, flashcards depuis les banques de questions existantes, évaluation rédigée corrigée par un examinateur). **Niveaux persistés** en base (table `skill_levels`, `GET/PUT /api/skill-levels`, jamais abaissés) et synchronisés avec l'appareil à l'entrée dans `/competences` ; le résultat du test visiteur devient le niveau de départ du premier profil qui ouvre ses compétences. API : `GET/POST /api/skill-enrollments` + `PATCH /:id` (admin) ; `POST /api/learner/login` ; `POST /api/students/:id/access-code` ; `GET/POST /api/skill-evaluations`, `PATCH /api/skill-evaluations/:id` (admin, valider relève aussi le niveau en base) ; tables `skill_evaluations`, `skill_enrollments`, `skill_levels`. `server.ts` = accès base (API routes uniquement).
 - `quizzes` : 45 questions de positionnement (9 × 5 niveaux), niveau de départ = 1 + bonnes réponses (max 5).
 - `pricing` : abonnements 1 mois / 1 an / à vie (table `pricing_plans`), section « Nos abonnements » sur l'accueil, édition dans `/admin/pricing`. API : `GET /api/pricing` (public), `PUT /api/pricing/:id` (admin). `index.ts` = API client, `server.ts` = accès base (API routes uniquement).
 
