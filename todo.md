@@ -14,11 +14,10 @@ Fichier unique de pilotage : **en cours**, **backlog** et **bugs connus** (rempl
 - [ ] Notifier l'élève / le parent quand une évaluation est corrigée
 
 ## Franchise / multi-organisations (voir docs/saas-franchise.md)
-- [ ] **Avant le 1er centre externe** : limiter les politiques `anon` (profiles, scores, badges, quiz_answers, keyboard_progress) aux lignes de la société mère et synchroniser les scores des autres centres via API (jeton apprenant)
-- [ ] Catalogue de compétences, questions, parcours et tarifs **par organisation** (Étape 3 : catalogue en base)
+- [ ] **Avant le 1er centre externe** : appliquer `supabase/migrations/20261015000000_anon_parent_only.sql` (accès anonymes limités à la société mère ; la synchro XP / badges passe déjà par `PUT /api/progress`) — migration refusée à l'application depuis l'assistant, à lancer toi-même ou à autoriser
 - [ ] Libre-service : page publique d'un centre + code du centre → l'apprenant crée son profil et demande ses cours
 - [ ] Nommer un responsable pour la société mère elle-même (aujourd'hui : super admin via `ADMIN_EMAILS`) ; ajouter `platform_admins` côté UI
-- [ ] Marque par centre (logo, couleurs, sous-domaine) ; facturation par centre
+- [ ] Marque par centre (logo, couleurs, sous-domaine) ; facturation par centre. *Décision : catalogue, questions et tarifs restent communs à tous les centres.*
 - [ ] RLS sur `parcours` / `parcours_enrollments` / `questions` / `release_notes`
 
 ## Release, abonnements, déploiement

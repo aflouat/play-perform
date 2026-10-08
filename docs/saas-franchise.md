@@ -21,9 +21,15 @@ Les permissions sont des fonctions pures dans `src/modules/organizations/domain/
 ## Compatibilité avec l'existant
 Migration additive : aucune ligne n'est modifiée, tout passe dans la société mère. Les super admins actuels (`ADMIN_EMAILS`) gardent tous leurs droits. Si la migration n'est pas appliquée, `getAccessContext` retombe sur `ADMIN_EMAILS` seul.
 
-## Risques connus (à traiter avant le premier centre externe)
-1. **Politiques `anon` permissives** sur `profiles`, `scores`, `badges`, `quiz_answers`, `keyboard_progress` (`using (true)`), conservées volontairement pour les accès anonymes de la société mère. Avec des centres externes, un détenteur de la clé publique pourrait lire ou écrire les lignes de leurs élèves. Correctif prévu : limiter ces politiques aux lignes de la société mère et faire passer la synchro des scores des autres centres par une API authentifiée (jeton apprenant).
-2. `parcours` et `parcours_enrollments` : lecture ouverte à tous ; `questions` et `release_notes` sans RLS.
-3. Catalogue de compétences (`SKILLS_SEED`), questions et tarifs (`pricing_plans`) encore globaux : un centre ne peut pas avoir les siens.
-4. Inscription en libre-service d'un apprenant (page publique du centre + code du centre) : non faite.
-5. Les invitations d'enseignants passent par l'e-mail Supabase : le SMTP (Brevo) doit être configuré.
+## Décision : catalogue commun
+Le **catalogue de compétences, les banques de questions et les tarifs sont communs à tous les centres** (décision produit). Un centre ne personnalise ni le contenu ni les prix ; il recrute son équipe, a ses élèves, décide des inscriptions. Cela évite tout `organization_id` sur le catalogue, les questions et `pricing_plans`.
+
+## Accès anonymes et isolation des centres
+Les accès anonymes (visiteurs, profils de démonstration) restent possibles et sont **rattachés à la société mère**. Pour qu'un centre externe n'expose pas ses élèves :
+- le navigateur enregistre XP et badges via `PUT /api/progress` dès qu'il y a une session (apprenant ou enseignant) : l'API vérifie que le profil appartient à l'appelant ;
+- la migration `20261015000000_anon_parent_only.sql` remplace les politiques `anon … using (true)` de `profiles`, `scores`, `badges`, `quiz_answers`, `keyboard_progress` par des politiques limitées aux lignes de la société mère (**à appliquer avant d'ouvrir un centre externe**). Un enseignant connecté dans le navigateur passe par le rôle `authenticated`, pour lequel les anciennes politiques `anon` ne s'appliquaient pas : la synchro directe échouait déjà en silence, l'API la corrige.
+
+## Risques restants
+1. `parcours` et `parcours_enrollments` : lecture ouverte à tous ; `questions` et `release_notes` sans RLS.
+2. Inscription en libre-service d'un apprenant (page publique du centre + code du centre) : non faite.
+3. Les invitations d'enseignants passent par l'e-mail Supabase : le SMTP (Brevo) doit être configuré.

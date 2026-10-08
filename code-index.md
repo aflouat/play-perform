@@ -49,6 +49,7 @@ _Mis à jour : 2026-10-07 · v0.7.0_
 | `api/students/route.ts` | GET, POST | Liste élèves / création |
 | `api/students/[id]/route.ts` | DELETE, PATCH | Suppression / mise à jour élève |
 | `api/releases/route.ts` | GET, POST | Historique releases — lecture / écriture |
+| `api/progress/route.ts` | PUT | XP / badge d'un apprenant (session apprenant ou enseignant, propriété du profil vérifiée) |
 | `api/me/route.ts` | GET | Mon e-mail, drapeau super admin, mes centres et rôles |
 | `api/organizations/route.ts` | GET, POST | Centres visibles / création (super admin) |
 | `api/organizations/[id]/members/route.ts` | GET, POST, DELETE | Équipe d'un centre : recrutement par invitation e-mail (responsable de centre) |
@@ -76,6 +77,7 @@ _Mis à jour : 2026-10-07 · v0.7.0_
 | `docker/supabase/migrate.sh` | Applique les migrations non jouées (table `_local_migrations`) + seed au 1er run |
 | `supabase/migrations/20260927000000_initial_schema.sql` | Schéma complet (10 tables + RLS) reconstruit depuis la prod |
 | `supabase/migrations/20260928000000_reading_mode.sql` | CHECK `students.mode` accepte `reading` |
+| `supabase/migrations/20261015000000_anon_parent_only.sql` | Accès anonymes limités aux lignes de la société mère (**non appliquée en prod**) |
 | `supabase/migrations/20261014000000_organizations.sql` | `organizations`, `memberships`, `platform_admins`, `organization_id` sur students / profiles / skill_enrollments / skill_evaluations |
 | `supabase/migrations/20261013000000_push_subscriptions.sql` | Table `push_subscriptions` |
 | `supabase/migrations/20261012000000_skill_enrollments.sql` | Table `skill_enrollments` |
@@ -353,6 +355,7 @@ Types : `src/types/reading.ts` (`ReadingWord`, `Syllable`, `ParsedWord`, `Readin
 |---|---|---|
 | `integration/faq-alignment.test.tsx` | Intégration | FAQ alignée sur README, version, avatars, XP, matières, fonctionnalités |
 | `unit/release-tag.test.ts` | Unit | Script `release:tag` — semver, CHANGELOG, tag, note persistée, README synchronisé |
+| `unit/progress-api.test.ts` | Unit | Validation et contrôle d'accès de la synchro XP / badges |
 | `unit/organization-permissions.test.ts`, `unit/org-scoped-routes.test.ts` | Unit | Rôles et permissions par centre ; routes d'inscription / correction limitées au centre |
 | `unit/push-schedule.test.ts`, `unit/push-dispatch.test.ts` | Unit | Fuseau horaire, rappels dus, envoi et nettoyage des abonnements |
 | `unit/learner-access.test.ts` | Unit | Jeton apprenant signé, codes d'accès, limiteur d'essais |
