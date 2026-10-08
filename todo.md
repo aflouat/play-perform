@@ -14,7 +14,6 @@ Fichier unique de pilotage : **en cours**, **backlog** et **bugs connus** (rempl
 - [ ] Notifier l'élève / le parent quand une évaluation est corrigée
 
 ## Release, abonnements, déploiement
-- [ ] **Appliquer en prod `20261009000000_skill_evaluations` et `20261010000000_skill_levels`** (sans elles, évaluations et persistance des niveaux échouent en prod)
 - [ ] **Emails d'inscription prod** : saisir Brevo (`smtp-relay.brevo.com:587`) dans Supabase → Auth → SMTP Settings, valider l'expéditeur dans Brevo, relever la limite d'emails, vérifier `NEXT_PUBLIC_SITE_URL` (procédure : `docs/deploiement.md`)
 - [ ] Prod : activer RLS sur `questions` et `release_notes` (alerte sécurité Supabase) avec les policies adaptées
 - [ ] Configurer env vars prod (`SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SITE_URL`, `ADMIN_EMAILS`)
