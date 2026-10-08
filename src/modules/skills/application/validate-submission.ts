@@ -1,5 +1,6 @@
 import { validateSubmission as validate, type EvaluationSubmission, type Validation } from '../domain/evaluation';
 import { validateLevelUpdate as validateLevel, type LevelUpdate } from '../domain/skill-levels';
+import { validateEnrollmentRequest as validateEnrollment, type EnrollmentRequest } from '../domain/enrollment';
 import { getSkillById } from '../infra/skills-repository';
 
 /** Submission validation with the skills catalogue (unknown skills are rejected). */
@@ -9,4 +10,8 @@ export function validateSubmission(input: unknown): Validation<EvaluationSubmiss
 
 export function validateLevelUpdate(input: unknown): Validation<LevelUpdate> {
   return validateLevel(input, (id) => getSkillById(id) !== undefined);
+}
+
+export function validateEnrollmentRequest(input: unknown): Validation<EnrollmentRequest> {
+  return validateEnrollment(input, (id) => getSkillById(id) !== undefined);
 }

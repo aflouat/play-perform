@@ -8,3 +8,6 @@ export { validateCorrection } from './domain/evaluation';
 export { getEvaluationPrompt } from './infra/evaluation-prompts';
 export { listLevels, raiseLevel } from './infra/levels-repository';
 export { validateLevelUpdate } from './application/validate-submission';
+export { listEnrollmentsForProfile, listPendingEnrollments, createEnrollment, decideEnrollment } from './infra/enrollment-repository';
+export { validateEnrollmentRequest } from './application/validate-submission';
+export { validateEnrollmentDecision } from './domain/enrollment';

@@ -7,10 +7,10 @@ import { SkillLevelMeter } from './SkillLevelMeter';
 import { ReviewsSummary } from './ReviewsSummary';
 import { GoalEditor } from './GoalEditor';
 
-interface Props { skill: Skill; profileId: string; level: SkillLevelNumber | null; now: Date }
+interface Props { skill: Skill; profileId: string; level: SkillLevelNumber | null; now: Date; enrolled: boolean }
 
 /** What the learner sees when clicking a building: level, reviews done and planned, goal date. */
-export function SkillDetailPanel({ skill, profileId, level, now }: Props) {
+export function SkillDetailPanel({ skill, profileId, level, now, enrolled }: Props) {
   const reviews = loadSkillReviews(profileId, skill.id, now);
   return (
     <section aria-label={skill.name} className="space-y-4 rounded-3xl border border-violet-200 bg-white p-5 shadow-lg">
@@ -21,7 +21,11 @@ export function SkillDetailPanel({ skill, profileId, level, now }: Props) {
       <SkillLevelMeter level={level} />
       <ReviewsSummary reviews={reviews} />
       <GoalEditor profileId={profileId} skillId={skill.id} level={level} now={now} />
-      <Link href={`/competences/${skill.id}`} className="block rounded-2xl bg-violet-600 py-3 text-center font-bold text-white">Progresser →</Link>
+      {enrolled ? (
+        <Link href={`/competences/${skill.id}`} className="block rounded-2xl bg-violet-600 py-3 text-center font-bold text-white">Progresser →</Link>
+      ) : (
+        <Link href={`/competences/${skill.id}/fiche`} className="block rounded-2xl bg-amber-400 py-3 text-center font-bold text-slate-900">Voir la fiche du cours et demander l’inscription →</Link>
+      )}
     </section>
   );
 }

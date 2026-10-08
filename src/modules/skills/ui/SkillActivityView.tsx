@@ -5,6 +5,9 @@ import type { QuizQuestion } from '@/types';
 import type { LearningMode } from '@/lib/learning-mode';
 import { recordSkillAnswer } from '../infra/skill-reviews';
 import { getSkillById } from '../infra/skills-repository';
+import Link from 'next/link';
+import { useEnrollments } from '../application/use-enrollments';
+import { isEnrolled } from '../domain/enrollment';
 import { persistSkillLevel } from '../application/skill-sync';
 import { advanceSkillLevel, setSkillLevel, useSkillLevels } from '../application/skill-progress';
 import { FLASHCARDS_XP, QUIZ_LENGTH, QUIZ_PASS_XP, isQuizPassed, type SkillActivity } from '../domain/activity';
@@ -33,6 +36,8 @@ export function SkillActivityView({ skillId, profileId, mode, addXp, triggerGain
   const skill = getSkillById(skillId);
   const levels = useSkillLevels(profileId);
   const level = levels[skillId] ?? null;
+  const { enrollments, loaded } = useEnrollments(profileId);
+  const enrolled = isEnrolled(skillId, level, enrollments);
   const [activity, setActivity] = useState<SkillActivity | null>(null);
   const [round, setRound] = useState(0);
   const hasBank = hasQuestionBank(skillId);
@@ -66,7 +71,15 @@ export function SkillActivityView({ skillId, profileId, mode, addXp, triggerGain
         <SkillLevelMeter level={level} />
       </header>
 
-      <div className="grid gap-2">
+      {!loaded && <p className="text-center text-sm text-slate-400">Chargement…</p>}
+      {loaded && !enrolled && (
+        <div className="space-y-3 rounded-3xl bg-amber-50 p-5 text-sm text-amber-900">
+          <p>Pour travailler ce cours, consulte sa fiche et présente ta demande au centre de formation.</p>
+          <Link href={`/competences/${skillId}/fiche`} className="block rounded-2xl bg-amber-400 py-3 text-center font-bold text-slate-900">Voir la fiche du cours →</Link>
+        </div>
+      )}
+
+      {loaded && enrolled && <div className="grid gap-2">
         {ACTIVITIES.map((a) => {
           const disabled = a.id !== 'evaluation' && !hasBank;
           return (
@@ -78,7 +91,7 @@ export function SkillActivityView({ skillId, profileId, mode, addXp, triggerGain
             </button>
           );
         })}
-      </div>
+      </div>}
 
       {activity === 'quiz' && questions.length > 0 && (
         <SkillQuiz key={round} questions={questions} mode={mode} onFinish={finishQuiz} onAnswered={(q, ok) => recordSkillAnswer(profileId, q, ok)} />
