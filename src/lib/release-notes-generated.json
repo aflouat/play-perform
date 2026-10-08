@@ -1,1 +1,34 @@
-[]
+[
+  {
+    "id": "generated-v0.8.0",
+    "version": "0.8.0",
+    "deployed_at": "2026-10-08T21:07:06.577Z",
+    "title": "Version 0.8.0",
+    "summary": "8 nouveauté(s), 2 correction(s) — dont : plus d'élèves démo d'office, page confidentialité, FAQ à jour ; ville des compétences, barre vers la maîtrise, révisions passées/à venir, objectif de date ; compétence Claude Platform, niveaux persistés en base, reprise du test visiteur.",
+    "changes": [
+      "fix : titre de note « Version X » et résumé des nouveautés",
+      "feat : plus d'élèves démo d'office, page confidentialité, FAQ à jour",
+      "feat : ville des compétences, barre vers la maîtrise, révisions passées/à venir, objectif de date",
+      "docs : migrations skill_evaluations et skill_levels appliquées en prod",
+      "feat : compétence Claude Platform, niveaux persistés en base, reprise du test visiteur",
+      "feat : évaluation rédigée corrigée par un examinateur, /admin/evaluations, FAQ et docs",
+      "feat : niveau par compétence visible avant action (quiz, flashcards) — /competences",
+      "feat : streak quotidien calculé, affiché et badges 3/7 jours",
+      "feat : release:tag persiste la note de version (fichier généré, README, base)",
+      "docs : Brevo comme relais SMTP (compose, env, déploiement)",
+      "docs : migrations prod appliquées",
+      "docs : pricing_plans appliquée en prod",
+      "fix : profiles/scores à la création d'élève, /api/releases lit la BDD, hydration /mots /keyboard",
+      "docs+test: FAQ alignée (test de cohérence), notes 0.6/0.7, fusion todo/in-progress/knownBugs",
+      "feat : niveau par compétence, XP au compte; ménage des .md",
+      "features",
+      "POC perform & learn"
+    ],
+    "tags": [
+      "fix",
+      "feat",
+      "docs"
+    ],
+    "deployed_by": "aflouatabdelwedoud"
+  }
+]

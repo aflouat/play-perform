@@ -1,4 +1,4 @@
-#  Play Perform · v0.7.0
+#  Play Perform · v0.8.0
 
 Plateforme d'apprentissage ludique pour les ados & jeunes. Le parent (ou l'adulte responsable) crée un compte, crée le profil de l'apprenant — plus aucun élève « démo » n'est ajouté d'office —, et chaque enfant joue dans le mode adapté à son profil. la ptf dispose d'un acces admin pour gerer les questions sur la GUI et ou batch API / CSV
 
