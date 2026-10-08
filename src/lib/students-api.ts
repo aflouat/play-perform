@@ -54,3 +54,10 @@ export async function apiUpdateStudent(id: string, updates: Partial<DbStudent>):
   });
   return res.ok;
 }
+
+/** Teacher: (re)generates the learner access code of a student. Returns the formatted code, or null. */
+export async function apiGenerateAccessCode(id: string): Promise<string | null> {
+  const token = await getToken();
+  const res = await fetch(`/api/students/${id}/access-code`, { method: 'POST', headers: { authorization: `Bearer ${token}` } });
+  return res.ok ? ((await res.json()) as { code: string }).code : null;
+}

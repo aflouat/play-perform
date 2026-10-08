@@ -1,11 +1,7 @@
-import { createClient } from '@supabase/supabase-js';
+import { getAuthToken } from '@/lib/auth-token';
 import type { EvaluationSubmission, SkillEvaluation } from '../domain/evaluation';
 
-async function accessToken(): Promise<string> {
-  const db = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL ?? '', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '');
-  const { data } = await db.auth.getSession();
-  return data.session?.access_token ?? '';
-}
+const accessToken = getAuthToken;
 
 const headers = (token: string) => ({ 'content-type': 'application/json', authorization: `Bearer ${token}` });
 

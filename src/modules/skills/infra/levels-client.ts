@@ -1,11 +1,9 @@
-import { createClient } from '@supabase/supabase-js';
+import { getAuthToken } from '@/lib/auth-token';
 import type { SkillLevelNumber } from '../domain/skill';
 import type { SkillLevels } from '../domain/skill-levels';
 
 async function headers(): Promise<Record<string, string>> {
-  const db = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL ?? '', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '');
-  const { data } = await db.auth.getSession();
-  return { 'content-type': 'application/json', authorization: `Bearer ${data.session?.access_token ?? ''}` };
+  return { 'content-type': 'application/json', authorization: `Bearer ${await getAuthToken()}` };
 }
 
 /** Browser side: persisted levels of a learner, or null when unavailable (offline, demo profile, not signed in). */

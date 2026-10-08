@@ -1,6 +1,6 @@
 /** Server-only API of the skills module (used by API routes). */
 export {
-  isStudentOfParent, listEvaluationsForProfile, listPendingEvaluations, createEvaluation, correctEvaluation,
+  listEvaluationsForProfile, listPendingEvaluations, createEvaluation, correctEvaluation,
 } from './infra/evaluation-repository';
 export type { PendingEvaluation } from './infra/evaluation-repository';
 export { validateSubmission } from './application/validate-submission';

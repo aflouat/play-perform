@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import type { DbStudent } from '@/lib/db';
 import { apiDeleteStudent, apiUpdateStudent } from '@/lib/students-api';
+import { AccessCodeBox } from './AccessCodeBox';
 
 interface StudentScore { xp: number; level: number; }
 
@@ -85,11 +86,13 @@ export function StudentCard({ student, onDelete, onUpdated }: StudentCardProps) 
       {score && (
         <div className="flex items-center gap-1 text-xs">
           <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 border border-amber-200">
-            <span className="text-amber-600 font-bold">⭐ Niv.{score.level}</span>
+            <span className="text-amber-600 font-bold">⭐ Rang {score.level}</span>
             <span className="text-amber-400">· {score.xp} XP</span>
           </span>
         </div>
       )}
+
+      <AccessCodeBox student={student} onCode={(code) => onUpdated({ ...student, access_code: code })} />
 
       {editing && (
         <div className="flex gap-2 pt-1">

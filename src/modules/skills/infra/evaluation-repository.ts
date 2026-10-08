@@ -19,11 +19,6 @@ const toEvaluation = (r: Row): SkillEvaluation => ({
 const table = () => getServerClient().from('skill_evaluations');
 
 /** Server-side only (service role). */
-export async function isStudentOfParent(parentId: string, profileId: string): Promise<boolean> {
-  const { data } = await getServerClient().from('students').select('id').eq('id', profileId).eq('parent_id', parentId).maybeSingle();
-  return data !== null;
-}
-
 export async function listEvaluationsForProfile(profileId: string): Promise<SkillEvaluation[]> {
   const { data, error } = await table().select('*').eq('profile_id', profileId).order('created_at', { ascending: false });
   if (error) throw new Error(error.message);

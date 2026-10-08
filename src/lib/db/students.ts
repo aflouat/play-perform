@@ -14,6 +14,7 @@ export interface DbStudent {
   age: number;
   mode?: StudentMode;           // game mode → determines home route
   learning_mode?: StudentLearningMode; // default assisted/advanced
+  access_code?: string | null;  // learner access (set by the API)
 }
 
 export async function fetchStudents(): Promise<DbStudent[]> {

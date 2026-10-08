@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getServerSupabaseUrl } from '@/lib/db/client';
+import { generateAccessCode } from '@/lib/access-code';
 
 const URL = getServerSupabaseUrl();
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? '';
@@ -63,7 +64,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   if (!userId) return NextResponse.json({ error: 'Non autorisé.' }, { status: 401 });
 
   const body = await req.json() as Record<string, unknown>;
-  const payload = { ...body, parent_id: userId };
+  const payload = { ...body, parent_id: userId, access_code: generateAccessCode() };
   const db = dbForUser(token);
 
   async function insertStudent(payloadData: Record<string, unknown>) {
@@ -76,7 +77,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
     student = await insertStudent(payload);
   } catch {
-    const { mode: _m, learning_mode: _lm, ...base } = payload as Record<string, unknown>;
+    const { mode: _m, learning_mode: _lm, access_code: _ac, ...base } = payload as Record<string, unknown>;
     try {
       student = await insertStudent(base);
     } catch (fallbackError: unknown) {
