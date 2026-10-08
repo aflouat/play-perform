@@ -5,7 +5,7 @@ import type { Skill, SkillLevelNumber } from '../domain/skill';
 import { loadSkillReviews } from '../infra/skill-reviews';
 import { SkillLevelMeter } from './SkillLevelMeter';
 import { ReviewsSummary } from './ReviewsSummary';
-import { GoalEditor } from './GoalEditor';
+import { PlanEditor } from './PlanEditor';
 
 interface Props { skill: Skill; profileId: string; level: SkillLevelNumber | null; now: Date; enrolled: boolean }
 
@@ -20,7 +20,7 @@ export function SkillDetailPanel({ skill, profileId, level, now, enrolled }: Pro
       </header>
       <SkillLevelMeter level={level} />
       <ReviewsSummary reviews={reviews} />
-      <GoalEditor profileId={profileId} skillId={skill.id} level={level} now={now} />
+      {enrolled && <PlanEditor profileId={profileId} skillId={skill.id} level={level} now={now} />}
       {enrolled ? (
         <Link href={`/competences/${skill.id}`} className="block rounded-2xl bg-violet-600 py-3 text-center font-bold text-white">Progresser →</Link>
       ) : (

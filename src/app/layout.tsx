@@ -3,6 +3,7 @@ import { Geist } from 'next/font/google';
 import './globals.css';
 import { SiteHeader } from '@/shared/ui/SiteHeader';
 import { SiteFooter } from '@/shared/ui/SiteFooter';
+import { ReminderRunner } from '@/modules/skills';
 
 const geist = Geist({
   subsets: ['latin'],
@@ -21,6 +22,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <SiteHeader />
         <div className="flex-1">{children}</div>
         <SiteFooter />
+        <ReminderRunner />
       </body>
     </html>
   );
