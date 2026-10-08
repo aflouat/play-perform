@@ -68,6 +68,12 @@ export default function HomePage() {
           </div>
         )}
 
+        <Link href="/competences"
+          className="flex items-center justify-between rounded-2xl bg-violet-600 px-4 py-3 mb-5 text-white shadow-lg">
+          <span className="font-black">🎯 Mes compétences</span>
+          <span className="text-xs font-semibold opacity-80">voir mon niveau →</span>
+        </Link>
+
         <h1 className="text-2xl font-black text-[#1a1a2e] leading-snug tracking-tight mb-2">
           Qu&apos;est-ce qu&apos;on apprend aujourd&apos;hui ?
         </h1>

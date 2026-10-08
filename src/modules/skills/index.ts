@@ -1,16 +1,15 @@
 /** Public API of the skills module. Other modules must import from here only. */
-import { SKILLS_SEED } from './infra/skills-seed';
-import type { Skill } from './domain/skill';
 
 export type { Skill, SkillLevelNumber, SkillLevelInfo } from './domain/skill';
 export { SKILL_LEVELS, getSkillLevel } from './domain/skill';
 
-export function getSkills(): readonly Skill[] {
-  return SKILLS_SEED;
-}
+export { getSkills, getSkillById } from './infra/skills-repository';
 
-export function getSkillById(id: string): Skill | undefined {
-  return SKILLS_SEED.find((s) => s.id === id);
-}
-
-export { getAllSkillLevels, getSkillLevelFor, setSkillLevel, advanceSkillLevel } from './application/skill-progress';
+export { useSkillLevels, getAllSkillLevels, getSkillLevelFor, setSkillLevel, advanceSkillLevel } from './application/skill-progress';
+export type { SkillActivity } from './domain/activity';
+export { QUIZ_LENGTH, QUIZ_PASS_XP, FLASHCARDS_XP, isQuizPassed, nextLevelAfterQuiz } from './domain/activity';
+export type { Flashcard } from './infra/skill-content';
+export { getSkillSubject, difficultyForLevel, pickSkillQuestions, toFlashcards } from './infra/skill-content';
+export { SkillsDashboard } from './ui/SkillsDashboard';
+export { SkillActivityView } from './ui/SkillActivityView';
+export { SkillLevelMeter } from './ui/SkillLevelMeter';

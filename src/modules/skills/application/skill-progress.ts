@@ -1,3 +1,6 @@
+'use client';
+
+import { useMemo, useSyncExternalStore } from 'react';
 import type { SkillLevelNumber } from '../domain/skill';
 
 /**
@@ -8,6 +11,7 @@ import type { SkillLevelNumber } from '../domain/skill';
 type SkillLevels = Record<string, SkillLevelNumber>;
 
 const key = (profileId: string) => `pp:skill-levels:${profileId}`;
+const CHANGE_EVENT = 'pp:skill-levels-change';
 
 function read(profileId: string): SkillLevels {
   try {
@@ -19,7 +23,10 @@ function read(profileId: string): SkillLevels {
 }
 
 function write(profileId: string, levels: SkillLevels): void {
-  try { localStorage.setItem(key(profileId), JSON.stringify(levels)); } catch { /* storage unavailable */ }
+  try {
+    localStorage.setItem(key(profileId), JSON.stringify(levels));
+    window.dispatchEvent(new Event(CHANGE_EVENT));
+  } catch { /* storage unavailable */ }
 }
 
 export function getAllSkillLevels(profileId: string): SkillLevels {
@@ -40,4 +47,21 @@ export function advanceSkillLevel(profileId: string, skillId: string): SkillLeve
   const next = (current === null ? 1 : Math.min(5, current + 1)) as SkillLevelNumber;
   setSkillLevel(profileId, skillId, next);
   return next;
+}
+
+function subscribe(callback: () => void): () => void {
+  window.addEventListener(CHANGE_EVENT, callback);
+  window.addEventListener('storage', callback);
+  return () => {
+    window.removeEventListener(CHANGE_EVENT, callback);
+    window.removeEventListener('storage', callback);
+  };
+}
+
+/** Levels of a profile by skill id, kept in sync with changes. Empty during SSR / hydration. */
+export function useSkillLevels(profileId: string): SkillLevels {
+  const raw = useSyncExternalStore(subscribe, () => localStorage.getItem(key(profileId)), () => null);
+  return useMemo(() => {
+    try { return raw ? (JSON.parse(raw) as SkillLevels) : {}; } catch { return {}; }
+  }, [raw]);
 }
