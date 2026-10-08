@@ -1,6 +1,6 @@
 #  Play Perform · v0.7.0
 
-Plateforme d'apprentissage ludique pour les ados & jeunes. Le parent crée un compte, ajoute ses élèves, et chaque enfant joue dans le mode adapté à son profil. la ptf dispose d'un acces admin pour gerer les questions sur la GUI et ou batch API / CSV
+Plateforme d'apprentissage ludique pour les ados & jeunes. Le parent (ou l'adulte responsable) crée un compte, crée le profil de l'apprenant — plus aucun élève « démo » n'est ajouté d'office —, et chaque enfant joue dans le mode adapté à son profil. la ptf dispose d'un acces admin pour gerer les questions sur la GUI et ou batch API / CSV
 
 ## Authentification
 
@@ -31,7 +31,8 @@ Plateforme d'apprentissage ludique pour les ados & jeunes. Le parent crée un co
 | `/parcours/[id]` | Session de jeu d'un parcours multi-discipline |
 | `/admin/parcours` | Gestion des parcours (admin) |
 | `/admin/parcours/[id]` | Édition parcours + inscriptions élèves (admin) |
-| `/competences` | Élève : niveau (1 → 5) dans chaque compétence avant de choisir une activité |
+| `/competences` | Élève : « ville des compétences » (un bâtiment par compétence, qui grandit avec le niveau) ; au clic : barre vers la maîtrise, révisions passées / à venir, objectif de date |
+| `/confidentialite` | Politique de confidentialité (données des mineurs) |
 | `/competences/[skillId]` | Niveau de la compétence + activités pour monter : Quiz (4/5 = niveau suivant), Flashcards, Évaluation rédigée |
 | `/admin/evaluations` | Examinateur (admin) : correction des évaluations rédigées (valider = +1 niveau) |
 | `/admin/pricing` | Tarifs des abonnements 1 mois / 1 an / à vie (admin) |
@@ -138,7 +139,7 @@ landing ──► skills    (compétences, niveaux 1 → 5)
    └──────► pricing   (abonnements, éditables en admin)
 ```
 - `landing` : page d'accueil visiteur — hero + CTA, choix du mode, choix de la compétence, test de niveau (5 questions), résultat sur le chemin 1 → 5, section parents. Résultats sans compte en localStorage (`pp:placements`).
-- `skills` : 9 compétences (dont « Claude Platform (docs) ») collège / lycée (seed local), libellés des 5 niveaux, **niveau d'avancement par élève et par compétence** (l'XP reste au compte, affiché comme « Rang »), activités pour progresser (quiz, flashcards depuis les banques de questions existantes, évaluation rédigée corrigée par un examinateur). **Niveaux persistés** en base (table `skill_levels`, `GET/PUT /api/skill-levels`, jamais abaissés) et synchronisés avec l'appareil à l'entrée dans `/competences` ; le résultat du test visiteur devient le niveau de départ du premier profil qui ouvre ses compétences. API : `GET/POST /api/skill-evaluations`, `PATCH /api/skill-evaluations/:id` (admin, valider relève aussi le niveau en base) ; table `skill_evaluations`. `server.ts` = accès base (API routes uniquement).
+- `skills` : 9 compétences (dont « Claude Platform (docs) ») collège / lycée (seed local), libellés des 5 niveaux, **niveau d'avancement par élève et par compétence** (ville des compétences, objectifs de date, planning de révisions repris du SRS) (l'XP reste au compte, affiché comme « Rang »), activités pour progresser (quiz, flashcards depuis les banques de questions existantes, évaluation rédigée corrigée par un examinateur). **Niveaux persistés** en base (table `skill_levels`, `GET/PUT /api/skill-levels`, jamais abaissés) et synchronisés avec l'appareil à l'entrée dans `/competences` ; le résultat du test visiteur devient le niveau de départ du premier profil qui ouvre ses compétences. API : `GET/POST /api/skill-evaluations`, `PATCH /api/skill-evaluations/:id` (admin, valider relève aussi le niveau en base) ; table `skill_evaluations`. `server.ts` = accès base (API routes uniquement).
 - `quizzes` : 45 questions de positionnement (9 × 5 niveaux), niveau de départ = 1 + bonnes réponses (max 5).
 - `pricing` : abonnements 1 mois / 1 an / à vie (table `pricing_plans`), section « Nos abonnements » sur l'accueil, édition dans `/admin/pricing`. API : `GET /api/pricing` (public), `PUT /api/pricing/:id` (admin). `index.ts` = API client, `server.ts` = accès base (API routes uniquement).
 

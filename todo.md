@@ -17,7 +17,6 @@ Fichier unique de pilotage : **en cours**, **backlog** et **bugs connus** (rempl
 - [ ] **Emails d'inscription prod** : saisir Brevo (`smtp-relay.brevo.com:587`) dans Supabase → Auth → SMTP Settings, valider l'expéditeur dans Brevo, relever la limite d'emails, vérifier `NEXT_PUBLIC_SITE_URL` (procédure : `docs/deploiement.md`)
 - [ ] Prod : activer RLS sur `questions` et `release_notes` (alerte sécurité Supabase) avec les policies adaptées
 - [ ] Configurer env vars prod (`SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SITE_URL`, `ADMIN_EMAILS`)
-- [ ] Tag de référence `v0.7.0` avant la 1re release (sinon la note reprend tout l'historique)
 - [ ] Vérification visuelle tarifs / admin (Docker arrêté)
 - [ ] Paiement en ligne (non demandé pour l'instant)
 
@@ -32,8 +31,6 @@ Fichier unique de pilotage : **en cours**, **backlog** et **bugs connus** (rempl
 - [ ] Revue façon Anki après chaque quiz avec erreur ; SRS : intervalle × facteur de facilité (réussite parfaite ×2-3, lacunes → 1 jour)
 - [ ] Badge « Rapide ! » (`fast-learner`) défini mais jamais débloqué
 - [ ] Tests e2e Playwright à jour
-- feature en tant que joueur sur une compétence j'ai une espece de barre d'avancement avec mon niveau actuel vs niveau de maitrise(5)
-- tableau de board du jouer avec une carte ludique sur les compétence dans son programme sous forme d'un chateau ou ville avec infra, au click sur une compétence il visualise son niveau actuel  + une synthese sur les revisions passés et à venir avec objectif de date  
 
 ## Backlog — Futur
 - [ ] Compétition live (strike entre joueurs, récompenses supervisées) et classement

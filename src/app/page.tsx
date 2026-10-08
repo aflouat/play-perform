@@ -8,7 +8,7 @@ import { setActiveProfile, getActiveProfileId, clearActiveProfile } from '@/lib/
 import type { DbStudent } from '@/lib/db';
 import { useScore } from '@/hooks/useScore';
 import { saveMode, type LearningMode, STUDENT_MODE_LABELS } from '@/lib/learning-mode';
-import { apiFetchStudents, apiInsertStudent } from '@/lib/students-api';
+import { apiFetchStudents } from '@/lib/students-api';
 import { LandingPage } from '@/modules/landing';
 import { AppVersion } from '@/shared/ui/AppVersion';
 
@@ -20,12 +20,6 @@ interface DisplayProfile {
 function getSupabase() {
   return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL ?? '', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '');
 }
-
-const DEFAULT_STUDENTS_SEED = [
-  { name: 'Élève démo · Quiz',    emoji: '🧑‍🎓', gradient: 'from-sky-400 to-blue-500',     grade: '6ème',      tagline: 'Objectif : brevet',      age: 12, mode: 'quiz'     as const, learning_mode: 'advanced' as const },
-  { name: 'Élève démo · Mots',    emoji: '🌸',   gradient: 'from-pink-400 to-rose-500',    grade: 'CP adapté', tagline: 'Mots & phrases (assisté)', age: 9,  mode: 'words'    as const, learning_mode: 'assisted' as const },
-  { name: 'Élève démo · Clavier', emoji: '🚀',   gradient: 'from-emerald-400 to-teal-500', grade: 'CP',        tagline: 'Clavier, mots, sciences',  age: 6,  mode: 'keyboard' as const, learning_mode: 'advanced' as const },
-];
 
 function toDisplayProfile(s: DbStudent): DisplayProfile {
   const modeKey = s.mode ?? 'quiz';
@@ -76,11 +70,7 @@ export default function WelcomePage() {
         .then((r) => r.json() as Promise<{ isAdmin: boolean }>)
         .then(({ isAdmin }) => setIsAdmin(isAdmin))
         .catch(() => {});
-      let students = await apiFetchStudents();
-      if (students.length === 0) {
-        await Promise.all(DEFAULT_STUDENTS_SEED.map((s) => apiInsertStudent(s)));
-        students = await apiFetchStudents();
-      }
+      const students = await apiFetchStudents();
       const resolved = students.map(toDisplayProfile);
       const ids = new Set(resolved.map((p) => p.id));
       const stale = getActiveProfileId();
@@ -110,7 +100,14 @@ export default function WelcomePage() {
         </div>
         <div className="space-y-3">
           {profiles.map((p) => <ProfileCard key={p.id} profile={p} onSelect={() => startSession(p, p.homeRoute)} />)}
-          {profiles.length === 0 && <p className="text-center py-8 text-slate-400 text-sm">Aucun élève — <Link href="/parent" className="text-violet-600 font-semibold">en ajouter →</Link></p>}
+          {profiles.length === 0 && (
+            <div className="rounded-3xl bg-white p-6 text-center shadow-md">
+              <p className="text-4xl" aria-hidden>🚀</p>
+              <h2 className="mt-2 text-lg font-black text-[#1a1a2e]">Bienvenue ! Crée le premier profil</h2>
+              <p className="mt-1 text-sm text-slate-500">Un prénom, un âge, et c&apos;est parti : passe le test de niveau et construis ta ville des compétences.</p>
+              <Link href="/parent/new" className="mt-4 inline-flex rounded-2xl bg-violet-600 px-6 py-3 font-bold text-white shadow-lg">Créer mon profil →</Link>
+            </div>
+          )}
           <Link href="/parent" className="w-full flex items-center gap-4 rounded-2xl p-5 border-2 border-dashed border-violet-200 hover:border-violet-400 transition-colors">
             <div className="w-16 h-16 shrink-0 rounded-2xl bg-violet-50 flex items-center justify-center text-2xl">+</div>
             <div className="text-left"><div className="text-violet-600 font-bold">Gérer les élèves</div><div className="text-slate-400 text-sm">Ajouter, modifier ou supprimer</div></div>

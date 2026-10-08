@@ -99,6 +99,7 @@ export default function FaqPage() {
 
         <Section title="7. Niveaux par compétence">
           <Q q="Le niveau dépend-il de l'XP ?">Non. L&apos;XP et le rang sont ceux du compte ; le <strong>niveau d&apos;avancement (1 → 5) est propre à chaque compétence</strong> et au projet d&apos;apprentissage de l&apos;élève.</Q>
+          <Q q="Où voir ma progression ?">Sur <strong>Ma ville des compétences</strong> : chaque compétence est un bâtiment qui grandit avec ton niveau, jusqu&apos;au château (niveau 5). Touche-le pour voir ta barre vers la maîtrise, tes révisions passées et à venir, et fixer un <strong>objectif de date</strong>.</Q>
           <Q q="Comment monter d&apos;un niveau ?">Depuis <strong>Mes compétences</strong>, tu vois ton niveau puis tu choisis : un <strong>quiz</strong> (4 bonnes réponses sur 5 = niveau suivant), des <strong>flashcards</strong> pour réviser, ou une <strong>évaluation</strong> rédigée, corrigée par un examinateur.</Q>
           <Q q="Comment connaître son niveau de départ ?">Sur la page d&apos;accueil, le test de niveau (5 questions) donne un niveau de 1 à 5 pour la compétence choisie. Il est gratuit et fonctionne sans compte.</Q>
         </Section>
@@ -115,6 +116,7 @@ export default function FaqPage() {
               <li>Répondre rapidement (sablier = XP maximum)</li>
             </ol>
           </Q>
+          <Q q="Que devient mon adresse e-mail et mes données ?">Rien n&apos;est revendu et il n&apos;y a pas de publicité. Détails et droit à l&apos;effacement sur la page <Link href="/confidentialite" className="text-violet-600 underline">Confidentialité</Link>.</Q>
           <Q q="La plateforme fonctionne-t-elle hors connexion ?">Oui — toute la logique est côté client.</Q>
           <Q q="Comment réinitialiser le SRS ?">
             Console : <code className="bg-slate-100 px-2 py-0.5 rounded text-xs">{`localStorage.removeItem('srs:<id-élève>:maths')`}</code>

@@ -10,6 +10,7 @@ export function SiteFooter() {
         <nav aria-label="Liens du pied de page" className="flex items-center gap-5">
           <Link href="#tarifs" className="hover:text-slate-900">Tarifs</Link>
           <Link href="/faq" className="hover:text-slate-900">FAQ</Link>
+          <Link href="/confidentialite" className="hover:text-slate-900">Confidentialité</Link>
           <Link href="/releases" className="hover:text-slate-900">Versions</Link>
           <AppVersion className="text-slate-500 hover:text-slate-900" />
         </nav>

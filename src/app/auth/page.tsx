@@ -104,6 +104,12 @@ function AuthContent() {
             )}
           </div>
         )}
+        {screen === 'signup' && (
+          <p className="text-xs text-slate-500">
+            Le compte est créé par un parent ou un adulte responsable. En t&apos;inscrivant, tu acceptes notre{' '}
+            <Link href="/confidentialite" className="text-violet-600 underline">politique de confidentialité</Link>.
+          </p>
+        )}
         {error && <p className="text-rose-600 text-sm bg-rose-50 rounded-xl px-3 py-2">{error}</p>}
         {info  && <p className="text-emerald-600 text-sm bg-emerald-50 rounded-xl px-3 py-2">{info}</p>}
         <button type="submit" disabled={loading}

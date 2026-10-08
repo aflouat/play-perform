@@ -65,7 +65,12 @@ describe('FAQ / README / version alignment', () => {
     expect(faq).toMatch(/niveau d'avancement.*propre à chaque compétence/);
     expect(faq).toMatch(/1 mois.*1 an.*à vie/);
     expect(faq).toContain('Lecture par syllabes');
+    ['ville des compétences', 'objectif de date', 'château', 'Confidentialité'].forEach((t) => expect(faq).toContain(t));
     ['quiz', 'flashcards', 'évaluation'].forEach((a) => expect(faq).toContain(a));
+  });
+
+  it('links only to pages that exist', () => {
+    ['/confidentialite', '/competences'].forEach((route) => expect(readme).toContain(`\`${route}`));
   });
 
   it('is described in the README routes table', () => {

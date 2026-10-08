@@ -19,7 +19,7 @@ export default function NewStudentPage() {
           <Link href="/parent" className="text-xs text-slate-400 hover:text-slate-600 font-semibold">← Retour</Link>
         </div>
 
-        <AddStudentForm onAdded={() => { router.push('/parent'); }} />
+        <AddStudentForm onAdded={() => { router.push('/'); }} />
 
       </div>
     </div>

@@ -81,7 +81,7 @@ _Mis à jour : 2026-10-07 · v0.7.0_
 
 | Module | Fichiers | API publique |
 |---|---|---|
-| `skills` | `domain/skill.ts`, `infra/skills-seed.ts` | `getSkills()`, `getSkillById(id)`, `SKILL_LEVELS`, `getSkillLevel(n)`, `syncSkillLevels/persistSkillLevel/mergeLevels/applyPlacements/validateLevelUpdate`, `useSkillLevels/getSkillLevelFor/setSkillLevel/advanceSkillLevel/getAllSkillLevels` (niveau par compétence), `pickSkillQuestions`, `toFlashcards`, `isQuizPassed`, `nextLevelAfterQuiz`, `validateSubmission`, `validateCorrection`, `levelAfterEvaluations`, `getEvaluationPrompt`, UI `SkillsDashboard`, `SkillActivityView`, `EvaluationPanel` · `server.ts` : évaluations (service role), types `Skill`, `SkillLevelNumber` |
+| `skills` | `domain/skill.ts`, `infra/skills-seed.ts` | `getSkills()`, `getSkillById(id)`, `SKILL_LEVELS`, `getSkillLevel(n)`, `syncSkillLevels/persistSkillLevel/mergeLevels/applyPlacements/validateLevelUpdate`, `useSkillLevels/getSkillLevelFor/setSkillLevel/advanceSkillLevel/getAllSkillLevels` (niveau par compétence), `pickSkillQuestions`, `toFlashcards`, `isQuizPassed`, `nextLevelAfterQuiz`, `validateSubmission`, `validateCorrection`, `levelAfterEvaluations`, `getEvaluationPrompt`, UI `SkillMap` (ville), `SkillDetailPanel`, `BuildingTile`, `GoalEditor`, `ReviewsSummary`, `masteryPercent/buildingFor/summarizeReviews/paceToGoal`, `loadSkillReviews/recordSkillAnswer`, `getSkillGoal/setSkillGoal`, `SkillActivityView`, `EvaluationPanel` · `server.ts` : évaluations (service role), types `Skill`, `SkillLevelNumber` |
 | `quizzes` | `domain/placement.ts`, `infra/placement-bank-{a,b}.ts`, `infra/placement-question.ts` | `getPlacementTest(skillId)`, `scoreAnswer(q, index\|null)`, `estimateStartLevel(answers)`, types `PlacementQuestion`, `PlacementAnswer`, `PlacementResult` |
 | `pricing` | `domain/plan.ts`, `infra/pricing-client.ts`, `infra/pricing-repository.ts` (serveur), `ui/{PricingSection,PlanEditor}.tsx`, `server.ts` | `formatPrice`, `billingSuffix`, `eurosToCents`, `centsToEuros`, `yearlySavingPercent`, `validatePlanUpdate`, `fetchActivePlans`, `fetchAllPlans`, `savePlan`, `PricingSection`, `PlanEditor` · `server.ts` : `fetchPlans`, `updatePlan` |
 | `landing` | `application/useLandingFlow.ts`, `infra/placement-storage.ts`, `ui/{LandingPage,Hero,FlowStepper,ModeChoice,SkillPicker,PlacementTest,PlacementResultView,ParentsSection}.tsx` | `LandingPage` |
@@ -339,6 +339,7 @@ Types : `src/types/reading.ts` (`ReadingWord`, `Syllable`, `ParsedWord`, `Readin
 |---|---|---|
 | `integration/faq-alignment.test.tsx` | Intégration | FAQ alignée sur README, version, avatars, XP, matières, fonctionnalités |
 | `unit/release-tag.test.ts` | Unit | Script `release:tag` — semver, CHANGELOG, tag, note persistée, README synchronisé |
+| `unit/skill-dashboard.test.ts` | Unit | Maîtrise, bâtiments, synthèse des révisions, rythme vers l'objectif |
 | `unit/skill-levels.test.ts`, `unit/claim-placements.test.ts` | Unit | Fusion/validation des niveaux, reprise du test visiteur, compétence Claude Platform |
 | `unit/skill-activities.test.ts`, `unit/skill-evaluation.test.ts`, `unit/skill-progress.test.ts` | Unit | Niveaux par compétence, quiz/flashcards, évaluations |
 | `unit/useScore.test.ts` | Unit | `useScore` — XP, niveau, badges, streak |
