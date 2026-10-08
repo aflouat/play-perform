@@ -15,7 +15,7 @@ Fichier unique de pilotage : **en cours**, **backlog** et **bugs connus** (rempl
 
 ## Release, abonnements, déploiement
 - [ ] **Définir `LEARNER_TOKEN_SECRET`** (Vercel) : signe les sessions apprenant ; à défaut, la clé service role sert de secret
-- [ ] **Rappels application fermée** : aujourd'hui des notifications du navigateur tant que l'app est ouverte ; pour réveiller un appareil fermé il faut Web Push (clés VAPID, table d'abonnements, tâche planifiée) ou un e-mail Brevo quotidien
+- [ ] **Web Push en prod** : variables VAPID + `CRON_SECRET` sur Vercel, planificateur toutes les 5 min vers `/api/push/dispatch` (procédure : `docs/deploiement.md`)
 - [ ] Centre de formation = admin (`ADMIN_EMAILS`) : prévoir un rôle « centre » distinct et des notifications de décision (inscription, correction)
 - [ ] Vérifier côté serveur le temps réellement travaillé (aujourd'hui l'effort quotidien est déclaratif)
 - [ ] **Emails d'inscription prod** : saisir Brevo (`smtp-relay.brevo.com:587`) dans Supabase → Auth → SMTP Settings, valider l'expéditeur dans Brevo, relever la limite d'emails, vérifier `NEXT_PUBLIC_SITE_URL` (procédure : `docs/deploiement.md`)

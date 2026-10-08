@@ -72,3 +72,17 @@ Les mails de confirmation / reset sont envoyés par Supabase Auth (GoTrue) ; Bre
 5. Test : créer un compte avec une adresse neuve, puis consulter *Brevo → Transactionnel → Logs*
 
 Auto-hébergé (Mac mini) : mêmes valeurs dans `GOTRUE_SMTP_*` (variables `SMTP_*` lues par `docker-compose.yml`). Ne jamais commiter la clé SMTP.
+
+## Rappels application fermée (Web Push)
+
+1. Clés VAPID : `npx web-push generate-vapid-keys` (en local, elles sont déjà dans `.env.local`)
+2. Variables Vercel : `NEXT_PUBLIC_VAPID_PUBLIC_KEY` (publique, requise **au build**), `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` (`mailto:…`), `CRON_SECRET` (chaîne aléatoire) — puis redéployer
+3. Migration `push_subscriptions` appliquée (voir `supabase/migrations/`)
+4. Un planificateur appelle toutes les 5 minutes `GET https://<domaine>/api/push/dispatch` avec l'en-tête `Authorization: Bearer <CRON_SECRET>` :
+   - Vercel Cron (plan Pro : minute) — **pas** sur le plan Hobby (1 fois par jour maximum, le déploiement serait refusé)
+   - ou cron-job.org / UptimeRobot (gratuit, toutes les 5 min)
+   - ou Supabase `pg_cron` + `pg_net` (`net.http_get`)
+5. Test : activer un rappel dans un plan de travail, régler l'heure dans 2 minutes, fermer l'onglet → la notification arrive
+6. iPhone / iPad : Web Push n'existe que si l'application est ajoutée à l'écran d'accueil (iOS 16.4+)
+
+Un rappel en retard de plus de 90 minutes (planificateur arrêté) n'est pas envoyé. Une clé VAPID changée invalide les abonnements existants.

@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { getSkillPlan, setSkillPlan } from '../application/skill-plans';
-import { reminderPermission, requestReminderPermission, type ReminderPermission } from '../application/reminders';
+import { reminderPermission, type ReminderPermission } from '../application/reminders';
+import { enablePush, isPushActive, syncPushReminders, type EnableResult } from '../application/push';
 import { dailyMinutesNeeded, victoryDate, type StudyPlan } from '../domain/effort';
 import { remainingMinutes } from '../domain/effort';
 import type { SkillLevelNumber } from '../domain/skill';
@@ -16,6 +17,7 @@ const INPUT = 'block w-full rounded-lg border border-slate-300 p-2';
 export function PlanEditor({ profileId, skillId, level, now }: Props) {
   const [plan, setPlan] = useState<StudyPlan>(() => getSkillPlan(profileId, skillId));
   const [permission, setPermission] = useState<ReminderPermission>(() => reminderPermission());
+  const [pushResult, setPushResult] = useState<EnableResult | null>(() => (isPushActive(profileId) ? 'ok' : null));
   const needed = dailyMinutesNeeded(level, plan.goalDate, now);
   const victory = victoryDate(level, plan.dailyMinutes, now);
 
@@ -23,8 +25,13 @@ export function PlanEditor({ profileId, skillId, level, now }: Props) {
     const next = { ...plan, ...patch };
     setPlan(next);
     setSkillPlan(profileId, skillId, next);
+    void syncPushReminders(profileId);
   }
-  async function enableReminders() { setPermission(await requestReminderPermission()); }
+  async function enableReminders() {
+    const result = await enablePush(profileId);
+    setPushResult(result);
+    setPermission(reminderPermission());
+  }
 
   if (remainingMinutes(level) === 0) return <p className="text-sm font-bold text-emerald-700">🏆 Victoire : tu maîtrises cette compétence !</p>;
 
@@ -48,13 +55,17 @@ export function PlanEditor({ profileId, skillId, level, now }: Props) {
         {needed !== null && <> Pour tenir ta date : <strong>{needed} min par jour</strong>.</>}
         {plan.goalDate && needed === null && ' Cette date est déjà passée : choisis-en une nouvelle.'}
       </p>
-      {plan.reminderTime && permission !== 'granted' && (
-        <button onClick={enableReminders} disabled={permission === 'unsupported' || permission === 'denied'}
-          className="w-full rounded-lg bg-slate-800 py-2 font-bold text-white disabled:opacity-40">
-          {permission === 'denied' ? 'Notifications bloquées dans le navigateur' : permission === 'unsupported' ? 'Notifications non disponibles ici' : '🔔 Activer les rappels'}
-        </button>
+      {plan.reminderTime && pushResult !== 'ok' && (
+        <div className="space-y-1">
+          <button onClick={enableReminders} disabled={permission === 'unsupported' || permission === 'denied'}
+            className="w-full rounded-lg bg-slate-800 py-2 font-bold text-white disabled:opacity-40">
+            {permission === 'denied' ? 'Notifications bloquées dans le navigateur' : permission === 'unsupported' ? 'Notifications non disponibles ici' : '🔔 Activer les rappels'}
+          </button>
+          {pushResult === 'not-configured' && <p className="text-amber-700">Les rappels application fermée ne sont pas encore configurés : tu seras prévenu application ouverte.</p>}
+          {pushResult === 'failed' && <p className="text-rose-700">Activation impossible pour le moment, réessaie.</p>}
+        </div>
       )}
-      {plan.reminderTime && permission === 'granted' && <p className="text-emerald-700">🔔 Rappel actif à {plan.reminderTime} (l&apos;application doit être ouverte).</p>}
+      {plan.reminderTime && pushResult === 'ok' && <p className="text-emerald-700">🔔 Rappel actif à {plan.reminderTime}, même application fermée.</p>}
     </div>
   );
 }

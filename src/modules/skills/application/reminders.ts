@@ -2,6 +2,7 @@ import { getSkillById } from '../infra/skills-repository';
 import { isReminderDue, reminderMessage, toDay } from '../domain/effort';
 import { getAllPlans } from './skill-plans';
 import { getAllSkillLevels } from './skill-progress';
+import { isPushActive } from './push';
 
 const sentKey = (profileId: string) => `pp:reminders-sent:${profileId}`;
 
@@ -32,7 +33,8 @@ async function show(title: string, body: string, tag: string): Promise<void> {
  * Browser notifications fire while the app is open in a tab or window; a push service would be needed to wake a closed app.
  */
 export async function sendDueReminders(profileId: string, now: Date): Promise<number> {
-  if (reminderPermission() !== 'granted') return 0;
+  // When this device is registered for Web Push, the server sends the reminders: stay silent here.
+  if (reminderPermission() !== 'granted' || isPushActive(profileId)) return 0;
   const plans = getAllPlans(profileId);
   const levels = getAllSkillLevels(profileId);
   const sent = readSent(profileId);

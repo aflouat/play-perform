@@ -50,11 +50,15 @@ function minutesOfDay(time: string | null): number | null {
   return h < 24 && m < 60 ? h * 60 + m : null;
 }
 
-/** True once today's reminder time has passed and the reminder was not already sent today. */
-export function isReminderDue(plan: StudyPlan, now: Date, lastNotifiedDay: string | null): boolean {
+/**
+ * True once today's reminder time has passed and the reminder was not already sent today.
+ * `graceMinutes` drops a reminder that would arrive too late to be useful (server-side pushes).
+ */
+export function isReminderDue(plan: StudyPlan, now: Date, lastNotifiedDay: string | null, graceMinutes = Infinity): boolean {
   const at = minutesOfDay(plan.reminderTime);
   if (at === null || lastNotifiedDay === toDay(now)) return false;
-  return now.getHours() * 60 + now.getMinutes() >= at;
+  const elapsed = now.getHours() * 60 + now.getMinutes() - at;
+  return elapsed >= 0 && elapsed <= graceMinutes;
 }
 
 const formatDay = (day: string) => new Date(`${day}T12:00:00`).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
