@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Geist } from 'next/font/google';
 import './globals.css';
+import { SiteHeader } from '@/shared/ui/SiteHeader';
+import { SiteFooter } from '@/shared/ui/SiteFooter';
 
 const geist = Geist({
   subsets: ['latin'],
@@ -15,8 +17,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="fr">
-      <body className={`${geist.variable} font-sans antialiased min-h-screen`}>
-        {children}
+      <body className={`${geist.variable} font-sans antialiased min-h-screen flex flex-col`}>
+        <SiteHeader />
+        <div className="flex-1">{children}</div>
+        <SiteFooter />
       </body>
     </html>
   );

@@ -9,9 +9,8 @@ import { ModeChoice } from './ModeChoice';
 import { SkillPicker } from './SkillPicker';
 import { PlacementTest } from './PlacementTest';
 import { PlacementResultView } from './PlacementResultView';
-import { ParentsSection } from './ParentsSection';
+import { TeachersSection } from './TeachersSection';
 import { PricingSection } from '@/modules/pricing';
-import { SiteFooter } from '@/shared/ui/SiteFooter';
 
 /** Home page for visitors who are not signed in. */
 export function LandingPage() {
@@ -43,8 +42,7 @@ export function LandingPage() {
       </section>
 
       <PricingSection />
-      <ParentsSection onTryTest={goToFlow} />
-      <SiteFooter />
+      <TeachersSection onTryTest={goToFlow} />
     </main>
   );
 }

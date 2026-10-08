@@ -12,7 +12,7 @@ export async function isAdminAuthorized(req: NextRequest): Promise<boolean> {
   // Script / CLI access via service role key
   if (serviceKey && token === serviceKey) return true;
 
-  // Parent JWT: verify email against ADMIN_EMAILS
+  // Teacher JWT: verify email against ADMIN_EMAILS
   const adminEmails = (process.env.ADMIN_EMAILS ?? '')
     .split(',').map((s) => s.trim()).filter(Boolean);
   if (adminEmails.length === 0) return false;

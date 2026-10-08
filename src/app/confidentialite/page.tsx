@@ -25,7 +25,7 @@ export default function PrivacyPage() {
       <p className="mb-8 text-slate-500">Play &amp; Perform est fait pour des jeunes : nous gardons le strict nécessaire.</p>
 
       <Block title="Qui crée le compte ?">
-        <p>Le compte est ouvert par un parent ou un adulte responsable, avec son adresse e-mail. Il crée ensuite les profils des jeunes (prénom, âge, classe). Aucun nom de famille n&apos;est demandé.</p>
+        <p>Le compte est ouvert par un enseignant, un tuteur ou un adulte responsable, avec son adresse e-mail. Il crée ensuite les profils des apprenants et leur donne un accès (prénom, âge, classe). Aucun nom de famille n&apos;est demandé.</p>
       </Block>
       <Block title="Quelles données sont conservées ?">
         <ul className="list-disc space-y-1 pl-5">
@@ -36,13 +36,13 @@ export default function PrivacyPage() {
         </ul>
       </Block>
       <Block title="Ce que nous ne faisons pas">
-        <p>Pas de publicité, pas de revente de données, pas de traceurs publicitaires. Les données servent uniquement à faire fonctionner l&apos;apprentissage et le suivi par le parent.</p>
+        <p>Pas de publicité, pas de revente de données, pas de traceurs publicitaires. Les données servent uniquement à faire fonctionner l&apos;apprentissage et le suivi par l&apos;enseignant.</p>
       </Block>
       <Block title="Où sont-elles hébergées ?">
         <p>Le site est servi par Vercel ; la base de données et l&apos;authentification sont fournies par Supabase. Les e-mails d&apos;inscription transitent par un service d&apos;envoi (Brevo).</p>
       </Block>
       <Block title="Accéder, corriger, effacer">
-        <p>Le parent peut modifier ou supprimer chaque profil depuis l&apos;espace parent. Pour supprimer le compte entier ou obtenir une copie des données, écris-nous{CONTACT ? <> à <a className="text-violet-600 underline" href={`mailto:${CONTACT}`}>{CONTACT}</a></> : ' via la page FAQ'}.</p>
+        <p>L&apos;enseignant peut modifier ou supprimer chaque profil depuis l&apos;espace enseignant. Pour supprimer le compte entier ou obtenir une copie des données, écris-nous{CONTACT ? <> à <a className="text-violet-600 underline" href={`mailto:${CONTACT}`}>{CONTACT}</a></> : ' via la page FAQ'}.</p>
       </Block>
     </main>
   );

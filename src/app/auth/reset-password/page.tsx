@@ -46,7 +46,7 @@ function ResetForm() {
     const { error: err } = await getClient().auth.updateUser({ password });
     setLoading(false);
     if (err) { setError(err.message); return; }
-    router.push('/parent');
+    router.push('/enseignant');
   }
 
   if (error && !ready) {

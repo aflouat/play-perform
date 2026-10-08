@@ -3,7 +3,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { AddStudentForm } from '@/components/parent/AddStudentForm';
+import { AddStudentForm } from '@/components/enseignant/AddStudentForm';
 
 export default function NewStudentPage() {
   const router = useRouter();
@@ -16,7 +16,7 @@ export default function NewStudentPage() {
             <h1 className="text-2xl font-black text-[#1a1a2e]">Ajouter un élève</h1>
             <p className="text-slate-500 text-sm">Créez un nouveau profil élève.</p>
           </div>
-          <Link href="/parent" className="text-xs text-slate-400 hover:text-slate-600 font-semibold">← Retour</Link>
+          <Link href="/enseignant" className="text-xs text-slate-400 hover:text-slate-600 font-semibold">← Retour</Link>
         </div>
 
         <AddStudentForm onAdded={() => { router.push('/'); }} />

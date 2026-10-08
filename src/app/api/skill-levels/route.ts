@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getUserIdFromRequest } from '@/lib/parent-auth';
+import { getUserIdFromRequest } from '@/lib/actor-auth';
 import { isStudentOfParent, listLevels, raiseLevel, validateLevelUpdate } from '@/modules/skills/server';
 
 const fail = (error: string, status: number) => NextResponse.json({ error }, { status });

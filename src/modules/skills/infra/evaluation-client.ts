@@ -9,7 +9,7 @@ async function accessToken(): Promise<string> {
 
 const headers = (token: string) => ({ 'content-type': 'application/json', authorization: `Bearer ${token}` });
 
-/** Browser side: calls /api/skill-evaluations with the parent's session. */
+/** Browser side: calls /api/skill-evaluations with the teacher's session. */
 export async function fetchProfileEvaluations(profileId: string): Promise<SkillEvaluation[]> {
   const res = await fetch(`/api/skill-evaluations?profileId=${encodeURIComponent(profileId)}`, { headers: headers(await accessToken()) });
   if (!res.ok) return [];

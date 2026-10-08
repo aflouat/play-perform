@@ -105,10 +105,10 @@ export default function WelcomePage() {
               <p className="text-4xl" aria-hidden>🚀</p>
               <h2 className="mt-2 text-lg font-black text-[#1a1a2e]">Bienvenue ! Crée le premier profil</h2>
               <p className="mt-1 text-sm text-slate-500">Un prénom, un âge, et c&apos;est parti : passe le test de niveau et construis ta ville des compétences.</p>
-              <Link href="/parent/new" className="mt-4 inline-flex rounded-2xl bg-violet-600 px-6 py-3 font-bold text-white shadow-lg">Créer mon profil →</Link>
+              <Link href="/enseignant/new" className="mt-4 inline-flex rounded-2xl bg-violet-600 px-6 py-3 font-bold text-white shadow-lg">Créer mon profil →</Link>
             </div>
           )}
-          <Link href="/parent" className="w-full flex items-center gap-4 rounded-2xl p-5 border-2 border-dashed border-violet-200 hover:border-violet-400 transition-colors">
+          <Link href="/enseignant" className="w-full flex items-center gap-4 rounded-2xl p-5 border-2 border-dashed border-violet-200 hover:border-violet-400 transition-colors">
             <div className="w-16 h-16 shrink-0 rounded-2xl bg-violet-50 flex items-center justify-center text-2xl">+</div>
             <div className="text-left"><div className="text-violet-600 font-bold">Gérer les élèves</div><div className="text-slate-400 text-sm">Ajouter, modifier ou supprimer</div></div>
           </Link>
@@ -116,7 +116,7 @@ export default function WelcomePage() {
         <div className="flex justify-center gap-4 text-xs text-slate-400">
           <Link href="/faq" className="hover:text-slate-600">❓ FAQ</Link>
           <Link href="/releases" className="hover:text-slate-600">📋 Versions</Link>
-          <Link href="/parent" className="hover:text-slate-600">👤 Espace parent</Link>
+          <Link href="/enseignant" className="hover:text-slate-600">👤 Espace enseignant</Link>
           {isAdmin && <Link href="/admin/questions" className="hover:text-violet-600 text-violet-400 font-semibold">⚙️ Admin</Link>}
           <AppVersion className="hover:text-slate-600" />
         </div>

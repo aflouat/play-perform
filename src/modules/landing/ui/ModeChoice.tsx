@@ -28,7 +28,7 @@ export function ModeChoice({ mode, onChoose }: Props) {
           className={`${CARD} ${mode === 'account' ? 'border-violet-600 bg-violet-50' : 'border-slate-200 bg-white hover:border-violet-500 hover:shadow-md'}`}>
           <span className="text-3xl" aria-hidden="true">👤</span>
           <span className="mt-2 block text-lg font-black text-slate-900">Avec un compte</span>
-          <span className="mt-1 block text-sm text-slate-600">Ta progression est sauvegardée partout et tes parents peuvent la suivre.</span>
+          <span className="mt-1 block text-sm text-slate-600">Ta progression est sauvegardée partout et ton enseignant peut la suivre.</span>
           <span className="mt-3 inline-block text-sm font-bold text-violet-700">Se connecter ou s&apos;inscrire →</span>
         </button>
       </div>

@@ -69,7 +69,7 @@ function AuthContent() {
   }
 
   const screenLabel: Record<Screen, string> = {
-    login: 'Connexion parent', signup: 'Créer un compte', forgot: 'Mot de passe oublié', forgot_sent: '',
+    login: 'Connexion enseignant', signup: 'Créer un compte', forgot: 'Mot de passe oublié', forgot_sent: '',
   };
 
   return (
@@ -80,7 +80,7 @@ function AuthContent() {
           <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Email</label>
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required
             className="mt-1 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:border-violet-400"
-            placeholder="parent@email.com" />
+            placeholder="enseignant@email.com" />
         </div>
         {screen !== 'forgot' && (
           <div>
@@ -106,7 +106,7 @@ function AuthContent() {
         )}
         {screen === 'signup' && (
           <p className="text-xs text-slate-500">
-            Le compte est créé par un parent ou un adulte responsable. En t&apos;inscrivant, tu acceptes notre{' '}
+            Le compte est créé par un enseignant, un tuteur ou un adulte responsable. En t&apos;inscrivant, tu acceptes notre{' '}
             <Link href="/confidentialite" className="text-violet-600 underline">politique de confidentialité</Link>.
           </p>
         )}
@@ -138,7 +138,7 @@ export default function AuthPage() {
       <div className="w-full max-w-sm space-y-6">
         <div className="text-center">
           <div className="text-5xl mb-3">👤</div>
-          <p className="text-slate-500 text-sm mt-1">Espace parent ·  Play Perform</p>
+          <p className="text-slate-500 text-sm mt-1">Espace enseignant ·  Play Perform</p>
         </div>
         <Suspense fallback={<div className="text-slate-400 text-sm text-center py-8">Chargement…</div>}>
           <AuthContent />

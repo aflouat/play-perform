@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isAdminAuthorized } from '@/lib/admin-auth';
-import { getUserIdFromRequest } from '@/lib/parent-auth';
+import { getUserIdFromRequest } from '@/lib/actor-auth';
 import {
   createEvaluation, getEvaluationPrompt, isStudentOfParent, listEvaluationsForProfile, listPendingEvaluations, validateSubmission,
 } from '@/modules/skills/server';
@@ -26,7 +26,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   }
 }
 
-/** POST → a learner submits an answer (through their parent's session). */
+/** POST → a learner submits an answer (through their teacher's or their own session). */
 export async function POST(req: NextRequest): Promise<NextResponse> {
   const userId = await getUserIdFromRequest(req);
   if (!userId) return fail('Non autorisé', 401);

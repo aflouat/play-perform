@@ -34,7 +34,7 @@ function ConfirmInner() {
           setMessage(error.message);
         } else {
           setStatus('success');
-          setTimeout(() => router.push('/parent'), 1500);
+          setTimeout(() => router.push('/enseignant'), 1500);
         }
         return;
       }
@@ -44,7 +44,7 @@ function ConfirmInner() {
       const { data } = await db.auth.getSession();
       if (data.session) {
         setStatus('success');
-        setTimeout(() => router.push('/parent'), 1000);
+        setTimeout(() => router.push('/enseignant'), 1000);
       } else {
         setStatus('error');
         setMessage('Lien invalide ou expiré. Veuillez vous reconnecter.');
@@ -65,7 +65,7 @@ function ConfirmInner() {
         <>
           <div className="text-5xl mb-4">✅</div>
           <h2 className="text-xl font-black text-[#1a1a2e]">Compte activé !</h2>
-          <p className="text-slate-500 text-sm mt-2">Redirection vers votre espace parent…</p>
+          <p className="text-slate-500 text-sm mt-2">Redirection vers votre espace enseignant…</p>
         </>
       )}
       {status === 'error' && (

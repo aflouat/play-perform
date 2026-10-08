@@ -7,6 +7,13 @@ const { version } = JSON.parse(readFileSync("./package.json", "utf8")) as { vers
 const nextConfig: NextConfig = {
   output: "standalone",
   env: { NEXT_PUBLIC_APP_VERSION: version },
+  async redirects() {
+    // Ancien « espace parent » devenu « espace enseignant »
+    return [
+      { source: '/parent', destination: '/enseignant', permanent: true },
+      { source: '/parent/new', destination: '/enseignant/new', permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;

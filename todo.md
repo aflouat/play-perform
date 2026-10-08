@@ -44,3 +44,5 @@ _Aucun bug ouvert._ (profiles/scores, `/api/releases` et hydration `/mots` `/key
 erreur serveur lors de la soumission d'une reponse a un examinateur skill-evaluations 500 (error)
 - lentete et le footer doivent etre visible sur toutes pages
 - l'acces parent a remplacer par acces enseignant pour ajouter ses eleves et leur donner un acces
+- un accès apprenant permet a un eleve d'acceder a ses comptences et apprentissage
+avant de s'inscrire a un cours l'eleve doit consulter la fiche du cours et presenter une demande au centre de formation qui propose le cours/compétence

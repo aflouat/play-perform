@@ -5,14 +5,14 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
 import type { DbStudent } from '@/lib/db';
-import { StudentCard } from '@/components/parent/StudentCard';
+import { StudentCard } from '@/components/enseignant/StudentCard';
 import { apiFetchStudents } from '@/lib/students-api';
 
 function getClient() {
   return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL ?? '', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '');
 }
 
-export default function ParentPage() {
+export default function TeacherPage() {
   const router = useRouter();
   const [students, setStudents] = useState<DbStudent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -44,7 +44,7 @@ export default function ParentPage() {
         </div>
 
         <div className="space-y-4">
-          <Link href="/parent/new" className="w-full flex items-center gap-4 rounded-2xl p-5 border-2 border-dashed border-violet-200 hover:border-violet-400 transition-colors">
+          <Link href="/enseignant/new" className="w-full flex items-center gap-4 rounded-2xl p-5 border-2 border-dashed border-violet-200 hover:border-violet-400 transition-colors">
             <div className="w-16 h-16 shrink-0 rounded-2xl bg-violet-50 flex items-center justify-center text-2xl">+</div>
             <div className="text-left"><div className="text-violet-600 font-bold">Ajouter un élève</div><div className="text-slate-400 text-sm">Créer un nouveau profil</div></div>
           </Link>
