@@ -8,11 +8,14 @@ Fichier unique de pilotage : **en cours**, **backlog** et **bugs connus** (rempl
 **Règle produit : l'XP est au compte ; le niveau d'avancement (1 → 5) est par compétence et par élève** (`skills/application/skill-progress.ts`, clé `pp:skill-levels:<profileId>`). Le niveau déduit de l'XP s'appelle « Rang ».
 
 - [ ] Étape 2 — Architecture modulaire : shared, `eslint-plugin-boundaries`, spaced-repetition, rewards, quizzes, contrats
-- [ ] Étape 3 — Modèle de données skills + seed, **persistance BDD des niveaux par compétence**
+- [ ] Étape 3 — Modèle de données skills + seed, **persistance BDD des niveaux par compétence** (aujourd'hui : localStorage par appareil ; les évaluations validées par l'examinateur remontent le niveau à la prochaine visite)
 - [ ] Étape 4 — Landing : constellation, célébrations + XP via `rewards`, badge « Premier pas »
-- [ ] Brancher `advanceSkillLevel` / `setSkillLevel` (résultat du test de niveau, fin de palier) dans les parcours connectés
+- [ ] Reprendre le résultat du test de niveau visiteur (`pp:placements`) comme niveau initial à la création du compte
+- [ ] Rôle examinateur dédié (aujourd'hui = admin `ADMIN_EMAILS`) ; contenu quiz/flashcards pour « Logique » et « Méthode » (évaluation seule pour l'instant)
+- [ ] Notifier l'élève / le parent quand une évaluation est corrigée
 
 ## Release, abonnements, déploiement
+- [ ] **Appliquer en prod `20261009000000_skill_evaluations`** (sans elle, l'envoi d'une évaluation échoue en prod)
 - [ ] **Emails d'inscription prod** : saisir Brevo (`smtp-relay.brevo.com:587`) dans Supabase → Auth → SMTP Settings, valider l'expéditeur dans Brevo, relever la limite d'emails, vérifier `NEXT_PUBLIC_SITE_URL` (procédure : `docs/deploiement.md`)
 - [ ] Prod : activer RLS sur `questions` et `release_notes` (alerte sécurité Supabase) avec les policies adaptées
 - [ ] Configurer env vars prod (`SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SITE_URL`, `ADMIN_EMAILS`)

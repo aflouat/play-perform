@@ -31,6 +31,9 @@ Plateforme d'apprentissage ludique pour les ados & jeunes. Le parent crée un co
 | `/parcours/[id]` | Session de jeu d'un parcours multi-discipline |
 | `/admin/parcours` | Gestion des parcours (admin) |
 | `/admin/parcours/[id]` | Édition parcours + inscriptions élèves (admin) |
+| `/competences` | Élève : niveau (1 → 5) dans chaque compétence avant de choisir une activité |
+| `/competences/[skillId]` | Niveau de la compétence + activités pour monter : Quiz (4/5 = niveau suivant), Flashcards, Évaluation rédigée |
+| `/admin/evaluations` | Examinateur (admin) : correction des évaluations rédigées (valider = +1 niveau) |
 | `/admin/pricing` | Tarifs des abonnements 1 mois / 1 an / à vie (admin) |
 
 ## Modes de jeu
@@ -135,7 +138,7 @@ landing ──► skills    (compétences, niveaux 1 → 5)
    └──────► pricing   (abonnements, éditables en admin)
 ```
 - `landing` : page d'accueil visiteur — hero + CTA, choix du mode, choix de la compétence, test de niveau (5 questions), résultat sur le chemin 1 → 5, section parents. Résultats sans compte en localStorage (`pp:placements`).
-- `skills` : 8 compétences collège / lycée (seed local), libellés des 5 niveaux, **niveau d'avancement par élève et par compétence** (l'XP reste au compte, affiché comme « Rang »).
+- `skills` : 8 compétences collège / lycée (seed local), libellés des 5 niveaux, **niveau d'avancement par élève et par compétence** (l'XP reste au compte, affiché comme « Rang »), activités pour progresser (quiz, flashcards depuis les banques de questions existantes, évaluation rédigée corrigée par un examinateur). API : `GET/POST /api/skill-evaluations`, `PATCH /api/skill-evaluations/:id` (admin) ; table `skill_evaluations`. `server.ts` = accès base (API routes uniquement).
 - `quizzes` : 40 questions de positionnement (8 × 5 niveaux), niveau de départ = 1 + bonnes réponses (max 5).
 - `pricing` : abonnements 1 mois / 1 an / à vie (table `pricing_plans`), section « Nos abonnements » sur l'accueil, édition dans `/admin/pricing`. API : `GET /api/pricing` (public), `PUT /api/pricing/:id` (admin). `index.ts` = API client, `server.ts` = accès base (API routes uniquement).
 

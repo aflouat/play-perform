@@ -24,8 +24,7 @@ export default function SkillPage() {
     <main className="mx-auto max-w-md px-5 pt-8 pb-16">
       <XpGainToast gain={lastGain} />
       <button onClick={() => router.push('/competences')} className="mb-4 text-sm text-slate-400">← Mes compétences</button>
-      <SkillActivityView skillId={skillId} profileId={profileId} mode={mode} addXp={addXp} triggerGain={triggerGain}
-        evaluation={<p className="rounded-2xl bg-slate-50 p-4 text-sm text-slate-500">Évaluation bientôt disponible.</p>} />
+      <SkillActivityView skillId={skillId} profileId={profileId} mode={mode} addXp={addXp} triggerGain={triggerGain} />
     </main>
   );
 }

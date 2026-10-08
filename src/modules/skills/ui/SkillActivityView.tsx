@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type ReactNode } from 'react';
+import { useState } from 'react';
 import type { QuizQuestion } from '@/types';
 import type { LearningMode } from '@/lib/learning-mode';
 import { getSkillById } from '../infra/skills-repository';
@@ -10,6 +10,7 @@ import { getSkillSubject, pickSkillQuestions, toFlashcards } from '../infra/skil
 import { SkillLevelMeter } from './SkillLevelMeter';
 import { SkillQuiz } from './SkillQuiz';
 import { Flashcards } from './Flashcards';
+import { EvaluationPanel } from './EvaluationPanel';
 
 interface Props {
   skillId: string;
@@ -17,8 +18,6 @@ interface Props {
   mode: LearningMode;
   addXp: (amount: number, reason: 'quiz-correct' | 'quiz-perfect') => void;
   triggerGain: (amount: number) => void;
-  /** Open-question evaluation corrected by an examiner (rendered by the page) */
-  evaluation: ReactNode;
 }
 
 const ACTIVITIES: { id: SkillActivity; emoji: string; label: string; hint: string }[] = [
@@ -28,7 +27,7 @@ const ACTIVITIES: { id: SkillActivity; emoji: string; label: string; hint: strin
 ];
 
 /** A skill: level first, then the choice of an activity to move up. */
-export function SkillActivityView({ skillId, profileId, mode, addXp, triggerGain, evaluation }: Props) {
+export function SkillActivityView({ skillId, profileId, mode, addXp, triggerGain }: Props) {
   const skill = getSkillById(skillId);
   const levels = useSkillLevels(profileId);
   const level = levels[skillId] ?? null;
@@ -82,7 +81,7 @@ export function SkillActivityView({ skillId, profileId, mode, addXp, triggerGain
         <SkillQuiz key={round} questions={questions} mode={mode} onFinish={finishQuiz} onCorrect={() => undefined} />
       )}
       {activity === 'flashcards' && questions.length > 0 && <Flashcards key={round} cards={toFlashcards(questions)} onFinish={finishCards} />}
-      {activity === 'evaluation' && evaluation}
+      {activity === 'evaluation' && <EvaluationPanel profileId={profileId} skillId={skillId} level={level} />}
     </div>
   );
 }

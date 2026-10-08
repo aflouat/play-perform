@@ -65,6 +65,7 @@ describe('FAQ / README / version alignment', () => {
     expect(faq).toMatch(/niveau d'avancement.*propre à chaque compétence/);
     expect(faq).toMatch(/1 mois.*1 an.*à vie/);
     expect(faq).toContain('Lecture par syllabes');
+    ['quiz', 'flashcards', 'évaluation'].forEach((a) => expect(faq).toContain(a));
   });
 
   it('is described in the README routes table', () => {
