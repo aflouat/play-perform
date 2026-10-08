@@ -27,7 +27,7 @@ Fichier unique de pilotage : **en cours**, **backlog** et **bugs connus** (rempl
 - [ ] Vérifier côté serveur le temps réellement travaillé (aujourd'hui l'effort quotidien est déclaratif)
 - [ ] **Emails d'inscription prod** : saisir Brevo (`smtp-relay.brevo.com:587`) dans Supabase → Auth → SMTP Settings, valider l'expéditeur dans Brevo, relever la limite d'emails, vérifier `NEXT_PUBLIC_SITE_URL` (procédure : `docs/deploiement.md`)
 - [ ] Prod : activer RLS sur `questions` et `release_notes` (alerte sécurité Supabase) avec les policies adaptées
-- [ ] Configurer env vars prod (`SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SITE_URL`, `ADMIN_EMAILS`)
+- [ ] **Bloquant prod** : `SUPABASE_SERVICE_ROLE_KEY` est absente de Vercel → toutes les routes API serveur (tarifs, niveaux, inscriptions, évaluations, codes d'accès, progression) échouent avec « supabaseKey is required ». Supabase → Project Settings → API → clé `service_role` → Vercel → Environment Variables (Production) → redéployer. Vérifier ensuite via `GET /api/health` (super admin). Même clé à corriger dans `.env.local` (refusée par Supabase : 401). Aussi : `NEXT_PUBLIC_SITE_URL`, `ADMIN_EMAILS`
 - [ ] Vérification visuelle tarifs / admin (Docker arrêté)
 - [ ] Paiement en ligne (non demandé pour l'instant)
 

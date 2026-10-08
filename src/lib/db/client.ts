@@ -19,6 +19,9 @@ export function getServerSupabaseUrl(): string {
 export function getServerClient(): SupabaseClient {
   const url = getServerSupabaseUrl();
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY ?? '';
+  if (!url || !key) {
+    throw new Error('SUPABASE_SERVICE_ROLE_KEY (ou l’URL Supabase) est absent côté serveur : renseigne-le dans les variables d’environnement (Vercel → Settings → Environment Variables) puis redéploie.');
+  }
   return createClient(url, key);
 }
 

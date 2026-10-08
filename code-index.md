@@ -49,6 +49,7 @@ _Mis à jour : 2026-10-07 · v0.7.0_
 | `api/students/route.ts` | GET, POST | Liste élèves / création |
 | `api/students/[id]/route.ts` | DELETE, PATCH | Suppression / mise à jour élève |
 | `api/releases/route.ts` | GET, POST | Historique releases — lecture / écriture |
+| `api/health/route.ts` | GET | Réglages serveur présents (booléens, super admin) |
 | `api/progress/route.ts` | PUT | XP / badge d'un apprenant (session apprenant ou enseignant, propriété du profil vérifiée) |
 | `api/me/route.ts` | GET | Mon e-mail, drapeau super admin, mes centres et rôles |
 | `api/organizations/route.ts` | GET, POST | Centres visibles / création (super admin) |
