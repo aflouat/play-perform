@@ -1,5 +1,24 @@
 [
   {
+    "id": "generated-v0.9.0",
+    "version": "0.9.0",
+    "deployed_at": "2026-10-08T21:34:20.358Z",
+    "title": "Version 0.9.0",
+    "summary": "4 nouveauté(s), 0 correction(s) — dont : effort quotidien jusqu'à la victoire, rappels quotidiens (heure + objectif) ; fiche du cours et demande d'inscription (motivations) validée par le centre de formation ; accès apprenant par code (jeton signé), authentification enseignant/apprenant des API.",
+    "changes": [
+      "docs : rôles enseignant/apprenant, inscriptions aux cours, plan de travail et rappels (README, FAQ, index, todo)",
+      "feat : effort quotidien jusqu'à la victoire, rappels quotidiens (heure + objectif)",
+      "feat : fiche du cours et demande d'inscription (motivations) validée par le centre de formation",
+      "feat : accès apprenant par code (jeton signé), authentification enseignant/apprenant des API",
+      "feat : en-tête et pied de page sur toutes les pages, espace parent → espace enseignant"
+    ],
+    "tags": [
+      "docs",
+      "feat"
+    ],
+    "deployed_by": "aflouatabdelwedoud"
+  },
+  {
     "id": "generated-v0.8.0",
     "version": "0.8.0",
     "deployed_at": "2026-10-08T21:07:06.577Z",

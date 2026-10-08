@@ -1,4 +1,4 @@
-#  Play Perform · v0.8.0
+#  Play Perform · v0.9.0
 
 Plateforme d'apprentissage ludique pour les ados & jeunes. L'enseignant (ou le tuteur / adulte responsable) crée un compte, ajoute ses élèves et leur donne un **code d'accès** ; chaque apprenant ouvre alors ses compétences sur `/apprenant` — plus aucun élève « démo » n'est ajouté d'office. la ptf dispose d'un acces admin pour gerer les questions sur la GUI et ou batch API / CSV
 

@@ -2,6 +2,17 @@
 
 Toutes les versions de Play Perform (générées par `npm run release:tag`).
 
+## v0.9.0 — 2026-10-08
+
+### ✨ Nouveautés
+- effort quotidien jusqu'à la victoire, rappels quotidiens (heure + objectif) (5934716)
+- fiche du cours et demande d'inscription (motivations) validée par le centre de formation (9c50d2a)
+- accès apprenant par code (jeton signé), authentification enseignant/apprenant des API (fc4b132)
+- en-tête et pied de page sur toutes les pages, espace parent → espace enseignant (b7045a4)
+
+### 📝 Documentation
+- rôles enseignant/apprenant, inscriptions aux cours, plan de travail et rappels (README, FAQ, index, todo) (e8181f9)
+
 ## v0.8.0 — 2026-10-08
 
 ### ✨ Nouveautés
