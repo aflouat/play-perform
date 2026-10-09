@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { getEvaluationPrompt } from '../infra/evaluation-prompts';
 import { fetchProfileEvaluations, submitEvaluation } from '../infra/evaluation-client';
 import { setSkillLevel, getSkillLevelFor } from '../application/skill-progress';
+import { markSeen } from '../application/seen';
 import { levelAfterEvaluations, ANSWER_MIN, ANSWER_MAX, type SkillEvaluation } from '../domain/evaluation';
 import type { SkillLevelNumber } from '../domain/skill';
 
@@ -26,6 +27,7 @@ export function EvaluationPanel({ profileId, skillId, level }: Props) {
       if (!alive) return;
       const mine = all.filter((e) => e.skillId === skillId);
       setHistory(mine);
+      markSeen(profileId, 'evaluations');
       const next = levelAfterEvaluations(getSkillLevelFor(profileId, skillId), mine);
       if (next !== null && next !== getSkillLevelFor(profileId, skillId)) setSkillLevel(profileId, skillId, next);
     }).catch(() => undefined);

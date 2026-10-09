@@ -25,8 +25,12 @@ export function adminLinks(a: NavAccess): NavLink[] {
   ];
 }
 
+/** Someone who only corrects: their home is the correction queue, not a centre's student list. */
+export const isExaminerOnly = (a: NavAccess): boolean => !a.isSuperAdmin && a.roles.length > 0 && a.roles.every((r) => r === 'examiner');
+
 /** Short menu of the site header for a signed-in centre account. */
 export function centreHeaderLinks(a: NavAccess): NavLink[] {
+  if (isExaminerOnly(a)) return [{ href: '/examinateur', label: 'Mes corrections' }];
   return [
     { href: '/enseignant', label: 'Mon centre' },
     ...(corrections(a) ? [{ href: '/admin/evaluations', label: 'Corrections' }] : []),

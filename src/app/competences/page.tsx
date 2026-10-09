@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { SkillMap } from '@/modules/skills';
+import { LearnerHome } from '@/modules/dashboards';
 import { useActiveProfileId, isProfileReady } from '@/hooks/useActiveProfileId';
 import { useSkillBootstrap } from '@/hooks/useSkillBootstrap';
 
@@ -23,7 +24,8 @@ export default function CompetencesPage() {
           <button onClick={() => router.push('/home')} className="font-semibold text-violet-600">Quiz par matière →</button>
         </span>
       </div>
-      <h1 className="text-2xl font-black text-[#1a1a2e]">Ma ville des compétences</h1>
+      <LearnerHome profileId={profileId} />
+      <h2 className="mt-8 text-2xl font-black text-[#1a1a2e]">Ma ville des compétences</h2>
       <p className="mb-5 mt-1 text-sm text-slate-500">Chaque bâtiment grandit avec ton niveau. Objectif : le château (niveau 5) !</p>
       <SkillMap profileId={profileId} />
     </main>

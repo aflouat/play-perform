@@ -41,3 +41,7 @@ export { EMPTY_PLAN, toDay, remainingMinutes, dailyMinutesNeeded, victoryDate, i
 export type { ScheduledReminder, DueReminder } from './domain/push-schedule';
 export { zonedNow, dueScheduledReminders } from './domain/push-schedule';
 export { enablePush, disablePush, syncPushReminders, isPushActive, pushSupported } from './application/push';
+export type { SeenKind } from './application/seen';
+export { getSeen, markSeen } from './application/seen';
+export { fetchProfileEvaluations } from './infra/evaluation-client';
+export { fetchEnrollments } from './infra/enrollment-client';

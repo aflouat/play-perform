@@ -1,4 +1,4 @@
-import { adminLinks, centreHeaderLinks, type NavAccess } from '@/modules/organizations';
+import { adminLinks, centreHeaderLinks, isExaminerOnly, type NavAccess } from '@/modules/organizations';
 
 const access = (isSuperAdmin: boolean, ...roles: NavAccess['roles']): NavAccess => ({ isSuperAdmin, roles });
 const labels = (links: { label: string }[]) => links.map((l) => l.label);
@@ -39,7 +39,19 @@ describe('centreHeaderLinks (site header of a signed-in centre)', () => {
   });
   it('adds only what the roles allow, with a short label', () => {
     expect(labels(centreHeaderLinks(access(false, 'org_admin')))).toEqual(['Mon centre', 'Corrections', 'Inscriptions', 'Équipe']);
-    expect(labels(centreHeaderLinks(access(false, 'examiner')))).toEqual(['Mon centre', 'Corrections']);
+    expect(labels(centreHeaderLinks(access(false, 'teacher')))).toEqual(['Mon centre', 'Inscriptions']);
     expect(labels(centreHeaderLinks(access(true)))).toEqual(['Mon centre', 'Corrections', 'Inscriptions', 'Centres']);
+  });
+});
+
+describe('examiner-only accounts', () => {
+  it('land on their correction queue instead of a centre’s student list', () => {
+    expect(isExaminerOnly(access(false, 'examiner'))).toBe(true);
+    expect(centreHeaderLinks(access(false, 'examiner'))).toEqual([{ href: '/examinateur', label: 'Mes corrections' }]);
+  });
+  it('is not the case as soon as the person also teaches, manages, or is super admin', () => {
+    expect(isExaminerOnly(access(false, 'examiner', 'teacher'))).toBe(false);
+    expect(isExaminerOnly(access(true, 'examiner'))).toBe(false);
+    expect(isExaminerOnly(access(false))).toBe(false);
   });
 });

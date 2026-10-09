@@ -1,10 +1,12 @@
 'use client';
 
 import Link from 'next/link';
+import { useEffect } from 'react';
 import { getCourseSheet } from '../application/course-sheet';
 import { useEnrollments } from '../application/use-enrollments';
 import { useSkillLevels } from '../application/skill-progress';
 import { isEnrolled } from '../domain/enrollment';
+import { markSeen } from '../application/seen';
 import { EnrollmentForm } from './EnrollmentForm';
 
 const ACTIVITY_LABEL = { quiz: '❓ Quiz', flashcards: '🗂️ Flashcards', evaluation: '📝 Évaluation corrigée' } as const;
@@ -12,8 +14,9 @@ const ACTIVITY_LABEL = { quiz: '❓ Quiz', flashcards: '🗂️ Flashcards', eva
 /** Course sheet: what the course teaches and how, then the enrollment request. */
 export function CourseSheetView({ skillId, profileId }: { skillId: string; profileId: string }) {
   const sheet = getCourseSheet(skillId);
-  const { enrollments, reload } = useEnrollments(profileId);
+  const { enrollments, loaded, reload } = useEnrollments(profileId);
   const level = useSkillLevels(profileId)[skillId] ?? null;
+  useEffect(() => { if (loaded) markSeen(profileId, 'enrollments'); }, [loaded, profileId]);
   if (!sheet) return <p className="text-center text-slate-500">Cours introuvable.</p>;
 
   const mine = enrollments.find((e) => e.skillId === skillId);

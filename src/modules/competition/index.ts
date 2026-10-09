@@ -9,5 +9,5 @@ export { challengeFor, scoreChallenge, CHALLENGE_LENGTH } from './application/ch
 export type { CompetitionData, CompetitionView } from './application/view';
 export { buildCompetitionView, pastAwardsOf } from './application/view';
 export type { TeacherAward } from './infra/competition-client';
-export { updateRankingSettings, fetchTeacherAwards, revokeAwardRequest } from './infra/competition-client';
+export { fetchCompetition, updateRankingSettings, fetchTeacherAwards, revokeAwardRequest } from './infra/competition-client';
 export { CompetitionPanel } from './ui/CompetitionPanel';

@@ -18,6 +18,6 @@ export { validateSiren, validateSiret, validateCentreIdentity, formatSiren, form
 export type { CentreApplication, ApplicationStatus, ApplicationInput, ApplicationDecision } from './domain/application';
 export { validateCentreApplication, validateApplicationDecision } from './domain/application';
 export type { NavLink, NavAccess } from './domain/navigation';
-export { adminLinks, centreHeaderLinks, navAccessOf } from './domain/navigation';
+export { adminLinks, centreHeaderLinks, navAccessOf, isExaminerOnly } from './domain/navigation';
 export { AdminNav } from './ui/AdminNav';
 export { SuperAdminGate } from './ui/SuperAdminGate';

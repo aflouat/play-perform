@@ -15,7 +15,7 @@ Fichier unique de pilotage : **en cours**, **backlog** et **bugs connus** (rempl
 
 ## UX par rôle (avant le backend centre mère / franchises)
 - [ ] Vérifier le SIREN / SIRET auprès de l'API Sirene (INSEE) à l'inscription d'un centre (aujourd'hui : somme de contrôle + examen manuel par la société mère)
-- [ ] Parcours d'accueil dédiés : tableau de bord du centre (élèves actifs, demandes en attente, corrections), tableau de bord de l'examinateur, page d'accueil apprenant
+- [ ] Tableaux de bord : graphiques de progression dans le temps (activité par semaine), export CSV pour le centre, notification au centre quand une demande attend depuis plus de 3 jours
 - [ ] Vérifier à l'écran les trois espaces (visiteur, apprenant, centre) sur mobile ; textes finaux avec les premiers utilisateurs
 - [ ] Un enseignant sans centre (comptes existants) est rattaché à la société mère : proposer de rejoindre ou créer son centre
 

@@ -7,7 +7,8 @@ import { createClient } from '@supabase/supabase-js';
 import type { DbStudent } from '@/lib/db';
 import { StudentCard } from '@/components/enseignant/StudentCard';
 import { apiFetchStudents } from '@/lib/students-api';
-import { CentreApplicationBanner, CentreCard, TeamLinks } from '@/modules/organizations';
+import { CentreApplicationBanner, CentreCard, TeamLinks, fetchMyAccess, isExaminerOnly, navAccessOf } from '@/modules/organizations';
+import { CentreDashboardView } from '@/modules/dashboards';
 
 function getClient() {
   return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL ?? '', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '');
@@ -21,6 +22,8 @@ export default function TeacherPage() {
   useEffect(() => {
     getClient().auth.getSession().then(({ data }) => {
       if (!data.session) { router.replace('/auth'); return; }
+      // Someone who only corrects has no students: their home is the correction queue
+      fetchMyAccess().then((me) => { if (me && isExaminerOnly(navAccessOf(me))) router.replace('/examinateur'); });
       apiFetchStudents().then((s) => { setStudents(s); setLoading(false); });
     });
   }, [router]);
@@ -40,6 +43,7 @@ export default function TeacherPage() {
         </div>
 
         <CentreApplicationBanner />
+        <CentreDashboardView />
         <CentreCard />
         <TeamLinks />
 
