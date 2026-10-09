@@ -2,6 +2,19 @@
 
 Toutes les versions de Play Perform (générées par `npm run release:tag`).
 
+## v0.10.0 — 2026-10-09
+
+### ✨ Nouveautés
+- synchro XP/badges via API, accès anonymes limités à la société mère (migration), catalogue commun acté (1356370)
+- organisations (société mère + centres), rôles responsable / enseignant / examinateur, permissions par centre (a96ed9f)
+- rappels quotidiens par Web Push, application fermée (abonnements, dispatch planifié) (c548124)
+
+### 🐛 Corrections
+- message explicite si SUPABASE_SERVICE_ROLE_KEY manque, GET /api/health (eee9680)
+
+### 🔧 Autres changements
+- divers ameliorations (90338a5)
+
 ## v0.9.0 — 2026-10-08
 
 ### ✨ Nouveautés

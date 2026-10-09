@@ -1,5 +1,24 @@
 [
   {
+    "id": "generated-v0.10.0",
+    "version": "0.10.0",
+    "deployed_at": "2026-10-09T19:30:39.588Z",
+    "title": "Version 0.10.0",
+    "summary": "3 nouveauté(s), 1 correction(s) — dont : synchro XP/badges via API, accès anonymes limités à la société mère (migration), catalogue commun acté ; organisations (société mère + centres), rôles responsable / enseignant / examinateur, permissions par centre ; rappels quotidiens par Web Push, application fermée (abonnements, dispatch planifié).",
+    "changes": [
+      "divers ameliorations",
+      "fix : message explicite si SUPABASE_SERVICE_ROLE_KEY manque, GET /api/health",
+      "feat : synchro XP/badges via API, accès anonymes limités à la société mère (migration), catalogue commun acté",
+      "feat : organisations (société mère + centres), rôles responsable / enseignant / examinateur, permissions par centre",
+      "feat : rappels quotidiens par Web Push, application fermée (abonnements, dispatch planifié)"
+    ],
+    "tags": [
+      "fix",
+      "feat"
+    ],
+    "deployed_by": "aflouatabdelwedoud"
+  },
+  {
     "id": "generated-v0.9.0",
     "version": "0.9.0",
     "deployed_at": "2026-10-08T21:34:20.358Z",
