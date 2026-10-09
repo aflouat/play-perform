@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import type { QuizQuestion } from '@/types';
 import type { LearningMode } from '@/lib/learning-mode';
 import { recordSkillAnswer } from '../infra/skill-reviews';
@@ -16,6 +16,8 @@ import { SkillLevelMeter } from './SkillLevelMeter';
 import { SkillQuiz } from './SkillQuiz';
 import { Flashcards } from './Flashcards';
 import { EvaluationPanel } from './EvaluationPanel';
+import { ClassicTraps } from '@/modules/community';
+import { difficultyForLevel, getSkillBank } from '../infra/skill-content';
 
 interface Props {
   skillId: string;
@@ -41,6 +43,8 @@ export function SkillActivityView({ skillId, profileId, mode, addXp, triggerGain
   const [activity, setActivity] = useState<SkillActivity | null>(null);
   const [round, setRound] = useState(0);
   const hasBank = hasQuestionBank(skillId);
+  // Candidates for the wall of classic traps: the questions of the learner's level
+  const trapCandidates = useMemo(() => getSkillBank(skillId).filter((q) => q.difficulty === difficultyForLevel(level ?? 1)), [skillId, level]);
 
   // Random draw happens in the click handler, never during render
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
@@ -86,6 +90,8 @@ export function SkillActivityView({ skillId, profileId, mode, addXp, triggerGain
           );
         })}
       </div>
+
+      {hasBank && <ClassicTraps questions={trapCandidates} />}
 
       {activity === 'quiz' && questions.length > 0 && (
         <SkillQuiz key={round} questions={questions} mode={mode} onFinish={finishQuiz} onAnswered={(q, ok) => recordSkillAnswer(profileId, q, ok)} />

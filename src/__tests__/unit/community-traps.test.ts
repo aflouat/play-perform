@@ -45,3 +45,31 @@ describe('constructiveFeedback (failure is a lesson)', () => {
     expect(constructiveFeedback(true, 'x').title).toMatch(/Bravo/);
   });
 });
+
+import { rankTraps, type TrapQuestion } from '@/modules/community';
+
+describe('rankTraps (wall of classic mistakes)', () => {
+  const q = (id: string): TrapQuestion => ({
+    id, question: `Question ${id}`, correctOptionId: 'C', explanation: `Parce que ${id}`,
+    options: [{ id: 'A', text: 'a' }, { id: 'B', text: 'b' }, { id: 'C', text: 'c' }, { id: 'D', text: 'd' }],
+  });
+  const dist = {
+    q1: { A: 2, B: 5, C: 10, D: 3 },   // trap B: 25 %
+    q2: { A: 0, B: 14, C: 5, D: 1 },   // trap B: 70 %
+    q3: { A: 3, B: 3, C: 20, D: 4 },   // no clear trap
+    q4: { A: 1, B: 1, C: 1, D: 1 },    // too few answers
+  };
+
+  it('keeps the questions with a clear trap, the biggest trap first', () => {
+    const ranked = rankTraps([q('q1'), q('q2'), q('q3'), q('q4'), q('q5')], dist);
+    expect(ranked.map((r) => r.question.id)).toEqual(['q2', 'q1']);
+    expect(ranked[0]).toMatchObject({ trapOptionText: 'b', correctOptionText: 'c' });
+    expect(ranked[0].summary.trap?.share).toBe(70);
+  });
+  it('shows at most the requested number', () => {
+    expect(rankTraps([q('q1'), q('q2')], dist, 1)).toHaveLength(1);
+  });
+  it('is empty without statistics', () => {
+    expect(rankTraps([q('q1')], {})).toEqual([]);
+  });
+});

@@ -40,3 +40,20 @@ export function constructiveFeedback(correct: boolean, explanation: string): { t
     ? { title: '✓ Bravo !', body: explanation }
     : { title: '💡 Presque ! Voilà ce que tu viens d’apprendre :', body: explanation };
 }
+
+export interface TrapQuestion { id: string; question: string; correctOptionId: string; explanation: string; options: readonly { id: string; text: string }[] }
+export interface ClassicTrap { question: TrapQuestion; summary: TrapSummary; trapOptionText: string; correctOptionText: string }
+
+/** The questions where learners go wrong most often, with the option they pick: the "wall of classic mistakes" (anonymous). */
+export function rankTraps(questions: readonly TrapQuestion[], distributions: Record<string, Record<string, number>>, limit = 3): ClassicTrap[] {
+  return questions
+    .flatMap((question) => {
+      const summary = trapSummary(distributions[question.id] ?? {}, question.correctOptionId);
+      const trap = summary?.trap;
+      if (!summary || !trap) return [];
+      const text = (id: string) => question.options.find((o) => o.id === id)?.text ?? '';
+      return [{ question, summary, trapOptionText: text(trap.optionId), correctOptionText: text(question.correctOptionId) }];
+    })
+    .sort((a, b) => (b.summary.trap?.share ?? 0) - (a.summary.trap?.share ?? 0))
+    .slice(0, limit);
+}
