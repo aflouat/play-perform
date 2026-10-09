@@ -47,7 +47,7 @@ export default function AdminOrganizationsPage() {
       {error && <p role="alert" className="text-sm text-rose-700">{error}</p>}
       {access && organizations.length === 0 && <p className="text-sm text-slate-500">Tu n&apos;appartiens à aucune organisation.</p>}
       <ul className="space-y-4">
-        {organizations.map((o) => <OrganizationCard key={o.id} organization={o} isSuperAdmin={access?.isSuperAdmin ?? false} canRecruit={(access?.isSuperAdmin ?? false) || managerOf.has(o.id)} />)}
+        {organizations.map((o) => <OrganizationCard key={o.id} organization={o} isSuperAdmin={access?.isSuperAdmin ?? false} canRecruit={(access?.isSuperAdmin ?? false) || managerOf.has(o.id)} onIdentitySaved={reload} />)}
       </ul>
     </div>
   );

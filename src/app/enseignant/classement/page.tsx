@@ -24,7 +24,7 @@ export default function TeacherAwardsPage() {
   return (
     <div className="min-h-screen bg-slate-50 px-5 py-10">
       <div className="mx-auto max-w-md space-y-5">
-        <Link href="/enseignant" className="text-xs font-semibold text-slate-400 hover:text-slate-600">← Mes élèves</Link>
+        <Link href="/enseignant" className="text-xs font-semibold text-slate-400 hover:text-slate-600">← Mon centre</Link>
         <div>
           <h1 className="text-2xl font-black text-[#1a1a2e]">Médailles de la compétition</h1>
           <p className="text-sm text-slate-500">Les médailles du défi hebdomadaire sont attribuées automatiquement. Tu peux en retirer une : personne ne prend sa place.</p>

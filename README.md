@@ -6,8 +6,10 @@ Plateforme d'apprentissage ludique pour les ados & jeunes. L'enseignant (ou le t
 
 | Rôle | Accès |
 |---|---|
-| Enseignant | S'inscrit sur `/auth`, ajoute ses élèves et génère leur code d'accès sur `/enseignant` |
+| Centre de formation (personne morale : raison sociale, SIREN, établissement SIRET, adresse) | S'inscrit sur `/auth` ; son espace `/enseignant` (« Mon centre ») : fiche légale, élèves, codes d'accès, équipe |
 | Apprenant | Saisit son code (8 caractères) sur `/apprenant` → session signée de 30 jours sur son appareil ; accède à ses compétences uniquement |
+
+**Un rôle par appareil, des espaces séparés** : l'en-tête n'affiche que l'espace du rôle courant (visiteur : « Je suis apprenant » / « Centre de formation » ; apprenant : Ma ville, Compétition ; centre : Mon centre, Corrections, Inscriptions, Équipe). Un apprenant est renvoyé vers sa ville s'il ouvre `/enseignant` ou `/admin/*` ; se connecter comme centre ferme la session apprenant, et inversement.
 | Super admin (société mère) | Email dans `ADMIN_EMAILS` ou table `platform_admins` → crée les centres, voit tout |
 | Responsable de centre / enseignant / examinateur | Rôles dans `memberships` (un examinateur peut appartenir à plusieurs centres) : le centre décide des inscriptions de ses élèves, l'examinateur corrige leurs évaluations — voir [docs/saas-franchise.md](docs/saas-franchise.md) |
 

@@ -7,7 +7,7 @@ import { createClient } from '@supabase/supabase-js';
 import type { DbStudent } from '@/lib/db';
 import { StudentCard } from '@/components/enseignant/StudentCard';
 import { apiFetchStudents } from '@/lib/students-api';
-import { TeamLinks } from '@/modules/organizations';
+import { CentreCard, TeamLinks } from '@/modules/organizations';
 
 function getClient() {
   return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL ?? '', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '');
@@ -34,11 +34,12 @@ export default function TeacherPage() {
     <div className="flex-1 bg-slate-50 px-5 py-10">
       <div className="max-w-md mx-auto space-y-6">
         <div className="flex items-center justify-between">
-          <div><h1 className="text-2xl font-black text-[#1a1a2e]">Mes élèves</h1><p className="text-slate-500 text-sm">{students.length} profil(s)</p></div>
+          <div><h1 className="text-2xl font-black text-[#1a1a2e]">Mon centre de formation</h1><p className="text-slate-500 text-sm">{students.length} profil(s)</p></div>
           <button onClick={() => getClient().auth.signOut().then(() => router.push('/'))}
             className="text-xs text-slate-400 hover:text-rose-500 font-semibold transition-colors">Déconnexion</button>
         </div>
 
+        <CentreCard />
         <TeamLinks />
 
         <div className="space-y-3">

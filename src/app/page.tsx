@@ -10,6 +10,7 @@ import { useScore } from '@/hooks/useScore';
 import { saveMode, type LearningMode, STUDENT_MODE_LABELS } from '@/lib/learning-mode';
 import { apiFetchStudents } from '@/lib/students-api';
 import { LandingPage } from '@/modules/landing';
+import { useRole } from '@/hooks/useRole';
 import { AppVersion } from '@/shared/ui/AppVersion';
 
 interface DisplayProfile {
@@ -60,6 +61,9 @@ export default function WelcomePage() {
   const [ready, setReady] = useState(false);
   const [authed, setAuthed] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const role = useRole();
+  // A learner's home is their city, never the centre's profile chooser or the visitor landing
+  useEffect(() => { if (role === 'learner') router.replace('/competences'); }, [role, router]);
 
   useEffect(() => {
     async function init() {
@@ -116,7 +120,7 @@ export default function WelcomePage() {
         <div className="flex justify-center gap-4 text-xs text-slate-400">
           <Link href="/faq" className="hover:text-slate-600">❓ FAQ</Link>
           <Link href="/releases" className="hover:text-slate-600">📋 Versions</Link>
-          <Link href="/enseignant" className="hover:text-slate-600">👤 Espace enseignant</Link>
+          <Link href="/enseignant" className="hover:text-slate-600">🏫 Mon centre</Link>
           {isAdmin && <Link href="/admin/questions" className="hover:text-violet-600 text-violet-400 font-semibold">⚙️ Admin</Link>}
           <AppVersion className="hover:text-slate-600" />
         </div>

@@ -19,7 +19,7 @@ export function PricingSection() {
   const monthly = plans?.find((p) => p.id === 'monthly');
 
   return (
-    <section id="tarifs" aria-labelledby="pricing-title" className="mx-auto max-w-5xl px-4 py-12 scroll-mt-4">
+    <section id="tarifs" aria-labelledby="pricing-title" className="mx-auto max-w-5xl px-4 py-12 scroll-mt-24">
       <h2 id="pricing-title" className="text-2xl sm:text-3xl font-black text-slate-900 text-center">Nos abonnements</h2>
       <p className="mt-2 text-center text-slate-600">Le test de niveau reste gratuit. Choisis la formule qui te convient pour aller plus loin.</p>
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { createClient } from '@supabase/supabase-js';
 import { saveLearnerToken, hasLearnerToken, clearLearnerToken } from '@/lib/auth-token';
 import { clearActiveProfile, getActiveProfileId, setActiveProfile } from '@/lib/profiles';
 import { saveMode, type LearningMode } from '@/lib/learning-mode';
@@ -29,6 +30,8 @@ export default function LearnerAccessPage() {
     const body = (await res.json().catch(() => ({}))) as LoginResponse;
     setBusy(false);
     if (!res.ok || !body.token || !body.student) { setError(body.error ?? 'Connexion impossible.'); return; }
+    // One role per device: a learner session replaces a centre account (the centre's space is never shown to a learner)
+    await createClient(process.env.NEXT_PUBLIC_SUPABASE_URL ?? '', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '').auth.signOut();
     saveLearnerToken(body.token);
     const { id, name, emoji, gradient, learning_mode } = body.student;
     setActiveProfile(id, { name, emoji, gradient });

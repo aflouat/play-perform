@@ -4,6 +4,7 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
 import Link from 'next/link';
+import { clearLearnerToken } from '@/lib/auth-token';
 
 function getClient() {
   return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL ?? '', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '');
@@ -50,6 +51,7 @@ function AuthContent() {
       }
       const { error: err } = await db.auth.signInWithPassword({ email, password });
       if (err) { setError(err.message); return; }
+      clearLearnerToken(); // one role per device: a centre account replaces a learner session
       router.push('/');
     } finally { setLoading(false); }
   }
@@ -69,7 +71,7 @@ function AuthContent() {
   }
 
   const screenLabel: Record<Screen, string> = {
-    login: 'Connexion enseignant', signup: 'Créer un compte', forgot: 'Mot de passe oublié', forgot_sent: '',
+    login: 'Connexion centre de formation', signup: 'Créer un compte', forgot: 'Mot de passe oublié', forgot_sent: '',
   };
 
   return (
@@ -138,7 +140,7 @@ export default function AuthPage() {
       <div className="w-full max-w-sm space-y-6">
         <div className="text-center">
           <div className="text-5xl mb-3">👤</div>
-          <p className="text-slate-500 text-sm mt-1">Espace enseignant ·  Play Perform</p>
+          <p className="text-slate-500 text-sm mt-1">Espace centre de formation ·  Play Perform</p>
         </div>
         <Suspense fallback={<div className="text-slate-400 text-sm text-center py-8">Chargement…</div>}>
           <AuthContent />

@@ -1,8 +1,20 @@
 import { getServerClient } from '@/lib/db/client';
 import type { OrgRole } from '../domain/access';
 import type { OrganizationInput } from '../domain/inputs';
+import type { CentreIdentity, StoredIdentity } from '../domain/identity';
 
-export interface Organization { id: string; name: string; slug: string; kind: 'parent' | 'center' }
+export interface Organization extends StoredIdentity { id: string; name: string; slug: string; kind: 'parent' | 'center' }
+
+interface OrganizationRow {
+  id: string; name: string; slug: string; kind: 'parent' | 'center';
+  legal_name: string | null; siren: string | null; siret: string | null; address: string | null; postal_code: string | null; city: string | null;
+}
+
+const COLUMNS = 'id, name, slug, kind, legal_name, siren, siret, address, postal_code, city';
+const toOrganization = (r: OrganizationRow): Organization => ({
+  id: r.id, name: r.name, slug: r.slug, kind: r.kind,
+  legalName: r.legal_name, siren: r.siren, siret: r.siret, address: r.address, postalCode: r.postal_code, city: r.city,
+});
 export interface Member { userId: string; email: string; role: OrgRole }
 
 const db = () => getServerClient();
@@ -10,21 +22,31 @@ const db = () => getServerClient();
 /** Server-side only (service role). `ids` = "all" lists every organization. */
 export async function listOrganizations(ids: 'all' | string[]): Promise<Organization[]> {
   if (ids !== 'all' && ids.length === 0) return [];
-  let query = db().from('organizations').select('id, name, slug, kind').order('kind').order('name');
+  let query = db().from('organizations').select(COLUMNS).order('kind').order('name');
   if (ids !== 'all') query = query.in('id', ids);
   const { data, error } = await query;
   if (error) throw new Error(error.message);
-  return (data ?? []) as Organization[];
+  return ((data ?? []) as OrganizationRow[]).map(toOrganization);
 }
 
 /** Returns null when the slug is already taken. */
 export async function createOrganization(input: OrganizationInput): Promise<Organization | null> {
-  const { data, error } = await db().from('organizations').insert({ name: input.name, slug: input.slug, kind: 'center' }).select('id, name, slug, kind').single();
+  const { data, error } = await db().from('organizations').insert({ name: input.name, slug: input.slug, kind: 'center' }).select(COLUMNS).single();
   if (error) {
     if (error.code === '23505') return null;
     throw new Error(error.message);
   }
-  return data as Organization;
+  return toOrganization(data as OrganizationRow);
+}
+
+/** Saves the legal identity of a centre. 'taken' when another centre already uses this SIRET. */
+export async function updateIdentity(id: string, identity: CentreIdentity): Promise<'ok' | 'taken'> {
+  const { error } = await db().from('organizations').update({
+    legal_name: identity.legalName, siren: identity.siren, siret: identity.siret, address: identity.address, postal_code: identity.postalCode, city: identity.city,
+  }).eq('id', id);
+  if (!error) return 'ok';
+  if (error.code === '23505') return 'taken';
+  throw new Error(error.message);
 }
 
 export async function listMembers(organizationId: string): Promise<Member[]> {

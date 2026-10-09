@@ -65,7 +65,7 @@ function ConfirmInner() {
         <>
           <div className="text-5xl mb-4">✅</div>
           <h2 className="text-xl font-black text-[#1a1a2e]">Compte activé !</h2>
-          <p className="text-slate-500 text-sm mt-2">Redirection vers votre espace enseignant…</p>
+          <p className="text-slate-500 text-sm mt-2">Redirection vers votre espace centre de formation…</p>
         </>
       )}
       {status === 'error' && (

@@ -28,7 +28,7 @@ export function LandingPage() {
     <main className="flex-1 bg-slate-50">
       <Hero onStart={goToFlow} />
 
-      <section ref={flowRef} id="commencer" aria-labelledby="flow-title" className="mx-auto max-w-3xl px-4 pt-10 scroll-mt-4">
+      <section ref={flowRef} id="commencer" aria-labelledby="flow-title" className="mx-auto max-w-3xl px-4 pt-10 scroll-mt-24">
         <FlowStepper step={flow.step} />
         {flow.step === 'mode' && <ModeChoice mode={flow.mode} onChoose={flow.chooseMode} />}
         {flow.step === 'skill' && <SkillPicker saved={saved} onChoose={flow.chooseSkill} onChangeMode={flow.changeMode} />}

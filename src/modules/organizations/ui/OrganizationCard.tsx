@@ -3,16 +3,19 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ORG_ROLES, ROLE_LABEL, type OrgRole } from '../domain/access';
 import { dismiss, fetchMembers, recruit, type Member, type Organization } from '../infra/organization-client';
+import { isIdentityComplete } from '../domain/identity';
+import { CentreIdentityForm } from './CentreIdentityForm';
 
-interface Props { organization: Organization; canRecruit: boolean; isSuperAdmin: boolean }
+interface Props { organization: Organization; canRecruit: boolean; isSuperAdmin: boolean; onIdentitySaved: () => void }
 
 /** A training centre: its team, and the form to recruit a teacher or an examiner. */
-export function OrganizationCard({ organization, canRecruit, isSuperAdmin }: Props) {
+export function OrganizationCard({ organization, canRecruit, isSuperAdmin, onIdentitySaved }: Props) {
   const [members, setMembers] = useState<Member[]>([]);
   const [email, setEmail] = useState('');
   const [role, setRole] = useState<OrgRole>('teacher');
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [identityOpen, setIdentityOpen] = useState(false);
   const roles = ORG_ROLES.filter((r) => isSuperAdmin || r !== 'org_admin');
 
   const load = useCallback(() => { if (canRecruit) fetchMembers(organization.id).then(setMembers); }, [organization.id, canRecruit]);
@@ -39,6 +42,10 @@ export function OrganizationCard({ organization, canRecruit, isSuperAdmin }: Pro
       </header>
       {canRecruit ? (
         <>
+          <button onClick={() => setIdentityOpen((v) => !v)} className={`text-xs font-bold ${isIdentityComplete(organization) ? 'text-slate-500' : 'text-amber-700'}`}>
+            {identityOpen ? 'Fermer la fiche légale' : isIdentityComplete(organization) ? '📄 Fiche légale (SIREN, adresse)' : '⚠️ Compléter la fiche légale (SIREN, adresse)'}
+          </button>
+          {identityOpen && <CentreIdentityForm organizationId={organization.id} initial={organization} onSaved={() => { setIdentityOpen(false); onIdentitySaved(); }} />}
           <ul className="divide-y divide-slate-100 text-sm">
             {members.length === 0 && <li className="py-2 text-slate-400">Aucun membre pour l&apos;instant.</li>}
             {members.map((m) => (

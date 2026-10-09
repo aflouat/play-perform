@@ -86,3 +86,31 @@ Auto-hébergé (Mac mini) : mêmes valeurs dans `GOTRUE_SMTP_*` (variables `SMTP
 6. iPhone / iPad : Web Push n'existe que si l'application est ajoutée à l'écran d'accueil (iOS 16.4+)
 
 Un rappel en retard de plus de 90 minutes (planificateur arrêté) n'est pas envoyé. Une clé VAPID changée invalide les abonnements existants.
+
+## Appliquer `anon_parent_only` (accès anonymes limités à la société mère)
+
+À faire une fois `SUPABASE_SERVICE_ROLE_KEY` présente sur Vercel et le code déployé (la synchro XP / badges passe alors par `PUT /api/progress`).
+
+1. Supabase → **SQL Editor** → coller le contenu de `supabase/migrations/20261015000000_anon_parent_only.sql` → **Run**
+   (ou autoriser l'outil de migration dans Claude Code et demander l'application ; ou `supabase db push`)
+2. Vérifier les règles :
+   ```sql
+   select tablename, policyname, roles from pg_policies
+   where schemaname = 'public' and tablename in ('profiles','scores','badges','quiz_answers','keyboard_progress')
+   order by tablename;
+   ```
+   On doit lire des politiques `anon_parent_*` et plus aucune `anon_all_*`.
+3. Vérifier à l'usage : un profil de démonstration enregistre toujours son XP ; un apprenant connecté par son code voit son score monter (`GET /api/health` doit afficher `serviceRoleKey: true`).
+4. Retour arrière si besoin :
+   ```sql
+   drop policy if exists anon_parent_profiles on public.profiles;
+   drop policy if exists anon_parent_scores   on public.scores;
+   drop policy if exists anon_parent_badges   on public.badges;
+   drop policy if exists anon_parent_quiz     on public.quiz_answers;
+   drop policy if exists anon_parent_keyboard on public.keyboard_progress;
+   create policy anon_all_profiles on public.profiles          for all to anon using (true) with check (true);
+   create policy anon_all_scores   on public.scores            for all to anon using (true) with check (true);
+   create policy anon_all_badges   on public.badges            for all to anon using (true) with check (true);
+   create policy anon_all_quiz     on public.quiz_answers      for all to anon using (true) with check (true);
+   create policy anon_all_keyboard on public.keyboard_progress for all to anon using (true) with check (true);
+   ```

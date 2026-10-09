@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import { RoleGate } from '@/shared/ui/RoleGate';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -42,7 +43,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <Link href="/" className="text-xs text-slate-400 hover:text-slate-600">← Accueil</Link>
         </div>
       </nav>
-      <div className="p-6 max-w-5xl mx-auto">{children}</div>
+      <div className="p-6 max-w-5xl mx-auto"><RoleGate deny="learner">{children}</RoleGate></div>
     </div>
   );
 }

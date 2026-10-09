@@ -7,5 +7,9 @@ export {
 export type { OrganizationInput, MemberInput, Validation } from './domain/inputs';
 export { slugify, validateOrganizationInput, validateMemberInput } from './domain/inputs';
 export type { MyAccess, Member, Organization } from './infra/organization-client';
-export { fetchMyAccess, fetchOrganizations, createCenter, fetchMembers, recruit, dismiss } from './infra/organization-client';
+export { fetchMyAccess, fetchOrganizations, createCenter, fetchMembers, recruit, dismiss, saveIdentity } from './infra/organization-client';
 export { TeamLinks } from './ui/TeamLinks';
+export { CentreCard } from './ui/CentreCard';
+export { CentreIdentityForm } from './ui/CentreIdentityForm';
+export type { CentreIdentity, StoredIdentity } from './domain/identity';
+export { validateSiren, validateSiret, validateCentreIdentity, formatSiren, formatSiret, isIdentityComplete } from './domain/identity';

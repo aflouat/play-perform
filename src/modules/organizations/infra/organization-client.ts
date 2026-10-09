@@ -1,6 +1,7 @@
 import { getAuthToken } from '@/lib/auth-token';
 import type { OrgRole } from '../domain/access';
 import type { Member, Organization } from './organization-repository';
+import type { CentreIdentity } from '../domain/identity';
 
 export type { Member, Organization };
 export interface MyAccess {
@@ -40,4 +41,9 @@ export async function recruit(organizationId: string, email: string, role: OrgRo
 export async function dismiss(organizationId: string, userId: string, role: OrgRole): Promise<string | null> {
   const res = await fetch(`/api/organizations/${organizationId}/members?userId=${userId}&role=${role}`, { method: 'DELETE', headers: await headers() });
   return res.ok ? null : errorOf(res, 'Retrait impossible.');
+}
+
+export async function saveIdentity(organizationId: string, identity: CentreIdentity): Promise<string | null> {
+  const res = await fetch(`/api/organizations/${organizationId}`, { method: 'PUT', headers: await headers(), body: JSON.stringify(identity) });
+  return res.ok ? null : errorOf(res, 'Enregistrement impossible.');
 }

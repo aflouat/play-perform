@@ -45,7 +45,7 @@ export default function PrivacyPage() {
         <p>Le site est servi par Vercel ; la base de données et l&apos;authentification sont fournies par Supabase. Les e-mails d&apos;inscription transitent par un service d&apos;envoi (Brevo).</p>
       </Block>
       <Block title="Accéder, corriger, effacer">
-        <p>L&apos;enseignant peut modifier ou supprimer chaque profil depuis l&apos;espace enseignant. Pour supprimer le compte entier ou obtenir une copie des données, écris-nous{CONTACT ? <> à <a className="text-violet-600 underline" href={`mailto:${CONTACT}`}>{CONTACT}</a></> : ' via la page FAQ'}.</p>
+        <p>L&apos;enseignant peut modifier ou supprimer chaque profil depuis l&apos;espace de son centre de formation. Pour supprimer le compte entier ou obtenir une copie des données, écris-nous{CONTACT ? <> à <a className="text-violet-600 underline" href={`mailto:${CONTACT}`}>{CONTACT}</a></> : ' via la page FAQ'}.</p>
       </Block>
     </main>
   );
