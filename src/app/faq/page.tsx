@@ -120,9 +120,12 @@ export default function FaqPage() {
           <Q q="Comment être rappelé ?">Choisis l&apos;<strong>heure du rappel</strong> et active les notifications : tu reçois chaque jour l&apos;heure, l&apos;effort et l&apos;objectif. L&apos;application doit être ouverte dans le navigateur.</Q>
         </Section>
 
-        <Section title="10. Compétition">
+        <Section title="10. Compétition et communauté">
           <Q q="Comment fonctionne la compétition ?">Chaque semaine, un <strong>défi</strong> de 5 questions est le même pour tout le monde, à relever une seule fois. Le classement du défi tient compte des bonnes réponses puis de la vitesse. Le classement du centre compare l&apos;XP, la série de jours et les niveaux.</Q>
           <Q q="Mon nom apparaît-il aux autres ?">Non : on n&apos;affiche qu&apos;un <strong>pseudo</strong>, choisi avec ton enseignant, et seulement aux élèves de ton centre. L&apos;enseignant peut aussi te retirer du classement.</Q>
+          <Q q="C&apos;est quoi le binôme de la semaine ?">Chaque semaine, le centre te met en <strong>binôme</strong> au hasard avec un autre élève (le binôme change chaque semaine). Le contrat : si vous obtenez <strong>tous les deux la mention</strong> au défi (4 bonnes réponses sur 5), vous gagnez <strong>tous les deux +50 XP</strong>. Aidez-vous !</Q>
+          <Q q="Que voient les autres de mes réussites ?">Le fil du centre annonce tes passages de niveau avec ton <strong>pseudo</strong> et les camarades peuvent t&apos;envoyer un <strong>Bravo</strong> 👏. Ton centre peut retirer un élément du fil.</Q>
+          <Q q="Et si je me trompe ?">Une erreur est une leçon : tu vois ce que tu viens d&apos;apprendre, et combien d&apos;élèves sont tombés dans le même <strong>piège classique</strong> (statistiques anonymes).</Q>
           <Q q="Quelles récompenses ?">Les trois meilleurs du défi reçoivent une <strong>médaille</strong> 🥇🥈🥉 automatiquement (3 bonnes réponses minimum). L&apos;enseignant peut en retirer une.</Q>
         </Section>
 

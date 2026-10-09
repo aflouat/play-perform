@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { canAccessProfile, getActorFromRequest } from '@/lib/actor-auth';
+import { recordMilestone } from '@/modules/competition/server';
 import { listLevels, raiseLevel, validateLevelUpdate } from '@/modules/skills/server';
 
 const fail = (error: string, status: number) => NextResponse.json({ error }, { status });
@@ -27,7 +28,9 @@ export async function PUT(req: NextRequest): Promise<NextResponse> {
   const { profileId, skillId, level } = validation.value;
   try {
     if (!(await canAccessProfile(actor, profileId))) return fail('Élève introuvable', 404);
-    return NextResponse.json({ level: await raiseLevel(profileId, skillId, level) });
+    const stored = await raiseLevel(profileId, skillId, level);
+    await recordMilestone(profileId, skillId, stored);
+    return NextResponse.json({ level: stored });
   } catch (err) {
     console.error('[PUT /api/skill-levels]', err);
     return fail('Erreur serveur', 500);

@@ -16,10 +16,13 @@ Fichier unique de pilotage : **en cours**, **backlog** et **bugs connus** (rempl
 ## Parcours de l'apprenant avec code (optimisations proposées)
 - [ ] **Première connexion guidée en 3 étapes** : pseudo → test de niveau → premier quiz (aujourd'hui : accueil + ville vide, profil en bas de page)
 - [ ] **« Mon chemin vers le diplôme »** : liste à cocher (inscrit, niveau 5, évaluation validée, nom renseigné) dans le panneau de la compétence, à partir de `GET /api/diploma`
-- [ ] **Communauté** : le pseudo sert déjà au classement ; l'entraide / le fil de la communauté n'existe pas encore (à cadrer, modération par le centre)
+- [ ] Communauté : forum / entraide (questions entre élèves, modéré par le centre) — le fil des réussites, les Bravo, les binômes et le mur des pièges sont faits
 - [ ] Questions de niveau 4-5 dans les banques (le diplôme s'appuie sur l'évaluation validée par un examinateur, pas sur les quiz)
 - [ ] Le centre peut corriger prénom / nom d'un élève avant impression (déjà possible dans sa fiche) ; ajouter une date de naissance si le diplôme l'exige
 - [ ] Diplôme : signature numérique / page publique de vérification de la référence `PP-…`
+
+- [ ] Binômes : message d'encouragement au partenaire (texte préécrit) ; choix d'un binôme par le centre ; bonus plus riche (badge d'équipe)
+- [ ] Pièges classiques : alimenter aussi `/quiz/[subject]` (matières) en statistiques ; notifier le centre des questions réussies par presque personne (question à revoir)
 
 ## UX par rôle (avant le backend centre mère / franchises)
 - [ ] Vérifier le SIREN / SIRET auprès de l'API Sirene (INSEE) à l'inscription d'un centre (aujourd'hui : somme de contrôle + examen manuel par la société mère)

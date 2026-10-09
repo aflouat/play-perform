@@ -31,8 +31,8 @@ export async function PUT(req: NextRequest): Promise<NextResponse> {
     const stored = await readIdentity(profileId);
     const validation = validateIdentityUpdate(body, { firstName: stored?.firstName, lastName: stored?.lastName });
     if (!validation.ok) return fail(validation.error, 400);
-    const { profileId: _id, ...patch } = validation.value;
-    return (await writeIdentity(profileId, patch)) === 'taken'
+    const { firstName, lastName, nickname } = validation.value;
+    return (await writeIdentity(profileId, { firstName, lastName, nickname })) === 'taken'
       ? fail('Ce pseudo est déjà pris dans ton centre : choisis-en un autre.', 409)
       : NextResponse.json({ ok: true });
   } catch (err) {

@@ -28,8 +28,8 @@ export function IdentityForm({ profileId, onSaved }: Props) {
     const checked = validateIdentityUpdate({ profileId, ...values });
     if (!checked.ok) { setMessage({ ok: false, text: checked.error }); return; }
     setBusy(true); setMessage(null);
-    const { profileId: _id, ...patch } = checked.value;
-    const failure = await saveIdentity(profileId, patch);
+    const { firstName, lastName, nickname } = checked.value;
+    const failure = await saveIdentity(profileId, { firstName, lastName, nickname });
     setBusy(false);
     if (failure) { setMessage({ ok: false, text: failure }); return; }
     const next = { ...(stored as ProfileIdentity), firstName: values.firstName, lastName: values.lastName, nickname: values.nickname };

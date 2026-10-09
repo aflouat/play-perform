@@ -2,6 +2,7 @@ import { getAuthToken } from '@/lib/auth-token';
 import type { CompetitionView } from '../application/view';
 import type { RankMetric } from '../domain/ranking';
 import type { ChallengeAnswer } from '../application/challenge';
+import type { PairView } from '../application/pair-view';
 
 const headers = async () => ({ 'content-type': 'application/json', authorization: `Bearer ${await getAuthToken()}` });
 const errorOf = async (res: Response, fallback: string) => ((await res.json().catch(() => ({}))) as { error?: string }).error ?? fallback;
@@ -51,4 +52,42 @@ export async function fetchIdentity(profileId: string): Promise<ProfileIdentity 
 export async function saveIdentity(profileId: string, patch: { firstName?: string; lastName?: string; nickname?: string }): Promise<string | null> {
   const res = await fetch('/api/profile', { method: 'PUT', headers: await headers(), body: JSON.stringify({ profileId, ...patch }) });
   return res.ok ? null : errorOf(res, 'Enregistrement impossible.');
+}
+
+// ── Pairs, feed, cheers ─────────────────────────────────────────────────────
+
+export async function fetchPair(profileId: string): Promise<PairView | null> {
+  try {
+    const res = await fetch(`/api/competition/pair?profileId=${encodeURIComponent(profileId)}`, { headers: await headers() });
+    return res.ok ? ((await res.json()) as { pair: PairView | null }).pair : null;
+  } catch { return null; }
+}
+
+/** Claims the bonus of the week; the returned XP is then added on the device. */
+export async function claimPairBonus(profileId: string): Promise<{ xp: number } | { error: string }> {
+  const res = await fetch('/api/competition/pair', { method: 'POST', headers: await headers(), body: JSON.stringify({ profileId }) });
+  return res.ok ? ((await res.json()) as { xp: number }) : { error: await errorOf(res, 'Récupération impossible.') };
+}
+
+export interface FeedEvent {
+  id: string; nickname: string; skillName: string; skillEmoji: string; level: number; createdAt: string;
+  cheers: number; cheeredByMe: boolean; isMine: boolean;
+}
+
+export async function fetchFeed(profileId: string): Promise<FeedEvent[]> {
+  try {
+    const res = await fetch(`/api/competition/feed?profileId=${encodeURIComponent(profileId)}`, { headers: await headers() });
+    return res.ok ? ((await res.json()) as { events: FeedEvent[] }).events : [];
+  } catch { return []; }
+}
+
+export async function sendCheer(profileId: string, eventId: string): Promise<boolean> {
+  const res = await fetch('/api/competition/cheer', { method: 'POST', headers: await headers(), body: JSON.stringify({ profileId, eventId }) });
+  return res.ok || res.status === 409;
+}
+
+/** Teacher: removes a success from the feed. */
+export async function hideFeedEvent(eventId: string): Promise<boolean> {
+  const res = await fetch(`/api/competition/events/${eventId}`, { method: 'DELETE', headers: await headers() });
+  return res.ok;
 }

@@ -30,7 +30,7 @@ export function RankingSettings({ student, onChange }: { student: DbStudent; onC
           placeholder="généré au premier classement" className="min-w-0 flex-1 rounded-lg border border-slate-200 px-2 py-1" />
       </div>
       <label className="flex items-center gap-2 text-slate-600">
-        <input type="checkbox" checked={visible} onChange={(e) => toggle(e.target.checked)} /> Apparaît au classement du centre
+        <input type="checkbox" checked={visible} onChange={(e) => toggle(e.target.checked)} /> Apparaît au classement et dans la communauté du centre
       </label>
       {message && <p role={message.ok ? 'status' : 'alert'} className={message.ok ? 'text-emerald-700' : 'text-rose-700'}>{message.text}</p>}
     </div>

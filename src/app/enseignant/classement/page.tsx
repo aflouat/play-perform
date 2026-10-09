@@ -3,16 +3,18 @@
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
-import { fetchTeacherAwards, revokeAwardRequest, type TeacherAward } from '@/modules/competition';
+import { ActivityFeed, fetchTeacherAwards, revokeAwardRequest, type TeacherAward } from '@/modules/competition';
+import { apiFetchStudents } from '@/lib/students-api';
 
 export default function TeacherAwardsPage() {
   const [awards, setAwards] = useState<TeacherAward[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [viewerId, setViewerId] = useState<string | null>(null);
   const load = useCallback(() => { fetchTeacherAwards().then(setAwards); }, []);
 
   useEffect(() => {
     const db = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL ?? '', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '');
-    db.auth.getSession().then(({ data }) => { if (!data.session) window.location.href = '/auth'; else load(); });
+    db.auth.getSession().then(({ data }) => { if (!data.session) window.location.href = '/auth'; else { load(); apiFetchStudents().then((s) => setViewerId(s[0]?.id ?? null)); } });
   }, [load]);
 
   async function revoke(award: TeacherAward) {
@@ -39,6 +41,12 @@ export default function TeacherAwardsPage() {
             </li>
           ))}
         </ul>
+        {viewerId && (
+          <section className="space-y-2 pt-4">
+            <p className="text-sm text-slate-500">Les réussites du centre : tu peux retirer un élément du fil (×).</p>
+            <ActivityFeed profileId={viewerId} moderator />
+          </section>
+        )}
       </div>
     </div>
   );
