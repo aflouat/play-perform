@@ -8,6 +8,7 @@ import { HintButton } from '@/components/ui/HintButton';
 import { QuizTimer } from '@/components/ui/QuizTimer';
 import { speakInstruction } from '@/lib/audio';
 import { useQuizCard } from '@/hooks/useQuizCard';
+import { constructiveFeedback } from '@/modules/community';
 import clsx from 'clsx';
 
 export const QUIZ_TIMER_SECONDS = 30;
@@ -17,6 +18,8 @@ interface QuizCardProps {
   mode?: LearningMode;
   onAnswer: (optionId: QuizOptionId, timeMs: number) => void;
   onSpeak?: (text: string) => void;
+  /** Reassuring note shown with a wrong answer (e.g. "30 % of learners chose the same") */
+  trapNote?: (chosen: QuizOptionId) => string | null;
 }
 
 export function QuizCard({
@@ -24,6 +27,7 @@ export function QuizCard({
   mode = 'advanced',
   onAnswer,
   onSpeak,
+  trapNote,
 }: QuizCardProps) {
   const { selected, revealed, hintUsed, eliminatedId, handleSelect, handleTimeout, handleHint, getOptionStyle, getOptionIcon } =
     useQuizCard(question, mode, onAnswer);
@@ -40,6 +44,8 @@ export function QuizCard({
     mode === 'assisted' && opt.textAssisted ? opt.textAssisted : opt.text;
 
   const diff = DIFFICULTY_META[question.difficulty as QuizDifficulty];
+  const feedback = constructiveFeedback(selected === question.correctOptionId, displayExplanation);
+  const note = revealed && selected && trapNote ? trapNote(selected) : null;
 
   return (
     <div className={clsx('space-y-4', mode === 'assisted' && 'space-y-5')}>
@@ -122,10 +128,11 @@ export function QuizCard({
         <div className={clsx('rounded-2xl p-4 text-sm leading-relaxed shadow-sm',
           selected === question.correctOptionId
             ? 'bg-emerald-50 border border-emerald-200 text-emerald-700'
-            : 'bg-rose-50 border border-rose-200 text-rose-700')}
+            : 'bg-amber-50 border border-amber-200 text-amber-800')}
           role="alert">
-          <span className="font-bold mr-1">{selected === question.correctOptionId ? '✓ Bravo !' : '✕ Pas tout à fait.'}</span>
-          <span className="text-slate-600">{displayExplanation}</span>
+          <span className="font-bold mr-1">{feedback.title}</span>
+          <span className="text-slate-600">{feedback.body}</span>
+          {note && <p className="mt-2 rounded-xl bg-white/70 p-2 text-xs font-semibold text-violet-700">🤝 {note}</p>}
         </div>
       )}
     </div>

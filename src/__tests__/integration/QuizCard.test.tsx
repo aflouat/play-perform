@@ -72,7 +72,8 @@ describe('QuizCard', () => {
   it('shows wrong answer feedback on incorrect choice', () => {
     renderCard();
     fireEvent.click(screen.getByText('3'));
-    expect(screen.getByText(/Pas tout à fait/)).toBeInTheDocument();
+    expect(screen.getByText(/Presque ! Voilà ce que tu viens d’apprendre/)).toBeInTheDocument();
+    expect(screen.queryByText(/Faux|Échec|Raté/)).toBeNull();
   });
 
   it('disables options after selection', () => {
@@ -112,5 +113,16 @@ describe('QuizCard', () => {
   it('falls back to question when questionAssisted absent in assisted mode', () => {
     renderCard({ mode: 'assisted' });
     expect(screen.getByText('Combien font 2 + 2 ?')).toBeInTheDocument();
+  });
+
+  it('adds the reassuring "classic trap" note to a wrong answer, but not to a right one', () => {
+    const trapNote = jest.fn((chosen: string) => (chosen === 'A' ? 'Piège classique : 45 % des élèves ont choisi la même réponse.' : null));
+    const { unmount } = render(<QuizCard question={MOCK_QUESTION} onAnswer={jest.fn()} trapNote={trapNote} />);
+    fireEvent.click(screen.getByText('3'));
+    expect(screen.getByText(/Piège classique : 45 %/)).toBeInTheDocument();
+    unmount();
+    render(<QuizCard question={MOCK_QUESTION} onAnswer={jest.fn()} trapNote={trapNote} />);
+    fireEvent.click(screen.getByText('4'));
+    expect(screen.queryByText(/Piège classique/)).toBeNull();
   });
 });

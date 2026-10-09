@@ -61,7 +61,7 @@ export function useQuizCard(
       return `bg-white border-2 border-slate-100 hover:border-slate-300 text-[#1a1a2e] ${hl}`;
     }
     if (optionId === question.correctOptionId) return 'bg-emerald-50 border-2 border-emerald-400 text-emerald-700';
-    if (optionId === selected) return 'bg-rose-50 border-2 border-rose-400 text-rose-700';
+    if (optionId === selected) return 'bg-amber-50 border-2 border-amber-400 text-amber-800';
     return 'bg-white border-2 border-slate-100 opacity-40 text-slate-400';
   }
 
