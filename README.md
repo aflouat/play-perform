@@ -18,6 +18,7 @@ Avant de travailler un cours, l'apprenant lit sa **fiche** et présente une **de
 | Route | Description |
 |---|---|
 | `/` | Visiteur : page d'accueil (mode sans compte / avec compte, choix d'une compétence, test de niveau) · Enseignant connecté : liste des élèves |
+| `/test-de-niveau/[skillId]` | Visiteur : revue question par question de son test de niveau (feedback), sans compte |
 | `/auth` | Connexion / Inscription / Mot de passe oublié |
 | `/auth/confirm` | Activation de compte (lien email) |
 | `/auth/reset-password` | Réinitialisation mot de passe |

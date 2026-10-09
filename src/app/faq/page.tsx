@@ -101,6 +101,7 @@ export default function FaqPage() {
           <Q q="Le niveau dépend-il de l'XP ?">Non. L&apos;XP et le rang sont ceux du compte ; le <strong>niveau d&apos;avancement (1 → 5) est propre à chaque compétence</strong> et au projet d&apos;apprentissage de l&apos;élève.</Q>
           <Q q="Où voir ma progression ?">Sur <strong>Ma ville des compétences</strong> : chaque compétence est un bâtiment qui grandit avec ton niveau, jusqu&apos;au château (niveau 5). Touche-le pour voir ta barre vers la maîtrise, tes révisions passées et à venir, et fixer un <strong>objectif de date</strong>.</Q>
           <Q q="Comment monter d&apos;un niveau ?">Depuis <strong>Mes compétences</strong>, tu vois ton niveau puis tu choisis : un <strong>quiz</strong> (4 bonnes réponses sur 5 = niveau suivant), des <strong>flashcards</strong> pour réviser, ou une <strong>évaluation</strong> rédigée, corrigée par un examinateur.</Q>
+          <Q q="Puis-je revoir mes réponses au test de niveau ?">Oui, même sans compte : le bouton « Revoir mes réponses » du résultat montre chaque question, ta réponse, la bonne réponse et les niveaux à retravailler.</Q>
           <Q q="Comment connaître son niveau de départ ?">Sur la page d&apos;accueil, le test de niveau (5 questions) donne un niveau de 1 à 5 pour la compétence choisie. Il est gratuit et fonctionne sans compte.</Q>
         </Section>
 

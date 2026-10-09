@@ -55,7 +55,10 @@ describe('useLandingFlow', () => {
     expect(result.current.step).toBe('result');
     expect(result.current.result).toMatchObject({ startLevel: 4, correct: 3, skipped: 2 });
     expect(onResult).toHaveBeenCalledTimes(1);
-    expect(onResult).toHaveBeenCalledWith('logique', expect.objectContaining({ startLevel: 4 }));
+    expect(onResult).toHaveBeenCalledWith('logique', expect.objectContaining({ startLevel: 4 }), expect.any(Array));
+    const chosen = onResult.mock.calls[0][2] as (number | null)[];
+    expect(chosen).toHaveLength(5);
+    expect(chosen.slice(3)).toEqual([null, null]);
   });
 
   it('lets the visitor test another skill', () => {

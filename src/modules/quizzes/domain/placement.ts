@@ -54,3 +54,28 @@ export function estimateStartLevel(answers: readonly PlacementAnswer[]): Placeme
     mastered: total > 0 && correct === total,
   };
 }
+
+export interface ReviewEntry {
+  question: PlacementQuestion;
+  /** Index of the option the learner picked; null = "Je ne sais pas" */
+  chosenIndex: number | null;
+  chosenText: string | null;
+  correctText: string;
+  correct: boolean;
+  skipped: boolean;
+}
+
+/** Question-by-question feedback for a finished (or partial) placement test. */
+export function reviewAnswers(questions: readonly PlacementQuestion[], chosen: readonly (number | null)[]): ReviewEntry[] {
+  return chosen.slice(0, questions.length).map((chosenIndex, i) => {
+    const question = questions[i];
+    return {
+      question,
+      chosenIndex,
+      chosenText: chosenIndex === null ? null : (question.options[chosenIndex] ?? null),
+      correctText: question.options[question.correctIndex],
+      correct: chosenIndex === question.correctIndex,
+      skipped: chosenIndex === null,
+    };
+  });
+}

@@ -43,7 +43,6 @@ Fichier unique de pilotage : **en cours**, **backlog** et **bugs connus** (rempl
 - [ ] Tests e2e Playwright à jour
 
 ## Backlog — Futur
-- [ ] Avec un quiz sans compte sur une compétence indiquer un lien pour passer en revue les reponses de l'apprenant pour le feedback
 - [ ] Compétition live (strike entre joueurs, récompenses supervisées) et classement
 - [ ] Dashboard parent avec suivi de chaque élève
 - [ ] Export portfolio de compétences d'un élève

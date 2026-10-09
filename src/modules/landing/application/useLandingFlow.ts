@@ -12,7 +12,7 @@ export type LandingStep = 'mode' | 'skill' | 'test' | 'result';
 export type AccessMode = 'guest' | 'account';
 
 interface Options {
-  onResult?: (skillId: string, result: PlacementResult) => void;
+  onResult?: (skillId: string, result: PlacementResult, chosen: (number | null)[]) => void;
 }
 
 /** Visitor journey on the home page: access mode → skill → placement test → result. */
@@ -22,6 +22,7 @@ export function useLandingFlow({ onResult }: Options = {}) {
   const [skill, setSkill] = useState<Skill | null>(null);
   const [questions, setQuestions] = useState<PlacementQuestion[]>([]);
   const [answers, setAnswers] = useState<PlacementAnswer[]>([]);
+  const [chosen, setChosen] = useState<(number | null)[]>([]);
   const [result, setResult] = useState<PlacementResult | null>(null);
 
   const chooseMode = useCallback((next: AccessMode) => {
@@ -33,7 +34,7 @@ export function useLandingFlow({ onResult }: Options = {}) {
     const found = getSkillById(skillId);
     const test = getPlacementTest(skillId);
     if (!found || test.length === 0) return;
-    setSkill(found); setQuestions(test); setAnswers([]); setResult(null);
+    setSkill(found); setQuestions(test); setAnswers([]); setChosen([]); setResult(null);
     setStep('test');
   }, []);
 
@@ -41,17 +42,19 @@ export function useLandingFlow({ onResult }: Options = {}) {
     const question = questions[answers.length];
     if (!question || !skill) return;
     const next = [...answers, scoreAnswer(question, chosenIndex)];
+    const nextChosen = [...chosen, chosenIndex];
     setAnswers(next);
+    setChosen(nextChosen);
     if (next.length === questions.length) {
       const computed = estimateStartLevel(next);
       setResult(computed);
       setStep('result');
-      onResult?.(skill.id, computed);
+      onResult?.(skill.id, computed, nextChosen);
     }
-  }, [questions, answers, skill, onResult]);
+  }, [questions, answers, chosen, skill, onResult]);
 
   const chooseAnotherSkill = useCallback(() => {
-    setSkill(null); setQuestions([]); setAnswers([]); setResult(null);
+    setSkill(null); setQuestions([]); setAnswers([]); setChosen([]); setResult(null);
     setStep('skill');
   }, []);
 

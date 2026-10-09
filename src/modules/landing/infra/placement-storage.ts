@@ -9,6 +9,8 @@ export interface SavedPlacement {
   correct: number;
   total: number;
   testedAt: string;
+  /** Option picked for each question (null = "Je ne sais pas"), to review the answers later */
+  answers?: (number | null)[];
 }
 
 const KEY = 'pp:placements';
@@ -28,9 +30,9 @@ export function readSavedPlacements(): Record<string, SavedPlacement> {
   return parse(readRaw());
 }
 
-export function savePlacement(skillId: string, result: PlacementResult): void {
+export function savePlacement(skillId: string, result: PlacementResult, answers?: (number | null)[]): void {
   const all = parse(readRaw());
-  all[skillId] = { startLevel: result.startLevel, correct: result.correct, total: result.total, testedAt: new Date().toISOString() };
+  all[skillId] = { startLevel: result.startLevel, correct: result.correct, total: result.total, testedAt: new Date().toISOString(), ...(answers ? { answers } : {}) };
   try {
     localStorage.setItem(KEY, JSON.stringify(all));
     window.dispatchEvent(new Event(CHANGE_EVENT));

@@ -48,7 +48,12 @@ export function PlacementResultView({ skill, result, onAnotherSkill }: Props) {
         })}
       </ol>
 
-      <div className="mt-7 rounded-2xl bg-violet-50 border border-violet-200 p-4 text-left">
+      <Link href={`/test-de-niveau/${skill.id}`}
+        className="mt-6 block rounded-xl border-2 border-violet-200 px-5 py-3 font-bold text-violet-800 hover:bg-violet-50">
+        📝 Revoir mes réponses et le feedback
+      </Link>
+
+      <div className="mt-4 rounded-2xl bg-violet-50 border border-violet-200 p-4 text-left">
         <p className="font-bold text-slate-900">Garde ta progression</p>
         <p className="mt-1 text-sm text-slate-600">
           Ton résultat est enregistré sur cet appareil. Crée un compte gratuit pour le retrouver partout et suivre ton parcours.
