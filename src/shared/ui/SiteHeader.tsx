@@ -7,6 +7,7 @@ import { createClient } from '@supabase/supabase-js';
 import { useRole } from '@/hooks/useRole';
 import { clearLearnerToken } from '@/lib/auth-token';
 import { clearActiveProfile } from '@/lib/profiles';
+import { centreHeaderLinks, type NavLink } from '@/modules/organizations/domain/navigation';
 
 type NavItem = { href: string; label: string } | { label: string; onClick: () => void };
 
@@ -16,15 +17,13 @@ const LINK = 'hover:text-violet-600';
 export function SiteHeader() {
   const role = useRole();
   const router = useRouter();
-  const [roles, setRoles] = useState<{ examiner: boolean; teaching: boolean; manager: boolean; superAdmin: boolean }>({ examiner: false, teaching: false, manager: false, superAdmin: false });
+  const [centreLinks, setCentreLinks] = useState<NavLink[]>(centreHeaderLinks({ isSuperAdmin: false, roles: [] }));
 
   useEffect(() => {
     if (role !== 'teacher') return;
-    import('@/modules/organizations').then(({ fetchMyAccess }) => fetchMyAccess()).then((access) => {
-      if (!access) return;
-      const has = (r: string) => access.memberships.some((m) => m.role === r);
-      setRoles({ examiner: has('examiner'), teaching: has('teacher'), manager: has('org_admin'), superAdmin: access.isSuperAdmin });
-    });
+    import('@/modules/organizations').then(({ fetchMyAccess, centreHeaderLinks: linksFor, navAccessOf }) => fetchMyAccess().then((me) => {
+      if (me) setCentreLinks(linksFor(navAccessOf(me)));
+    }));
   }, [role]);
 
   async function leaveLearner() { clearLearnerToken(); clearActiveProfile(); router.push('/'); }
@@ -37,10 +36,7 @@ export function SiteHeader() {
     ? [{ href: '/competences', label: 'Ma ville' }, { href: '/classement', label: 'Compétition' }, { label: 'Quitter', onClick: leaveLearner }]
     : role === 'teacher'
       ? [
-          { href: '/enseignant', label: 'Mon centre' },
-          ...(roles.superAdmin || roles.examiner || roles.manager ? [{ href: '/admin/evaluations', label: 'Corrections' }] : []),
-          ...(roles.superAdmin || roles.teaching || roles.manager ? [{ href: '/admin/inscriptions', label: 'Inscriptions' }] : []),
-          ...(roles.superAdmin ? [{ href: '/admin/organisations', label: 'Centres' }] : roles.manager ? [{ href: '/admin/organisations', label: 'Équipe' }] : []),
+          ...centreLinks,
           { label: 'Déconnexion', onClick: leaveCentre },
         ]
       : role === 'visitor'

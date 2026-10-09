@@ -1,48 +1,11 @@
 import React from 'react';
-import Link from 'next/link';
+import { AdminNav } from '@/modules/organizations';
 import { RoleGate } from '@/shared/ui/RoleGate';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex-1 bg-slate-50">
-      <nav className="bg-white border-b border-slate-200 px-6 py-3 flex items-center gap-6">
-        <span className="text-xs font-black text-slate-400 uppercase tracking-widest">Admin</span>
-        <Link href="/admin/import"
-          className="text-sm font-semibold text-slate-600 hover:text-violet-600 transition-colors">
-          📥 Import CSV
-        </Link>
-        <Link href="/admin/questions"
-          className="text-sm font-semibold text-slate-600 hover:text-violet-600 transition-colors">
-          📝 Questions
-        </Link>
-        <Link href="/admin/parcours"
-          className="text-sm font-semibold text-slate-600 hover:text-violet-600 transition-colors">
-          🗺️ Parcours
-        </Link>
-        <Link href="/admin/organisations"
-          className="text-sm font-semibold text-slate-600 hover:text-violet-600 transition-colors">
-          🏫 Organisations
-        </Link>
-        <Link href="/admin/inscriptions"
-          className="text-sm font-semibold text-slate-600 hover:text-violet-600 transition-colors">
-          📨 Inscriptions
-        </Link>
-        <Link href="/admin/evaluations"
-          className="text-sm font-semibold text-slate-600 hover:text-violet-600 transition-colors">
-          ✍️ Évaluations
-        </Link>
-        <Link href="/admin/pricing"
-          className="text-sm font-semibold text-slate-600 hover:text-violet-600 transition-colors">
-          💶 Tarifs
-        </Link>
-        <Link href="/enseignant"
-          className="text-sm font-semibold text-slate-600 hover:text-violet-600 transition-colors">
-          👨‍👧 Élèves
-        </Link>
-        <div className="ml-auto">
-          <Link href="/" className="text-xs text-slate-400 hover:text-slate-600">← Accueil</Link>
-        </div>
-      </nav>
+      <AdminNav />
       <div className="p-6 max-w-5xl mx-auto"><RoleGate deny="learner">{children}</RoleGate></div>
     </div>
   );

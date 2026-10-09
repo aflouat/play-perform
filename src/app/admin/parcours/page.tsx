@@ -73,7 +73,7 @@ export default function AdminParcoursPage() {
 
       {parcours.length === 0 && !showForm && (
         <div className="rounded-2xl bg-white border border-slate-100 p-10 text-center text-slate-400 text-sm">
-          Aucun parcours. Cliquez sur "+ Nouveau parcours" pour commencer.
+          Aucun parcours. Cliquez sur « + Nouveau parcours » pour commencer.
         </div>
       )}
 

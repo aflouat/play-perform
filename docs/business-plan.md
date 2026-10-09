@@ -1,6 +1,6 @@
 Play Perform — Business Plan
 1. Executive Summary
-Play Perform est une plateforme EdTech ludo-éducative ciblant les élèves du CP à la Terminale. L'application fusionne les meilleures mécaniques du marché : la gamification de Duolingo, l'interactivité de Kahoot, la mémorisation espacée (Anki) et la richesse de Lumni.
+Play Perform est une plateforme EdTech ludo-éducative ciblant les élèves de 2 ans à 99 ans. L'application fusionne les meilleures mécaniques du marché : la gamification de Duolingo, l'interactivité de Kahoot, la mémorisation espacée (Anki) et la richesse de Lumni.
 
 D'abord lancé en modèle Business to Families (B2F), le produit est conçu dès le départ pour pivoter à grande échelle vers le Business to Schools (B2B) puis le Business to Government (B2G) grâce à un moteur de contenu ouvert et extensible par API.
 
