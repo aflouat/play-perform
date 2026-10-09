@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { OrganizationCard } from '@/modules/organizations/ui/OrganizationCard';
+import { ApplicationsReview } from '@/modules/organizations/ui/ApplicationsReview';
 import { createCenter, fetchMyAccess, fetchOrganizations, type MyAccess, type Organization } from '@/modules/organizations';
 
 export default function AdminOrganizationsPage() {
@@ -44,6 +45,7 @@ export default function AdminOrganizationsPage() {
           <button onClick={create} disabled={name.trim().length < 2} className="rounded-xl bg-violet-600 px-4 py-2 text-sm font-bold text-white disabled:opacity-40">Créer le centre</button>
         </div>
       )}
+      {access?.isSuperAdmin && <ApplicationsReview onChanged={reload} />}
       {error && <p role="alert" className="text-sm text-rose-700">{error}</p>}
       {access && organizations.length === 0 && <p className="text-sm text-slate-500">Tu n&apos;appartiens à aucune organisation.</p>}
       <ul className="space-y-4">

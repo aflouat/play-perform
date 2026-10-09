@@ -59,8 +59,8 @@ export function PlacementReview({ skillId }: { skillId: string }) {
 
       <div className="rounded-2xl bg-violet-50 border border-violet-200 p-4">
         <p className="font-bold text-slate-900">Progresser sur cette compétence</p>
-        <p className="mt-1 text-sm text-slate-600">Crée un compte pour travailler ces notions avec des quiz, des flashcards et des évaluations corrigées.</p>
-        <Link href="/auth?signup=1" className="mt-3 block rounded-xl bg-violet-600 px-5 py-3 text-center font-bold text-white">Créer un compte</Link>
+        <p className="mt-1 text-sm text-slate-600">Avec le code d’accès de ton centre de formation, tu travailles ces notions avec des quiz, des flashcards et des évaluations corrigées.</p>
+        <Link href="/apprenant" className="mt-3 block rounded-xl bg-violet-600 px-5 py-3 text-center font-bold text-white">Entrer mon code d’accès</Link>
       </div>
     </div>
   );

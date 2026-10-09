@@ -31,8 +31,16 @@ beforeEach(() => { localStorage.clear(); session = null; replace.mockClear(); pu
 describe('header by role', () => {
   it('offers both entries to a visitor', async () => {
     render(<SiteHeader />);
-    expect(await screen.findByRole('link', { name: 'Je suis apprenant' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Centre de formation' })).toBeInTheDocument();
+    expect(await screen.findByRole('link', { name: 'Je commence mon apprentissage' })).toHaveAttribute('href', '/#commencer');
+    expect(screen.getByRole('link', { name: 'J’ai un code' })).toHaveAttribute('href', '/apprenant');
+  });
+
+  it('keeps the centre’s entry in its own corner, apart from the learner’s calls to action', async () => {
+    render(<SiteHeader />);
+    const centre = await screen.findByRole('link', { name: /Gérer mon centre/ });
+    expect(centre).toHaveAttribute('href', '/auth');
+    const nav = screen.getByRole('navigation', { name: 'Navigation principale' });
+    expect(nav).not.toContainElement(centre);
   });
 
   it('shows a learner only their own space, never the centre’s', async () => {
@@ -41,7 +49,8 @@ describe('header by role', () => {
     expect(await screen.findByRole('link', { name: 'Ma ville' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Compétition' })).toBeInTheDocument();
     expect(screen.queryByRole('link', { name: /Mon centre|Centre de formation|Inscriptions|Corrections|Équipe/ })).toBeNull();
-    expect(screen.queryByRole('link', { name: 'Je suis apprenant' })).toBeNull();
+    expect(screen.queryByRole('link', { name: /Je commence mon apprentissage|J’ai un code/ })).toBeNull();
+    expect(screen.queryByRole('link', { name: /Gérer mon centre/ })).toBeNull();
   });
 
   it('shows a centre only its own space, never the learner’s', async () => {
@@ -49,14 +58,14 @@ describe('header by role', () => {
     render(<SiteHeader />);
     expect(await screen.findByRole('link', { name: 'Mon centre' })).toBeInTheDocument();
     await waitFor(() => expect(screen.getByRole('link', { name: 'Équipe' })).toBeInTheDocument());
-    expect(screen.queryByRole('link', { name: /Je suis apprenant|Ma ville|Compétition/ })).toBeNull();
+    expect(screen.queryByRole('link', { name: /Je commence mon apprentissage|J’ai un code|Ma ville|Compétition/ })).toBeNull();
   });
 
   it('shows only the logo while the role is unknown', () => {
     render(<SiteHeader />);
-    expect(screen.queryByRole('link', { name: 'Je suis apprenant' })).toBeNull();
+    expect(screen.queryByRole('link', { name: 'Je commence mon apprentissage' })).toBeNull();
     expect(screen.getByRole('link', { name: /Play Perform/ })).toBeInTheDocument();
-    return screen.findByRole('link', { name: 'Je suis apprenant' }); // let the session check finish
+    return screen.findByRole('link', { name: 'Je commence mon apprentissage' }); // let the session check finish
   });
 });
 
@@ -85,5 +94,42 @@ describe('centre legal identity form', () => {
     await userEvent.type(screen.getByLabelText(/^SIREN/), '123456789');
     await userEvent.click(screen.getByRole('button', { name: /Enregistrer/ }));
     expect(await screen.findByRole('alert')).toHaveTextContent(/SIREN invalide/);
+  });
+});
+
+import PortalPage from '@/app/connexion/page';
+import { within } from '@testing-library/react';
+
+describe('entry portal', () => {
+  it('offers two distinct doors, with action verbs, and never mixes their links', () => {
+    render(<PortalPage />);
+    const learner = screen.getByRole('region', { name: 'Apprendre et progresser' });
+    const centre = screen.getByRole('region', { name: 'Gérer mon centre' });
+    expect(within(learner).getByRole('link', { name: /Je commence mon apprentissage/ })).toHaveAttribute('href', '/#commencer');
+    expect(within(learner).getByRole('link', { name: /code d.accès/ })).toHaveAttribute('href', '/apprenant');
+    expect(within(centre).getByRole('link', { name: 'Gérer mon centre de formation' })).toHaveAttribute('href', '/auth');
+    expect(within(centre).getByRole('link', { name: /Créer l.espace de mon centre/ })).toHaveAttribute('href', '/centre/inscription');
+    expect(within(learner).queryByRole('link', { name: /centre/i })).toBeNull();
+    expect(within(centre).queryByRole('link', { name: /apprentissage|code/ })).toBeNull();
+  });
+});
+
+import { CentreSignupForm } from '@/modules/organizations/ui/CentreSignupForm';
+
+describe('centre registration form', () => {
+  it('asks for the legal identity and explains a wrong SIRET before sending', async () => {
+    render(<CentreSignupForm />);
+    await userEvent.type(screen.getByLabelText('E-mail'), 'contact@alpha.fr');
+    await userEvent.type(screen.getByLabelText(/Mot de passe/), 'motdepasse1');
+    await userEvent.type(screen.getByLabelText(/Raison sociale/), 'Centre Alpha SAS');
+    await userEvent.type(screen.getByLabelText(/^SIREN/), '732829320');
+    await userEvent.type(screen.getByLabelText(/SIRET de l/), '73282932000044');
+    await userEvent.type(screen.getByLabelText(/Adresse de l/), '12 rue des Écoles');
+    await userEvent.type(screen.getByLabelText(/Code postal/), '75005');
+    await userEvent.type(screen.getByLabelText(/Ville/), 'Paris');
+    expect(screen.getByRole('button', { name: /Déposer le dossier/ })).toBeDisabled();
+    await userEvent.click(screen.getByRole('checkbox'));
+    await userEvent.click(screen.getByRole('button', { name: /Déposer le dossier/ }));
+    expect(await screen.findByRole('alert')).toHaveTextContent(/SIRET invalide/);
   });
 });

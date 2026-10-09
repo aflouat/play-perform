@@ -56,11 +56,11 @@ export function PlacementResultView({ skill, result, onAnotherSkill }: Props) {
       <div className="mt-4 rounded-2xl bg-violet-50 border border-violet-200 p-4 text-left">
         <p className="font-bold text-slate-900">Garde ta progression</p>
         <p className="mt-1 text-sm text-slate-600">
-          Ton résultat est enregistré sur cet appareil. Crée un compte gratuit pour le retrouver partout et suivre ton parcours.
+          Ton résultat est enregistré sur cet appareil. Avec le code d’accès donné par ton centre de formation, tu le retrouves partout et tu suis ton parcours.
         </p>
-        <Link href="/auth?signup=1"
+        <Link href="/apprenant"
           className="mt-3 block rounded-xl bg-violet-600 px-5 py-3 text-center font-bold text-white hover:bg-violet-700">
-          Sauvegarder ma progression
+          Entrer mon code d’accès
         </Link>
       </div>
       <button type="button" onClick={onAnotherSkill}

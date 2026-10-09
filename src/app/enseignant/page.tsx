@@ -7,7 +7,7 @@ import { createClient } from '@supabase/supabase-js';
 import type { DbStudent } from '@/lib/db';
 import { StudentCard } from '@/components/enseignant/StudentCard';
 import { apiFetchStudents } from '@/lib/students-api';
-import { CentreCard, TeamLinks } from '@/modules/organizations';
+import { CentreApplicationBanner, CentreCard, TeamLinks } from '@/modules/organizations';
 
 function getClient() {
   return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL ?? '', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '');
@@ -39,6 +39,7 @@ export default function TeacherPage() {
             className="text-xs text-slate-400 hover:text-rose-500 font-semibold transition-colors">Déconnexion</button>
         </div>
 
+        <CentreApplicationBanner />
         <CentreCard />
         <TeamLinks />
 

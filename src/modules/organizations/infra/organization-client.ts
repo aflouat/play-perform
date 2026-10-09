@@ -47,3 +47,26 @@ export async function saveIdentity(organizationId: string, identity: CentreIdent
   const res = await fetch(`/api/organizations/${organizationId}`, { method: 'PUT', headers: await headers(), body: JSON.stringify(identity) });
   return res.ok ? null : errorOf(res, 'Enregistrement impossible.');
 }
+
+import type { ApplicationInput, CentreApplication } from '../domain/application';
+
+/** Public: files the application of a new centre. Returns an error message or null. */
+export async function submitCentreApplication(input: ApplicationInput): Promise<string | null> {
+  const res = await fetch('/api/centre-applications', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(input) });
+  return res.ok ? null : errorOf(res, 'Envoi impossible, réessaie plus tard.');
+}
+
+export async function fetchMyApplication(): Promise<CentreApplication | null> {
+  const res = await fetch('/api/centre-applications/mine', { headers: await headers() });
+  return res.ok ? ((await res.json()) as { application: CentreApplication | null }).application : null;
+}
+
+export async function fetchPendingApplications(): Promise<CentreApplication[]> {
+  const res = await fetch('/api/centre-applications', { headers: await headers() });
+  return res.ok ? ((await res.json()) as { applications: CentreApplication[] }).applications : [];
+}
+
+export async function decideCentreApplication(id: string, status: 'approved' | 'rejected', comment: string): Promise<string | null> {
+  const res = await fetch(`/api/centre-applications/${id}`, { method: 'PATCH', headers: await headers(), body: JSON.stringify({ status, comment }) });
+  return res.ok ? null : errorOf(res, 'Décision impossible.');
+}

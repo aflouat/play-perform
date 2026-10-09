@@ -14,7 +14,7 @@ Fichier unique de pilotage : **en cours**, **backlog** et **bugs connus** (rempl
 - [ ] Notifier l'élève / le parent quand une évaluation est corrigée
 
 ## UX par rôle (avant le backend centre mère / franchises)
-- [ ] Inscription d'un **nouveau centre** en libre-service (formulaire raison sociale + SIREN + SIRET + adresse à l'inscription, validation par la société mère) — aujourd'hui un centre est créé par le super admin
+- [ ] Vérifier le SIREN / SIRET auprès de l'API Sirene (INSEE) à l'inscription d'un centre (aujourd'hui : somme de contrôle + examen manuel par la société mère)
 - [ ] Parcours d'accueil dédiés : tableau de bord du centre (élèves actifs, demandes en attente, corrections), tableau de bord de l'examinateur, page d'accueil apprenant
 - [ ] Vérifier à l'écran les trois espaces (visiteur, apprenant, centre) sur mobile ; textes finaux avec les premiers utilisateurs
 - [ ] Un enseignant sans centre (comptes existants) est rattaché à la société mère : proposer de rejoindre ou créer son centre

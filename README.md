@@ -9,6 +9,8 @@ Plateforme d'apprentissage ludique pour les ados & jeunes. L'enseignant (ou le t
 | Centre de formation (personne morale : raison sociale, SIREN, établissement SIRET, adresse) | S'inscrit sur `/auth` ; son espace `/enseignant` (« Mon centre ») : fiche légale, élèves, codes d'accès, équipe |
 | Apprenant | Saisit son code (8 caractères) sur `/apprenant` → session signée de 30 jours sur son appareil ; accède à ses compétences uniquement |
 
+Ergonomie B2C / B2B : voir [docs/ux-b2c-b2b.md](docs/ux-b2c-b2b.md).
+
 **Un rôle par appareil, des espaces séparés** : l'en-tête n'affiche que l'espace du rôle courant (visiteur : « Je suis apprenant » / « Centre de formation » ; apprenant : Ma ville, Compétition ; centre : Mon centre, Corrections, Inscriptions, Équipe). Un apprenant est renvoyé vers sa ville s'il ouvre `/enseignant` ou `/admin/*` ; se connecter comme centre ferme la session apprenant, et inversement.
 | Super admin (société mère) | Email dans `ADMIN_EMAILS` ou table `platform_admins` → crée les centres, voit tout |
 | Responsable de centre / enseignant / examinateur | Rôles dans `memberships` (un examinateur peut appartenir à plusieurs centres) : le centre décide des inscriptions de ses élèves, l'examinateur corrige leurs évaluations — voir [docs/saas-franchise.md](docs/saas-franchise.md) |
@@ -23,14 +25,16 @@ Avant de travailler un cours, l'apprenant lit sa **fiche** et présente une **de
 | `/classement` | Apprenant : compétition — défi hebdomadaire (5 questions, une fois par semaine), classement du centre par pseudo (XP, série, niveaux), médailles |
 | `/enseignant/classement` | Enseignant : médailles récentes de ses élèves, retrait possible |
 | `/test-de-niveau/[skillId]` | Visiteur : revue question par question de son test de niveau (feedback), sans compte |
-| `/auth` | Connexion / Inscription / Mot de passe oublié |
+| `/connexion` | Portail d'entrée : carte apprenant (grande, violette) et carte centre (petite, sobre) |
+| `/auth` | Centre de formation : connexion / mot de passe oublié (l'inscription passe par `/centre/inscription`) |
+| `/centre/inscription` | Dossier d'un nouveau centre : compte + raison sociale, SIREN, SIRET, adresse — examiné par la société mère |
 | `/auth/confirm` | Activation de compte (lien email) |
 | `/auth/reset-password` | Réinitialisation mot de passe |
 | `/enseignant`, `/enseignant/new` | Espace enseignant : gestion des élèves (ajout / édition / suppression) et de leur code d'accès (`/parent` redirige ici) |
 | `/apprenant` | Espace apprenant : saisie du code d'accès |
 | `/competences/[skillId]/fiche` | Fiche du cours + demande d'inscription (motivations) |
 | `/admin/inscriptions` | Centre : accepter / refuser les demandes d'inscription de ses élèves |
-| `/admin/organisations` | Super admin : créer des centres ; responsable de centre : recruter enseignants et examinateurs |
+| `/admin/organisations` | Super admin : examiner les dossiers de centres (ouverture = création du centre + responsable), créer des centres ; responsable de centre : recruter enseignants et examinateurs |
 | `/home` | Dashboard quiz eleve (toutes matières) |
 | `/quiz/[subject]` | Quiz interactif avec sablier 30s et XP décroissants |
 | `/keyboard` | Jeu d'enfant initié — Lettres / Mots / Sciences /Mots illustrés FR/EN/ES|

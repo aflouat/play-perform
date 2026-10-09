@@ -25,11 +25,11 @@ export function Hero({ onStart }: { onStart: () => void }) {
         <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
           <button type="button" onClick={onStart}
             className="rounded-2xl bg-amber-400 px-7 py-4 text-base font-black text-violet-950 shadow-lg hover:bg-amber-300 focus-visible:outline focus-visible:outline-4 focus-visible:outline-white transition-colors">
-            Faire mon test de niveau →
+            Je commence mon apprentissage →
           </button>
-          <Link href="/auth"
+          <Link href="/apprenant"
             className="rounded-2xl bg-white/10 border border-white/30 px-7 py-4 text-base font-bold hover:bg-white/20 transition-colors">
-            J&apos;ai déjà un compte
+            J&apos;ai un code d&apos;accès
           </Link>
         </div>
         <ul className="mt-10 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-violet-100">

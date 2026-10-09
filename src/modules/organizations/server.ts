@@ -3,3 +3,4 @@ export {
   listOrganizations, createOrganization, updateIdentity, listMembers, addMember, removeMember, findOrInviteUser, organizationOfStudent,
 } from './infra/organization-repository';
 export type { Organization, Member } from './infra/organization-repository';
+export { submitApplication, listPendingApplications, latestApplicationOf, decideApplication } from './infra/application-repository';

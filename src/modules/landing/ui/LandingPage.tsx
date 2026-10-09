@@ -42,7 +42,7 @@ export function LandingPage() {
       </section>
 
       <PricingSection />
-      <TeachersSection onTryTest={goToFlow} />
+      <TeachersSection />
     </main>
   );
 }

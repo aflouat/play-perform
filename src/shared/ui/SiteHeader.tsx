@@ -44,10 +44,20 @@ export function SiteHeader() {
           { label: 'Déconnexion', onClick: leaveCentre },
         ]
       : role === 'visitor'
-        ? [{ href: '/apprenant', label: 'Je suis apprenant' }, { href: '/auth', label: 'Centre de formation' }, { href: '/faq', label: 'FAQ' }]
+        ? [{ href: '/faq', label: 'FAQ' }, { href: '/apprenant', label: 'J’ai un code' }]
         : [];
 
   return (
+    <>
+      {/* B2B corner: the centres' entry lives apart from the learner's calls to action */}
+      {role === 'visitor' && (
+        <div className="bg-slate-800 text-xs text-slate-300">
+          <div className="mx-auto flex max-w-3xl items-center justify-end gap-2 px-4 py-1.5">
+            <span>Vous êtes un centre de formation ?</span>
+            <Link href="/auth" className="font-semibold text-white underline-offset-2 hover:underline">Gérer mon centre →</Link>
+          </div>
+        </div>
+      )}
     <header className="border-b border-slate-200 bg-white">
       <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-3">
         <Link href={role === 'learner' ? '/competences' : '/'} className="text-lg font-black tracking-tight text-[#1a1a2e]">🏰 Play Perform</Link>
@@ -55,8 +65,12 @@ export function SiteHeader() {
           {items.map((item) => 'href' in item
             ? <Link key={item.href} href={item.href} className={LINK}>{item.label}</Link>
             : <button key={item.label} onClick={item.onClick} className={LINK}>{item.label}</button>)}
+          {role === 'visitor' && (
+            <Link href="/#commencer" className="rounded-full bg-violet-600 px-4 py-1.5 font-bold text-white hover:bg-violet-700">Je commence mon apprentissage</Link>
+          )}
         </nav>
       </div>
     </header>
+    </>
   );
 }

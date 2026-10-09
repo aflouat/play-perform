@@ -57,6 +57,9 @@ _Mis à jour : 2026-10-07 · v0.7.0_
 | `api/progress/route.ts` | PUT | XP / badge d'un apprenant (session apprenant ou enseignant, propriété du profil vérifiée) |
 | `api/me/route.ts` | GET | Mon e-mail, drapeau super admin, mes centres et rôles |
 | `api/organizations/route.ts` | GET, POST | Centres visibles / création (super admin) |
+| `api/centre-applications/route.ts` | POST, GET | Dossier d'un nouveau centre (public, 5 / h / IP) ; dossiers en attente (super admin) |
+| `api/centre-applications/mine/route.ts` | GET | Mon dernier dossier (bandeau « Mon centre ») |
+| `api/centre-applications/[id]/route.ts` | PATCH | Ouvrir (organisation + responsable) ou refuser (super admin) |
 | `api/organizations/[id]/route.ts` | PUT | Fiche légale du centre : SIREN, SIRET, adresse (responsable / super admin) |
 | `api/organizations/[id]/members/route.ts` | GET, POST, DELETE | Équipe d'un centre : recrutement par invitation e-mail (responsable de centre) |
 | `api/push/subscription/route.ts` | PUT, DELETE | Abonnement Web Push d'un appareil + ses rappels (apprenant / enseignant) |
@@ -83,6 +86,7 @@ _Mis à jour : 2026-10-07 · v0.7.0_
 | `docker/supabase/migrate.sh` | Applique les migrations non jouées (table `_local_migrations`) + seed au 1er run |
 | `supabase/migrations/20260927000000_initial_schema.sql` | Schéma complet (10 tables + RLS) reconstruit depuis la prod |
 | `supabase/migrations/20260928000000_reading_mode.sql` | CHECK `students.mode` accepte `reading` |
+| `supabase/migrations/20261018000000_centre_applications.sql` | `centre_applications` (dossiers de centres, SIRET unique si ouvert) |
 | `supabase/migrations/20261017000000_centre_identity.sql` | `organizations` : raison sociale, SIREN, SIRET (unique), adresse, code postal, ville |
 | `supabase/migrations/20261016000000_competition.sql` | `students.nickname/show_in_ranking`, `challenge_results`, `reward_revocations` |
 | `supabase/migrations/20261015000000_anon_parent_only.sql` | Accès anonymes limités aux lignes de la société mère (**non appliquée en prod**) |
@@ -108,7 +112,7 @@ _Mis à jour : 2026-10-07 · v0.7.0_
 | `quizzes` | `domain/placement.ts`, `infra/placement-bank-{a,b}.ts`, `infra/placement-question.ts` | `getPlacementTest(skillId)`, `scoreAnswer(q, index\|null)`, `estimateStartLevel(answers)`, `reviewAnswers(questions, chosen)`, types `PlacementQuestion`, `PlacementAnswer`, `PlacementResult` |
 | (partagé) | `hooks/useRole.ts`, `shared/ui/{SiteHeader,RoleGate}.tsx` | `useRole()` → `loading \| visitor \| learner \| teacher` ; `RoleGate deny=…` |
 | `competition` | `domain/{week,nickname,ranking,seed}.ts`, `application/{challenge,view}.ts`, `infra/{competition-repository,competition-client}.ts`, `ui/{Leaderboard,ChallengePlayer,CompetitionPanel}.tsx`, `server.ts` | `isoWeek`, `previousWeek`, `validateNickname`, `generateNickname`, `rankBy`, `rankWeekly`, `awardsFor`, `challengeFor`, `scoreChallenge`, `buildCompetitionView`, `pastAwardsOf`, `CompetitionPanel` |
-| `organizations` | `domain/{access,inputs}.ts`, `infra/{organization-repository,organization-client}.ts`, `ui/{OrganizationCard,TeamLinks}.tsx`, `server.ts` | `DEFAULT_ORGANIZATION_ID`, `canRecruit`, `canManageStudents`, `canDecideEnrollments`, `canCorrectEvaluations`, `organizationsWhere`, `studentOrganization`, `validateOrganizationInput`, `validateMemberInput`, `validateSiren/Siret`, `validateCentreIdentity`, `isIdentityComplete`, `CentreCard`, `CentreIdentityForm`, `fetchMyAccess`, `recruit`, `TeamLinks` · `lib/access-context.ts` : `getAccessContext(req)` |
+| `organizations` | `domain/{access,inputs}.ts`, `infra/{organization-repository,organization-client}.ts`, `ui/{OrganizationCard,TeamLinks}.tsx`, `server.ts` | `DEFAULT_ORGANIZATION_ID`, `canRecruit`, `canManageStudents`, `canDecideEnrollments`, `canCorrectEvaluations`, `organizationsWhere`, `studentOrganization`, `validateOrganizationInput`, `validateMemberInput`, `validateSiren/Siret`, `validateCentreIdentity`, `isIdentityComplete`, `CentreCard`, `CentreIdentityForm`, `CentreSignupForm`, `CentreApplicationBanner`, `ApplicationsReview`, `validateCentreApplication`, `validateApplicationDecision`, `fetchMyAccess`, `recruit`, `TeamLinks` · `lib/access-context.ts` : `getAccessContext(req)` |
 | `pricing` | `domain/plan.ts`, `infra/pricing-client.ts`, `infra/pricing-repository.ts` (serveur), `ui/{PricingSection,PlanEditor}.tsx`, `server.ts` | `formatPrice`, `billingSuffix`, `eurosToCents`, `centsToEuros`, `yearlySavingPercent`, `validatePlanUpdate`, `fetchActivePlans`, `fetchAllPlans`, `savePlan`, `PricingSection`, `PlanEditor` · `server.ts` : `fetchPlans`, `updatePlan` |
 | `landing` | `application/useLandingFlow.ts`, `infra/placement-storage.ts`, `ui/{LandingPage,Hero,FlowStepper,ModeChoice,SkillPicker,PlacementTest,PlacementResultView,ParentsSection}.tsx` | `LandingPage` |
 
@@ -365,6 +369,7 @@ Types : `src/types/reading.ts` (`ReadingWord`, `Syllable`, `ParsedWord`, `Readin
 |---|---|---|
 | `integration/faq-alignment.test.tsx` | Intégration | FAQ alignée sur README, version, avatars, XP, matières, fonctionnalités |
 | `unit/release-tag.test.ts` | Unit | Script `release:tag` — semver, CHANGELOG, tag, note persistée, README synchronisé |
+| `unit/centre-application.test.ts`, `unit/centre-application-routes.test.ts` | Unit | Dossier de centre : validation, public + limite de débit, décision réservée au super admin |
 | `unit/organization-identity.test.ts`, `integration/role-experience.test.tsx` | Unit + intégration | SIREN / SIRET (Luhn), fiche légale ; en-tête et accès par rôle |
 | `unit/competition-domain.test.ts`, `unit/competition-view.test.ts`, `unit/competition-routes.test.ts` | Unit | Semaines ISO, pseudos, classements, défi hebdomadaire, médailles, routes |
 | `unit/placement-review.test.ts`, `integration/PlacementReview.test.tsx` | Unit + intégration | Revue des réponses du test de niveau (`reviewAnswers`, stockage, page, lien depuis le résultat) |

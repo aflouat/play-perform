@@ -10,19 +10,22 @@ function getClient() {
   return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL ?? '', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '');
 }
 
-type Screen = 'login' | 'signup' | 'forgot' | 'forgot_sent';
+type Screen = 'login' | 'forgot' | 'forgot_sent';
 
 // Tout useSearchParams est ici — ce composant est wrappé dans <Suspense>
 function AuthContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [screen, setScreen] = useState<Screen>(() => searchParams.get('signup') === '1' ? 'signup' : 'login');
+  const [screen, setScreen] = useState<Screen>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPwd, setShowPwd] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Old sign-up links now lead to the centre registration
+  useEffect(() => { if (searchParams.get('signup') === '1') router.replace('/centre/inscription'); }, [searchParams, router]);
 
   useEffect(() => {
     const db = getClient();
@@ -43,11 +46,6 @@ function AuthContent() {
         const { error: err } = await db.auth.resetPasswordForEmail(email, { redirectTo: `${siteUrl}/auth/reset-password` });
         if (err) { setError(err.message); return; }
         setScreen('forgot_sent'); return;
-      }
-      if (screen === 'signup') {
-        const { error: err } = await db.auth.signUp({ email, password, options: { emailRedirectTo: `${siteUrl}/auth/confirm` } });
-        if (err) { setError(err.message); return; }
-        setInfo('✉️ Vérifiez vos emails pour activer votre compte.'); return;
       }
       const { error: err } = await db.auth.signInWithPassword({ email, password });
       if (err) { setError(err.message); return; }
@@ -71,7 +69,7 @@ function AuthContent() {
   }
 
   const screenLabel: Record<Screen, string> = {
-    login: 'Connexion centre de formation', signup: 'Créer un compte', forgot: 'Mot de passe oublié', forgot_sent: '',
+    login: 'Gérer mon centre de formation', forgot: 'Mot de passe oublié', forgot_sent: '',
   };
 
   return (
@@ -82,7 +80,7 @@ function AuthContent() {
           <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Email</label>
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required
             className="mt-1 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:border-violet-400"
-            placeholder="enseignant@email.com" />
+            placeholder="contact@votre-centre.fr" />
         </div>
         {screen !== 'forgot' && (
           <div>
@@ -106,28 +104,22 @@ function AuthContent() {
             )}
           </div>
         )}
-        {screen === 'signup' && (
-          <p className="text-xs text-slate-500">
-            Le compte est créé par un enseignant, un tuteur ou un adulte responsable. En t&apos;inscrivant, tu acceptes notre{' '}
-            <Link href="/confidentialite" className="text-violet-600 underline">politique de confidentialité</Link>.
-          </p>
-        )}
         {error && <p className="text-rose-600 text-sm bg-rose-50 rounded-xl px-3 py-2">{error}</p>}
         {info  && <p className="text-emerald-600 text-sm bg-emerald-50 rounded-xl px-3 py-2">{info}</p>}
         <button type="submit" disabled={loading}
-          className="w-full py-3 rounded-xl bg-violet-600 text-white font-bold disabled:opacity-40 hover:bg-violet-700 transition-colors">
-          {loading ? 'Chargement…' : screen === 'login' ? 'Se connecter' : screen === 'signup' ? 'Créer un compte' : 'Envoyer le lien'}
+          className="w-full py-3 rounded-xl bg-slate-800 text-white font-bold disabled:opacity-40 hover:bg-slate-700 transition-colors">
+          {loading ? 'Chargement…' : screen === 'login' ? 'Se connecter' : 'Envoyer le lien'}
         </button>
       </form>
 
       <div className="text-center space-y-2">
-        {screen !== 'signup'
-          ? <button onClick={() => { setScreen('signup'); setError(null); setInfo(null); }} className="text-sm text-violet-600 font-semibold hover:underline block w-full">Pas encore de compte ? S&apos;inscrire</button>
-          : <button onClick={() => { setScreen('login');  setError(null); setInfo(null); }} className="text-sm text-violet-600 font-semibold hover:underline block w-full">Déjà un compte ? Se connecter</button>
-        }
+        {screen === 'login' && (
+          <Link href="/centre/inscription" className="block w-full text-sm font-semibold text-slate-700 hover:underline">Pas encore de centre ? Créer l&apos;espace de mon centre</Link>
+        )}
         {screen === 'forgot' && (
           <button onClick={() => { setScreen('login'); setError(null); }} className="text-sm text-slate-400 hover:underline block w-full">← Retour</button>
         )}
+        <Link href="/apprenant" className="block rounded-xl bg-violet-50 px-3 py-2 text-xs font-semibold text-violet-700 hover:bg-violet-100">Tu es apprenant ? Entre avec ton code d&apos;accès →</Link>
         <Link href="/" className="text-xs text-slate-400 hover:text-slate-600 block">← Retour à l&apos;accueil</Link>
       </div>
     </div>
