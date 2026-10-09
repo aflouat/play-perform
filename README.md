@@ -9,13 +9,20 @@ Plateforme d'apprentissage ludique pour les ados & jeunes. L'enseignant (ou le t
 | Centre de formation (personne morale : raison sociale, SIREN, établissement SIRET, adresse) | S'inscrit sur `/auth` ; son espace `/enseignant` (« Mon centre ») : fiche légale, élèves, codes d'accès, équipe |
 | Apprenant | Saisit son code (8 caractères) sur `/apprenant` → session signée de 30 jours sur son appareil ; accède à ses compétences uniquement |
 
-Ergonomie B2C / B2B : voir [docs/ux-b2c-b2b.md](docs/ux-b2c-b2b.md).
-
 **Un rôle par appareil, des espaces séparés** : l'en-tête n'affiche que l'espace du rôle courant (visiteur : « Je suis apprenant » / « Centre de formation » ; apprenant : Ma ville, Compétition ; centre : Mon centre, Corrections, Inscriptions, Équipe). Un apprenant est renvoyé vers sa ville s'il ouvre `/enseignant` ou `/admin/*` ; se connecter comme centre ferme la session apprenant, et inversement.
 | Super admin (société mère) | Email dans `ADMIN_EMAILS` ou table `platform_admins` → crée les centres, voit tout |
-| Responsable de centre / enseignant / examinateur | Rôles dans `memberships` (un examinateur peut appartenir à plusieurs centres) : le centre décide des inscriptions de ses élèves, l'examinateur corrige leurs évaluations — voir [docs/saas-franchise.md](docs/saas-franchise.md) |
+| Responsable de centre / enseignant / examinateur | Rôles dans `memberships` (un examinateur peut appartenir à plusieurs centres) : le centre décide des inscriptions de ses élèves, l'examinateur corrige leurs évaluations |
 
 Avant de travailler un cours, l'apprenant lit sa **fiche** et présente une **demande d'inscription** avec ses motivations ; le centre l'accepte ou la refuse. Un niveau déjà acquis (test de niveau) vaut inscription.
+
+## Organisations (franchise)
+Une seule application et une seule base ; chaque centre de formation est une organisation. La société mère « Play Perform » (id fixe `00000000-0000-4000-8000-000000000001`) possède l'existant et les accès anonymes. Rôles : super admin (`ADMIN_EMAILS` en amorçage, table `platform_admins`), responsable de centre `org_admin` (recrute, décide, corrige), enseignant `teacher` (élèves, inscriptions), examinateur `examiner` (corrections, un ou plusieurs centres). Permissions : fonctions pures dans `src/modules/organizations/domain/access.ts`, appliquées par `getAccessContext`. `organization_id` (défaut = société mère) sur `students`, `profiles`, `skill_enrollments`, `skill_evaluations`, `challenge_results` ; migrations additives, `ADMIN_EMAILS` reste super admin.
+- **Catalogue de compétences, questions et tarifs communs à tous les centres** (décision produit : pas d'`organization_id` dessus).
+- **Isolation** : XP et badges passent par `PUT /api/progress` (propriété du profil vérifiée) ; la migration `20261015000000_anon_parent_only.sql` limite les accès anonymes aux lignes de la société mère (à appliquer avant d'ouvrir un centre externe, procédure et retour arrière dans `docs/deploiement.md`).
+- Un centre s'inscrit par dossier (compte + raison sociale, SIREN, SIRET, adresse) que la société mère examine ; un SIRET = un centre.
+
+## Ergonomie B2C / B2B
+Deux portes distinctes, jamais mélangées. Apprenant : ton énergique, violet/ambre, verbes d'action (« Je commence mon apprentissage »), entrée par le bouton principal et `/connexion`, connexion par code. Centre : ton sobre, gris ardoise, « Gérer mon centre de formation », entrée par un bandeau à part, la section dédiée de l'accueil et une carte discrète de `/connexion`. Règles : le lien du centre n'est jamais dans le même bloc de boutons que celui de l'apprenant ; aucun CTA d'apprenant ne mène à la connexion du centre (« Entrer mon code d'accès » → `/apprenant`) ; une fois connecté, chacun ne voit que son espace (un rôle par appareil, `RoleGate` + en-tête par rôle). Testé dans `integration/role-experience.test.tsx`.
 
 ## Routes
 

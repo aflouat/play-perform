@@ -23,6 +23,8 @@ Instructions pour Claude Code dans ce repo.
 
 ## Index des fichiers .md
 
+**Ne jamais créer de nouveau fichier `.md`.** Une règle, une feature ou une décision (ergonomie B2C/B2B, franchise, etc.) se documente dans les fichiers ci-dessous : `README.md` (comportement, routes, règles), `todo.md` (reste à faire), `code-index.md` (fichiers et signatures), `docs/deploiement.md` (infra). Seule exception : une demande explicite de l'utilisateur.
+
 | Fichier | Rôle | Mise à jour |
 |---|---|---|
 | `CLAUDE.md` | Instructions Claude Code — règles, stack, composants, versionnement | Fin de chaque Epic |

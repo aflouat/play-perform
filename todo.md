@@ -19,12 +19,13 @@ Fichier unique de pilotage : **en cours**, **backlog** et **bugs connus** (rempl
 - [ ] Vérifier à l'écran les trois espaces (visiteur, apprenant, centre) sur mobile ; textes finaux avec les premiers utilisateurs
 - [ ] Un enseignant sans centre (comptes existants) est rattaché à la société mère : proposer de rejoindre ou créer son centre
 
-## Franchise / multi-organisations (voir docs/saas-franchise.md)
+## Franchise / multi-organisations (voir README « Organisations »)
 - [ ] **Avant le 1er centre externe** : appliquer `supabase/migrations/20261015000000_anon_parent_only.sql` (accès anonymes limités à la société mère ; la synchro XP / badges passe déjà par `PUT /api/progress`) — migration refusée à l'application depuis l'assistant, à lancer toi-même ou à autoriser
 - [ ] Libre-service : page publique d'un centre + code du centre → l'apprenant crée son profil et demande ses cours
 - [ ] Nommer un responsable pour la société mère elle-même (aujourd'hui : super admin via `ADMIN_EMAILS`) ; ajouter `platform_admins` côté UI
 - [ ] Marque par centre (logo, couleurs, sous-domaine) ; facturation par centre. *Décision : catalogue, questions et tarifs restent communs à tous les centres.*
-- [ ] RLS sur `parcours` / `parcours_enrollments` / `questions` / `release_notes`
+- [ ] RLS sur `parcours` / `parcours_enrollments` (lecture ouverte à tous), `questions` / `release_notes` (sans RLS)
+- [ ] Libre-service d'un apprenant (page publique du centre + code du centre)
 
 ## Release, abonnements, déploiement
 - [ ] Compétition : relire les 12 pseudos générés (`generateNickname`) ; décider si l'élève peut proposer son pseudo à l'enseignant
