@@ -35,7 +35,7 @@ export function AnkiReviewSession({ initialQuestions, mode, onRecord, onDone }: 
 
   if (queue.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
+      <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
         <div className="text-7xl mb-4">🎯</div>
         <h2 className="text-2xl font-black text-[#1a1a2e]">Toutes les erreurs corrigées !</h2>
         <p className="text-slate-500 mt-2 text-sm">Tu as repassé toutes les questions ratées.</p>
@@ -48,7 +48,7 @@ export function AnkiReviewSession({ initialQuestions, mode, onRecord, onDone }: 
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="flex-1">
       <div className="max-w-md mx-auto px-5 pt-8 pb-10">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-[#1a1a2e] font-black text-base">🔁 Révision des erreurs</h2>

@@ -31,7 +31,7 @@ export default function LecturePage() {
   const goHome = () => { clearActiveProfile(); router.push('/'); };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex-1 flex flex-col">
       <XpGainToast gain={lastGain} />
       <div className="max-w-sm mx-auto w-full px-5 pt-8 pb-6 flex-1 flex flex-col">
         <ProfileHeader name={name} avatarEmoji={avatar?.emoji ?? '📖'}

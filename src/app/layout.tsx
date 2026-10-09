@@ -20,7 +20,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="fr">
       <body className={`${geist.variable} font-sans antialiased min-h-screen flex flex-col`}>
         <SiteHeader />
-        <div className="flex-1">{children}</div>
+        <div className="flex-1 flex flex-col">{children}</div>
         <SiteFooter />
         <ReminderRunner />
       </body>

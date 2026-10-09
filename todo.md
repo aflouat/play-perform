@@ -27,7 +27,6 @@ Fichier unique de pilotage : **en cours**, **backlog** et **bugs connus** (rempl
 - [ ] Vérifier côté serveur le temps réellement travaillé (aujourd'hui l'effort quotidien est déclaratif)
 - [ ] **Emails d'inscription prod** : saisir Brevo (`smtp-relay.brevo.com:587`) dans Supabase → Auth → SMTP Settings, valider l'expéditeur dans Brevo, relever la limite d'emails, vérifier `NEXT_PUBLIC_SITE_URL` (procédure : `docs/deploiement.md`)
 - [ ] Prod : activer RLS sur `questions` et `release_notes` (alerte sécurité Supabase) avec les policies adaptées
-- [ ] **Bloquant prod** : `SUPABASE_SERVICE_ROLE_KEY` est absente de Vercel → toutes les routes API serveur (tarifs, niveaux, inscriptions, évaluations, codes d'accès, progression) échouent avec « supabaseKey is required ». Supabase → Project Settings → API → clé `service_role` → Vercel → Environment Variables (Production) → redéployer. Vérifier ensuite via `GET /api/health` (super admin). Même clé à corriger dans `.env.local` (refusée par Supabase : 401). Aussi : `NEXT_PUBLIC_SITE_URL`, `ADMIN_EMAILS`
 - [ ] Vérification visuelle tarifs / admin (Docker arrêté)
 - [ ] Paiement en ligne (non demandé pour l'instant)
 
@@ -44,6 +43,7 @@ Fichier unique de pilotage : **en cours**, **backlog** et **bugs connus** (rempl
 - [ ] Tests e2e Playwright à jour
 
 ## Backlog — Futur
+- [ ] Avec un quiz sans compte sur une compétence indiquer un lien pour passer en revue les reponses de l'apprenant pour le feedback
 - [ ] Compétition live (strike entre joueurs, récompenses supervisées) et classement
 - [ ] Dashboard parent avec suivi de chaque élève
 - [ ] Export portfolio de compétences d'un élève
@@ -52,8 +52,6 @@ Fichier unique de pilotage : **en cours**, **backlog** et **bugs connus** (rempl
 
 ## Bugs connus (supprimer une fois corrigé)
 _Aucun bug ouvert._ (profiles/scores, `/api/releases` et hydration `/mots` `/keyboard` corrigés, à livrer en 0.7.1 ; migrations prod appliquées le 2026-10-07.)
-erreur serveur lors de la soumission d'une reponse a un examinateur skill-evaluations 500 (error)
-- lentete et le footer doivent etre visible sur toutes pages
 - l'acces parent a remplacer par acces enseignant pour ajouter ses eleves et leur donner un acces
 - un accès apprenant permet a un eleve d'acceder a ses comptences et apprentissage
 avant de s'inscrire a un cours l'eleve doit consulter la fiche du cours et presenter une demande au centre de formation qui propose le cours/compétence

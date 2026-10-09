@@ -19,7 +19,7 @@ export default async function ReleasesPage() {
   const notes = await getReleaseNotes();
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6 sm:p-10">
+    <main className="flex-1 bg-slate-50 p-6 sm:p-10">
       <div className="max-w-3xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-black text-[#1a1a2e] mb-1">Notes de version</h1>

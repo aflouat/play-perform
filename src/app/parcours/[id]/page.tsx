@@ -35,7 +35,7 @@ export default function ParcoursPage() {
   }, [id, profileId, router]);
 
   if (!parcours) {
-    return <div className="min-h-screen flex items-center justify-center text-slate-400 text-sm">Chargement…</div>;
+    return <div className="flex-1 flex items-center justify-center text-slate-400 text-sm">Chargement…</div>;
   }
 
   if (started) {
@@ -45,7 +45,7 @@ export default function ParcoursPage() {
   const totalQ = parcours.subjects.length * parcours.questions_per_subject;
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6">
+    <div className="flex-1 flex flex-col items-center justify-center px-6">
       <div className="w-full max-w-sm space-y-6 text-center">
         <div className="text-6xl">{parcours.emoji}</div>
         <div>

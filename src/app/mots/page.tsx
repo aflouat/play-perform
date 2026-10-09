@@ -33,7 +33,7 @@ export default function WordsPage() {
 
   if (finished) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-5 py-10 text-center">
+      <div className="flex-1 flex flex-col items-center justify-center px-5 py-10 text-center">
         <XpGainToast gain={lastGain} />
         <div className="w-full max-w-sm space-y-6">
           <div className="text-7xl">{scoreGame === sessionLength ? '🌟' : scoreGame >= 4 ? '🎀' : '💪'}</div>
@@ -57,7 +57,7 @@ export default function WordsPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex-1 flex flex-col">
       <XpGainToast gain={lastGain} />
       <div className="max-w-sm mx-auto w-full px-5 pt-8 pb-6 flex-1 flex flex-col">
         <ProfileHeader name={name} avatarEmoji={avatar?.emoji ?? '🌸'}

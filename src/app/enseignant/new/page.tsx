@@ -9,7 +9,7 @@ export default function NewStudentPage() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-slate-50 px-5 py-10">
+    <div className="flex-1 bg-slate-50 px-5 py-10">
       <div className="max-w-md mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <div>

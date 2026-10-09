@@ -20,7 +20,7 @@ export default function SkillPage() {
   const { lastGain, triggerGain } = useXpGain();
 
   if (!isProfileReady(profileId)) {
-    return <div className="min-h-screen flex items-center justify-center text-slate-400 text-sm">Chargement…</div>;
+    return <div className="flex-1 flex items-center justify-center text-slate-400 text-sm">Chargement…</div>;
   }
   return (
     <main className="mx-auto max-w-md px-5 pt-8 pb-16">

@@ -39,11 +39,11 @@ export default function HomePage() {
   const profileMeta = getActiveProfileMeta();
 
   if (!isProfileReady(profileId)) {
-    return <div className="min-h-screen flex items-center justify-center text-slate-400 text-sm">Chargement…</div>;
+    return <div className="flex-1 flex items-center justify-center text-slate-400 text-sm">Chargement…</div>;
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="flex-1">
       <div className="max-w-md mx-auto px-5 pt-8 pb-24">
         <ProfileHeader
           name={profile?.name ?? profileMeta?.name ?? profileId}

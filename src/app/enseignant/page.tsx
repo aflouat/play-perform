@@ -28,10 +28,10 @@ export default function TeacherPage() {
   function handleDelete(id: string) { setStudents((s) => s.filter((st) => st.id !== id)); }
   function handleUpdated(updated: DbStudent) { setStudents((s) => s.map((st) => st.id === updated.id ? updated : st)); }
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center text-slate-400 text-sm">Chargement…</div>;
+  if (loading) return <div className="flex-1 flex items-center justify-center text-slate-400 text-sm">Chargement…</div>;
 
   return (
-    <div className="min-h-screen bg-slate-50 px-5 py-10">
+    <div className="flex-1 bg-slate-50 px-5 py-10">
       <div className="max-w-md mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <div><h1 className="text-2xl font-black text-[#1a1a2e]">Mes élèves</h1><p className="text-slate-500 text-sm">{students.length} profil(s)</p></div>

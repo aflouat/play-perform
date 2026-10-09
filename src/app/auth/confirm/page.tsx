@@ -54,7 +54,7 @@ function ConfirmInner() {
   }, [router, searchParams]);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center bg-slate-50">
+    <div className="flex-1 flex flex-col items-center justify-center px-6 text-center bg-slate-50">
       {status === 'loading' && (
         <>
           <div className="text-4xl mb-4 animate-pulse">✉️</div>
@@ -86,7 +86,7 @@ function ConfirmInner() {
 export default function AuthConfirmPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center text-slate-400 text-sm">
+      <div className="flex-1 flex items-center justify-center text-slate-400 text-sm">
         Chargement…
       </div>
     }>

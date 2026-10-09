@@ -48,7 +48,7 @@ function Table({ rows }: { rows: string[][] }) {
 
 export default function FaqPage() {
   return (
-    <div className="min-h-screen">
+    <div className="flex-1">
       <div className="max-w-2xl mx-auto px-5 pt-10 pb-20">
         <Link href="/" className="inline-flex items-center gap-2 text-slate-400 text-sm mb-8 hover:text-slate-600 transition-colors">← Retour</Link>
         <header className="mb-10">

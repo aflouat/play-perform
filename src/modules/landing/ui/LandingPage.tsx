@@ -25,7 +25,7 @@ export function LandingPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50">
+    <main className="flex-1 bg-slate-50">
       <Hero onStart={goToFlow} />
 
       <section ref={flowRef} id="commencer" aria-labelledby="flow-title" className="mx-auto max-w-3xl px-4 pt-10 scroll-mt-4">

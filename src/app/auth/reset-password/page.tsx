@@ -97,7 +97,7 @@ function ResetForm() {
 
 export default function ResetPasswordPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center px-5 bg-slate-50">
+    <div className="flex-1 flex items-center justify-center px-5 bg-slate-50">
       <div className="w-full max-w-sm space-y-6">
         <div className="text-center"><div className="text-5xl mb-3">🔑</div></div>
         <Suspense fallback={<p className="text-slate-400 text-sm text-center">Chargement…</p>}>

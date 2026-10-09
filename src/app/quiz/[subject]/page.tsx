@@ -50,7 +50,7 @@ export default function QuizPage() {
 
   if (!isValidSubject(subject)) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
+      <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
         <div className="text-4xl mb-4">🤔</div>
         <p className="text-slate-500">Matière introuvable.</p>
         <button onClick={() => router.push('/home')} className="mt-6 text-sky-500 font-semibold">← Retour</button>
@@ -58,7 +58,7 @@ export default function QuizPage() {
     );
   }
   if (!isProfileReady(profileId) || !questionsLoaded) {
-    return <div className="min-h-screen flex items-center justify-center text-slate-400 text-sm">Chargement…</div>;
+    return <div className="flex-1 flex items-center justify-center text-slate-400 text-sm">Chargement…</div>;
   }
   if (questions.length === 0) {
     const progressMap = loadProgressMap(profileId, validSubject);
@@ -69,7 +69,7 @@ export default function QuizPage() {
     const dateLabel = nearest
       ? nearest.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : null;
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
+      <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
         <div className="text-6xl mb-4">🌟</div>
         <h2 className="text-2xl font-black text-[#1a1a2e]">Bravo, tu avances vite !</h2>
         <p className="text-slate-500 mt-2 text-sm leading-relaxed">
@@ -106,7 +106,7 @@ export default function QuizPage() {
   const correctSoFar = answers.filter((a) => a.isCorrect).length;
 
   return (
-    <div className="min-h-screen">
+    <div className="flex-1">
       <XpGainToast gain={lastGain} />
       <div className="max-w-md mx-auto px-5 pt-8 pb-10">
         <ProfileHeader name={profile?.name ?? profileMeta?.name ?? profileId} avatarEmoji={avatar?.emoji ?? profileMeta?.emoji ?? '🎓'}

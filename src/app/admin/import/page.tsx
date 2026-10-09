@@ -59,7 +59,7 @@ export default function AdminImportPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 p-8 max-w-3xl mx-auto">
+    <main className="flex-1 bg-slate-50 p-8 max-w-3xl mx-auto">
       <h1 className="text-2xl font-bold text-[#1a1a2e] mb-2">Import de questions</h1>
       <p className="text-slate-500 mb-2 text-sm">
         Importe des questions depuis un fichier CSV.

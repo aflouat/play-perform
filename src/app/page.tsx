@@ -88,11 +88,11 @@ export default function WelcomePage() {
     router.push(route);
   }
 
-  if (!ready) return <div className="min-h-screen flex items-center justify-center text-slate-400 text-sm">Chargement…</div>;
+  if (!ready) return <div className="flex-1 flex items-center justify-center text-slate-400 text-sm">Chargement…</div>;
   if (!authed) return <LandingPage />;
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-5 py-12">
+    <div className="flex-1 flex flex-col items-center justify-center px-5 py-12">
       <div className="w-full max-w-sm space-y-8">
         <div className="text-center">
           <div className="text-5xl mb-3">✨</div>

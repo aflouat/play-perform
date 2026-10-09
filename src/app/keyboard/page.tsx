@@ -63,7 +63,7 @@ export default function KeyboardPage() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="flex-1">
       <div className="max-w-sm mx-auto px-5 pt-8 pb-10">
         <ProfileHeader
           name={profile?.name ?? profileId}

@@ -71,7 +71,7 @@ export function ParcoursSession({ parcours, mode, addXp, onDone }: Props) {
   if (phase === 'transition') {
     const nextSubject = subjects[subjectIdx + 1];
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
+      <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
         <div className="text-5xl mb-3">🎉</div>
         <h2 className="text-2xl font-black text-[#1a1a2e]">{SUBJECT_LABELS[currentSubject]} terminé !</h2>
         <p className="text-slate-500 mt-1 text-sm">{correctPerSubject[subjectIdx]} / {currentQuestions.length} correctes</p>
@@ -93,7 +93,7 @@ export function ParcoursSession({ parcours, mode, addXp, onDone }: Props) {
     const totalCorrect = correctPerSubject.reduce((a, b) => a + b, 0);
     const totalQ = sessionQuestions.reduce((a, b) => a + b.length, 0);
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
+      <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
         <div className="text-6xl mb-4">🏆</div>
         <h2 className="text-2xl font-black text-[#1a1a2e]">Parcours terminé !</h2>
         <p className="text-slate-500 mt-1 text-sm">{totalCorrect} / {totalQ} correctes · +{totalXp} XP gagnés</p>
@@ -117,7 +117,7 @@ export function ParcoursSession({ parcours, mode, addXp, onDone }: Props) {
   const subjectBg = SUBJECT_META[currentSubject]?.bg ?? 'bg-violet-400';
 
   return (
-    <div className="min-h-screen">
+    <div className="flex-1">
       <XpGainToast gain={lastGain} />
       <div className="max-w-md mx-auto px-5 pt-8 pb-10">
         <div className="flex items-center gap-2 mb-2">
