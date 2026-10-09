@@ -70,7 +70,7 @@ describe('buildExaminerDashboard', () => {
 describe('nextActionsFor (learner home)', () => {
   const base: LearnerSnapshot = {
     streak: 3, xp: 120, dueReviews: 0, enrolledSkills: [{ skillId: 'logique', name: 'Logique', level: 2, dailyMinutes: 20 }],
-    answeredEnrollments: 0, pendingEnrollments: 0, evaluationsToRead: 0, challengePlayed: true, studiedToday: true, canEnroll: true, identityComplete: true,
+    answeredEnrollments: 0, pendingEnrollments: 0, evaluationsToRead: 0, challengePlayed: true, studiedToday: true, canEnroll: true, identityComplete: true, hasLevel: true, startedSkillId: 'logique',
   };
   const ids = (s: LearnerSnapshot) => nextActionsFor(s).map((a) => a.id);
 

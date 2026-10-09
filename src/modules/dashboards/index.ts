@@ -9,3 +9,7 @@ export { useLearnerSnapshot } from './application/useLearnerSnapshot';
 export { LearnerHome } from './ui/LearnerHome';
 export { CentreDashboardView } from './ui/CentreDashboardView';
 export { ExaminerDashboardView } from './ui/ExaminerDashboardView';
+export type { StepId, StepState, OnboardingInput, OnboardingStep, Onboarding } from './domain/onboarding';
+export { onboardingSteps, firstQuizHref, applyStartLevel } from './domain/onboarding';
+export { FirstSteps } from './ui/FirstSteps';
+export { PlacementStep } from './ui/PlacementStep';

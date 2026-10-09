@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { QuizQuestion } from '@/types';
 import type { LearningMode } from '@/lib/learning-mode';
 import { recordSkillAnswer } from '../infra/skill-reviews';
@@ -25,6 +25,8 @@ interface Props {
   mode: LearningMode;
   addXp: (amount: number, reason: 'quiz-correct' | 'quiz-perfect') => void;
   triggerGain: (amount: number) => void;
+  /** Opens this activity as soon as the page shows (the first quiz of the first connection) */
+  initialActivity?: SkillActivity | null;
 }
 
 const ACTIVITIES: { id: SkillActivity; emoji: string; label: string; hint: string }[] = [
@@ -34,7 +36,7 @@ const ACTIVITIES: { id: SkillActivity; emoji: string; label: string; hint: strin
 ];
 
 /** A skill: level first, then the choice of an activity to move up. */
-export function SkillActivityView({ skillId, profileId, mode, addXp, triggerGain }: Props) {
+export function SkillActivityView({ skillId, profileId, mode, addXp, triggerGain, initialActivity = null }: Props) {
   const skill = getSkillById(skillId);
   const levels = useSkillLevels(profileId);
   const level = levels[skillId] ?? null;
@@ -48,6 +50,9 @@ export function SkillActivityView({ skillId, profileId, mode, addXp, triggerGain
 
   // Random draw happens in the click handler, never during render
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
+
+  // Draws the questions in an effect (never during render) when a link asked for an activity
+  useEffect(() => { if (initialActivity && initialActivity !== 'evaluation') choose(initialActivity); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!skill) return <p className="text-center text-slate-500">Compétence introuvable.</p>;
 

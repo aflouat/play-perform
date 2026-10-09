@@ -65,7 +65,7 @@ describe('learner home', () => {
   it('lists what to do now, most useful first', () => {
     jest.mocked(snapshot.useLearnerSnapshot).mockReturnValue({
       streak: 4, xp: 250, dueReviews: 3, enrolledSkills: [{ skillId: 'logique', name: 'Logique', level: 2, dailyMinutes: 20 }],
-      answeredEnrollments: 0, pendingEnrollments: 0, evaluationsToRead: 1, challengePlayed: false, studiedToday: false, canEnroll: true, identityComplete: true,
+      answeredEnrollments: 0, pendingEnrollments: 0, evaluationsToRead: 1, challengePlayed: false, studiedToday: false, canEnroll: true, identityComplete: true, hasLevel: true, startedSkillId: 'logique',
     });
     render(<LearnerHome profileId="p1" />);
     const links = screen.getAllByRole('link').map((l) => l.textContent);

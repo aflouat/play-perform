@@ -14,7 +14,7 @@ Fichier unique de pilotage : **en cours**, **backlog** et **bugs connus** (rempl
 - [ ] Notifier l'élève (Web Push) quand une évaluation est corrigée ou qu'un centre retire un accès
 
 ## Parcours de l'apprenant avec code (optimisations proposées)
-- [ ] **Première connexion guidée en 3 étapes** : pseudo → test de niveau → premier quiz (aujourd'hui : accueil + ville vide, profil en bas de page)
+- [ ] Première connexion : proposer ensuite les rappels (heure + effort) et la lecture de la fiche de formation ; tester sur mobile
 - [ ] **« Mon chemin vers le diplôme »** : liste à cocher (inscrit, niveau 5, évaluation validée, nom renseigné) dans le panneau de la compétence, à partir de `GET /api/diploma`
 - [ ] Communauté : forum / entraide (questions entre élèves, modéré par le centre) — le fil des réussites, les Bravo, les binômes et le mur des pièges sont faits
 - [ ] Questions de niveau 4-5 dans les banques (le diplôme s'appuie sur l'évaluation validée par un examinateur, pas sur les quiz)

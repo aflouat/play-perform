@@ -12,7 +12,7 @@ const isAfter = (iso: string | null, since: string | null) => Boolean(iso) && (!
 const sameDay = (a: Date, b: Date) => a.toDateString() === b.toDateString();
 
 /** Gathers what the learner's home needs: this device (levels, plans, reviews, score) and the API (requests, corrections, challenge). */
-export function useLearnerSnapshot(profileId: string): LearnerSnapshot | null {
+export function useLearnerSnapshot(profileId: string, version = 0): LearnerSnapshot | null {
   const [snapshot, setSnapshot] = useState<LearnerSnapshot | null>(null);
 
   useEffect(() => {
@@ -40,10 +40,12 @@ export function useLearnerSnapshot(profileId: string): LearnerSnapshot | null {
         canEnroll: !profileId.startsWith('demo-'),
         // Unknown identity (demo profile, offline): do not nag
         identityComplete: identity === null ? true : isIdentityReady(identity),
+        hasLevel: Object.keys(levels).length > 0,
+        startedSkillId: Object.entries(levels).sort(([, a], [, b]) => b - a)[0]?.[0] ?? null,
       });
     });
     return () => { alive = false; };
-  }, [profileId]);
+  }, [profileId, version]);
 
   return snapshot;
 }

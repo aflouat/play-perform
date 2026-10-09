@@ -13,6 +13,10 @@ export interface LearnerSnapshot {
   canEnroll: boolean;
   /** Pseudonym, first name and last name are all filled in */
   identityComplete: boolean;
+  /** At least one skill has a level (a placement test was taken, or a quiz passed) */
+  hasLevel: boolean;
+  /** Skill of the best level: where the first quiz goes */
+  startedSkillId: string | null;
 }
 
 export interface NextAction { id: string; icon: string; text: string; href: string }
