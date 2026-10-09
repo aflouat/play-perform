@@ -17,7 +17,7 @@ describe('AdminNav', () => {
     me.mockResolvedValue(manager);
     render(<AdminNav />);
     expect(await screen.findByRole('link', { name: 'Inscriptions' })).toHaveAttribute('aria-current', 'page');
-    ['Élèves', 'Corrections', 'Équipe'].forEach((name) => expect(screen.getByRole('link', { name })).toBeInTheDocument());
+    ['Mon centre', 'Corrections', 'Médailles', 'Équipe'].forEach((name) => expect(screen.getByRole('link', { name })).toBeInTheDocument());
     ['Tarifs', 'Parcours', 'Questions', 'Import CSV', 'Centres'].forEach((name) => expect(screen.queryByRole('link', { name })).toBeNull());
   });
 

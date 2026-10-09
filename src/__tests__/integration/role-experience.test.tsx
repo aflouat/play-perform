@@ -56,8 +56,9 @@ describe('header by role', () => {
   it('shows a centre only its own space, never the learner’s', async () => {
     session = { access_token: 'jwt' };
     render(<SiteHeader />);
-    expect(await screen.findByRole('link', { name: 'Mon centre' })).toBeInTheDocument();
-    await waitFor(() => expect(screen.getByRole('link', { name: 'Équipe' })).toBeInTheDocument());
+    expect(await screen.findByRole('button', { name: 'Déconnexion' })).toBeInTheDocument();
+    // one menu only: the section links live in the back-office menu, not in the site header
+    expect(screen.queryByRole('link', { name: /Mon centre|Équipe|Inscriptions|Corrections/ })).toBeNull();
     expect(screen.queryByRole('link', { name: /Je commence mon apprentissage|J’ai un code|Ma ville|Compétition/ })).toBeNull();
   });
 

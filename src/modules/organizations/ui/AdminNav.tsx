@@ -24,7 +24,6 @@ export function AdminNav() {
           {l.label}
         </Link>
       ))}
-      <Link href="/enseignant" className="ml-auto text-xs text-slate-400 hover:text-slate-600">← Mon centre</Link>
     </nav>
   );
 }

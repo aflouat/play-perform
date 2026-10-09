@@ -8,34 +8,30 @@ const students = (a: NavAccess) => has(a, 'teacher') || has(a, 'org_admin');
 const corrections = (a: NavAccess) => a.isSuperAdmin || has(a, 'examiner') || has(a, 'org_admin');
 const enrollments = (a: NavAccess) => a.isSuperAdmin || students(a);
 
+/** Someone who only corrects: their home is the correction queue, not a centre's student list. */
+export const isExaminerOnly = (a: NavAccess): boolean => !a.isSuperAdmin && a.roles.length > 0 && a.roles.every((r) => r === 'examiner');
+
+/** Where the logo of a signed-in centre account leads. */
+export const centreHome = (a: NavAccess): string => (isExaminerOnly(a) ? '/examinateur' : '/enseignant');
+
 /**
- * Menu of the back-office: each role sees only the screens it may use.
- * The super admin (parent company) also runs what all centres share: questions, import, learning routes, prices, centres.
+ * THE menu of the centre's side (one menu, shown under the header on every back-office screen):
+ * each role sees only the screens it may use. The super admin (parent company) also runs what all centres share.
  */
 export function adminLinks(a: NavAccess): NavLink[] {
+  const home: NavLink[] = isExaminerOnly(a)
+    ? [{ href: '/examinateur', label: 'Mes corrections' }]
+    : [{ href: '/enseignant', label: 'Mon centre' }];
   return [
+    ...home,
     ...(a.isSuperAdmin ? [
       { href: '/admin/questions', label: 'Questions' }, { href: '/admin/import', label: 'Import CSV' },
       { href: '/admin/parcours', label: 'Parcours' }, { href: '/admin/pricing', label: 'Tarifs' }, { href: '/admin/organisations', label: 'Centres' },
     ] : []),
-    ...(!a.isSuperAdmin && students(a) ? [{ href: '/enseignant', label: 'Élèves' }] : []),
     ...(enrollments(a) ? [{ href: '/admin/inscriptions', label: 'Inscriptions' }] : []),
     ...(corrections(a) ? [{ href: '/admin/evaluations', label: 'Corrections' }] : []),
+    ...(students(a) || a.isSuperAdmin ? [{ href: '/enseignant/classement', label: 'Médailles' }] : []),
     ...(!a.isSuperAdmin && has(a, 'org_admin') ? [{ href: '/admin/organisations', label: 'Équipe' }] : []),
-  ];
-}
-
-/** Someone who only corrects: their home is the correction queue, not a centre's student list. */
-export const isExaminerOnly = (a: NavAccess): boolean => !a.isSuperAdmin && a.roles.length > 0 && a.roles.every((r) => r === 'examiner');
-
-/** Short menu of the site header for a signed-in centre account. */
-export function centreHeaderLinks(a: NavAccess): NavLink[] {
-  if (isExaminerOnly(a)) return [{ href: '/examinateur', label: 'Mes corrections' }];
-  return [
-    { href: '/enseignant', label: 'Mon centre' },
-    ...(corrections(a) ? [{ href: '/admin/evaluations', label: 'Corrections' }] : []),
-    ...(enrollments(a) ? [{ href: '/admin/inscriptions', label: 'Inscriptions' }] : []),
-    ...(a.isSuperAdmin ? [{ href: '/admin/organisations', label: 'Centres' }] : has(a, 'org_admin') ? [{ href: '/admin/organisations', label: 'Équipe' }] : []),
   ];
 }
 

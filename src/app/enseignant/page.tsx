@@ -7,7 +7,7 @@ import { createClient } from '@supabase/supabase-js';
 import type { DbStudent } from '@/lib/db';
 import { StudentCard } from '@/components/enseignant/StudentCard';
 import { apiFetchStudents } from '@/lib/students-api';
-import { CentreApplicationBanner, CentreCard, TeamLinks, fetchMyAccess, isExaminerOnly, navAccessOf } from '@/modules/organizations';
+import { CentreApplicationBanner, CentreCard, fetchMyAccess, isExaminerOnly, navAccessOf } from '@/modules/organizations';
 import { CentreDashboardView } from '@/modules/dashboards';
 
 function getClient() {
@@ -45,7 +45,6 @@ export default function TeacherPage() {
         <CentreApplicationBanner />
         <CentreDashboardView />
         <CentreCard />
-        <TeamLinks />
 
         <div className="space-y-3">
           {students.map((s) => <StudentCard key={s.id} student={s} onDelete={handleDelete} onUpdated={handleUpdated} />)}

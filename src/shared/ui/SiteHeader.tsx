@@ -7,7 +7,7 @@ import { createClient } from '@supabase/supabase-js';
 import { useRole } from '@/hooks/useRole';
 import { clearLearnerToken } from '@/lib/auth-token';
 import { clearActiveProfile } from '@/lib/profiles';
-import { centreHeaderLinks, type NavLink } from '@/modules/organizations/domain/navigation';
+import { centreHome } from '@/modules/organizations/domain/navigation';
 
 type NavItem = { href: string; label: string } | { label: string; onClick: () => void };
 
@@ -17,12 +17,12 @@ const LINK = 'hover:text-violet-600';
 export function SiteHeader() {
   const role = useRole();
   const router = useRouter();
-  const [centreLinks, setCentreLinks] = useState<NavLink[]>(centreHeaderLinks({ isSuperAdmin: false, roles: [] }));
+  const [home, setHome] = useState('/enseignant');
 
   useEffect(() => {
     if (role !== 'teacher') return;
-    import('@/modules/organizations').then(({ fetchMyAccess, centreHeaderLinks: linksFor, navAccessOf }) => fetchMyAccess().then((me) => {
-      if (me) setCentreLinks(linksFor(navAccessOf(me)));
+    import('@/modules/organizations').then(({ fetchMyAccess, navAccessOf }) => fetchMyAccess().then((me) => {
+      if (me) setHome(centreHome(navAccessOf(me)));
     }));
   }, [role]);
 
@@ -36,7 +36,6 @@ export function SiteHeader() {
     ? [{ href: '/competences', label: 'Ma ville' }, { href: '/classement', label: 'Compétition' }, { label: 'Quitter', onClick: leaveLearner }]
     : role === 'teacher'
       ? [
-          ...centreLinks,
           { label: 'Déconnexion', onClick: leaveCentre },
         ]
       : role === 'visitor'
@@ -56,7 +55,7 @@ export function SiteHeader() {
       )}
     <header className="border-b border-slate-200 bg-white">
       <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-3">
-        <Link href={role === 'learner' ? '/competences' : '/'} className="text-lg font-black tracking-tight text-[#1a1a2e]">🏰 Play Perform</Link>
+        <Link href={role === 'learner' ? '/competences' : role === 'teacher' ? home : '/'} className="text-lg font-black tracking-tight text-[#1a1a2e]">🏰 Play Perform</Link>
         <nav aria-label="Navigation principale" className="flex flex-wrap items-center justify-end gap-x-4 gap-y-1 text-sm font-semibold text-slate-600">
           {items.map((item) => 'href' in item
             ? <Link key={item.href} href={item.href} className={LINK}>{item.label}</Link>
