@@ -1,5 +1,33 @@
 [
   {
+    "id": "generated-v0.11.0",
+    "version": "0.11.0",
+    "deployed_at": "2026-10-09T22:14:36.983Z",
+    "title": "Version 0.11.0",
+    "summary": "11 nouveauté(s), 1 correction(s) — dont : première connexion guidée en 3 étapes (profil, test de niveau, premier quiz) ; binômes de la semaine, fil des réussites avec Bravo, mur des trophées, modération par le centre ; mur des pièges classiques sur la page d'une compétence.",
+    "changes": [
+      "feat : première connexion guidée en 3 étapes (profil, test de niveau, premier quiz)",
+      "feat : binômes de la semaine, fil des réussites avec Bravo, mur des trophées, modération par le centre",
+      "feat : mur des pièges classiques sur la page d'une compétence",
+      "feat : échec constructif (« Presque ! »), statistiques anonymes et pièges classiques",
+      "feat : pseudo + prénom/nom, quiz libres, formation complète à inscription auto-validée, diplôme imprimable, un seul menu côté centre",
+      "fix : un seul menu côté centre (en-tête épuré, barre d'administration unique, plus de pastilles en double)",
+      "feat : tableaux de bord du centre, de l'examinateur et accueil apprenant",
+      "feat : menu d'administration par rôle, pages communes réservées à la société mère, isAdminAuthorized aligné sur platform_admins",
+      "docs : règle « pas de nouveau .md » dans CLAUDE.md, fusion des notes franchise et B2C/B2B dans le README",
+      "feat : portail d'entrée B2C/B2B, coin centre séparé, inscription d'un centre par dossier (SIREN, SIRET, adresse)",
+      "feat : espaces séparés apprenant / centre de formation, fiche légale du centre (SIREN, SIRET, adresse)",
+      "feat : classement par pseudos, défi hebdomadaire, médailles automatiques retirables",
+      "feat : revue des réponses du test de niveau sans compte (feedback question par question)"
+    ],
+    "tags": [
+      "feat",
+      "fix",
+      "docs"
+    ],
+    "deployed_by": "aflouatabdelwedoud"
+  },
+  {
     "id": "generated-v0.10.0",
     "version": "0.10.0",
     "deployed_at": "2026-10-09T19:30:39.588Z",

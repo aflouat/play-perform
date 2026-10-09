@@ -2,6 +2,27 @@
 
 Toutes les versions de Play Perform (générées par `npm run release:tag`).
 
+## v0.11.0 — 2026-10-09
+
+### ✨ Nouveautés
+- première connexion guidée en 3 étapes (profil, test de niveau, premier quiz) (f465fdd)
+- binômes de la semaine, fil des réussites avec Bravo, mur des trophées, modération par le centre (86f2149)
+- mur des pièges classiques sur la page d'une compétence (8c3cc6d)
+- échec constructif (« Presque ! »), statistiques anonymes et pièges classiques (2dd2cd8)
+- pseudo + prénom/nom, quiz libres, formation complète à inscription auto-validée, diplôme imprimable, un seul menu côté centre (22291f3)
+- tableaux de bord du centre, de l'examinateur et accueil apprenant (b255d68)
+- menu d'administration par rôle, pages communes réservées à la société mère, isAdminAuthorized aligné sur platform_admins (f45b600)
+- portail d'entrée B2C/B2B, coin centre séparé, inscription d'un centre par dossier (SIREN, SIRET, adresse) (68a556d)
+- espaces séparés apprenant / centre de formation, fiche légale du centre (SIREN, SIRET, adresse) (335349a)
+- classement par pseudos, défi hebdomadaire, médailles automatiques retirables (ee02aae)
+- revue des réponses du test de niveau sans compte (feedback question par question) (b6ab856)
+
+### 🐛 Corrections
+- un seul menu côté centre (en-tête épuré, barre d'administration unique, plus de pastilles en double) (032825d)
+
+### 📝 Documentation
+- règle « pas de nouveau .md » dans CLAUDE.md, fusion des notes franchise et B2C/B2B dans le README (93215ab)
+
 ## v0.10.0 — 2026-10-09
 
 ### ✨ Nouveautés
