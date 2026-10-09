@@ -9,7 +9,7 @@ export { useSkillLevels, getAllSkillLevels, getSkillLevelFor, setSkillLevel, adv
 export type { SkillActivity } from './domain/activity';
 export { QUIZ_LENGTH, QUIZ_PASS_XP, FLASHCARDS_XP, isQuizPassed, nextLevelAfterQuiz } from './domain/activity';
 export type { Flashcard } from './infra/skill-content';
-export { getSkillSubject, hasQuestionBank, difficultyForLevel, pickSkillQuestions, toFlashcards } from './infra/skill-content';
+export { getSkillSubject, hasQuestionBank, getSkillBank, difficultyForLevel, pickSkillQuestions, toFlashcards } from './infra/skill-content';
 export { SkillMap } from './ui/SkillMap';
 export { SkillActivityView } from './ui/SkillActivityView';
 export { SkillLevelMeter } from './ui/SkillLevelMeter';

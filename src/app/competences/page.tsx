@@ -18,7 +18,10 @@ export default function CompetencesPage() {
     <main className="mx-auto max-w-md px-5 pt-8 pb-16">
       <div className="mb-4 flex items-center justify-between text-sm text-slate-400">
         <button onClick={() => router.push('/')}>← Changer d&apos;élève</button>
-        <button onClick={() => router.push('/home')} className="font-semibold text-violet-600">Quiz par matière →</button>
+        <span className="flex gap-4">
+          <button onClick={() => router.push('/classement')} className="font-semibold text-amber-600">🏆 Compétition</button>
+          <button onClick={() => router.push('/home')} className="font-semibold text-violet-600">Quiz par matière →</button>
+        </span>
       </div>
       <h1 className="text-2xl font-black text-[#1a1a2e]">Ma ville des compétences</h1>
       <p className="mb-5 mt-1 text-sm text-slate-500">Chaque bâtiment grandit avec ton niveau. Objectif : le château (niveau 5) !</p>

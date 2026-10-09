@@ -12,6 +12,7 @@ export function TeamLinks() {
 
   const has = (role: string) => access.memberships.some((m) => m.role === role);
   const links = [
+    { href: '/enseignant/classement', label: '🏆 Médailles' },
     (access.isSuperAdmin || has('examiner') || has('org_admin')) && { href: '/admin/evaluations', label: '✍️ Évaluations à corriger' },
     (access.isSuperAdmin || has('teacher') || has('org_admin')) && { href: '/admin/inscriptions', label: '📨 Demandes d’inscription' },
     (access.isSuperAdmin || has('org_admin')) && { href: '/admin/organisations', label: '🏫 Mon équipe' },

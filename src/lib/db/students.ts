@@ -15,6 +15,8 @@ export interface DbStudent {
   mode?: StudentMode;           // game mode → determines home route
   learning_mode?: StudentLearningMode; // default assisted/advanced
   access_code?: string | null;  // learner access (set by the API)
+  nickname?: string | null;     // pseudonym shown in rankings
+  show_in_ranking?: boolean;    // false = hidden from rankings
 }
 
 export async function fetchStudents(): Promise<DbStudent[]> {

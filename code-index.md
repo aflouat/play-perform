@@ -50,6 +50,10 @@ _Mis à jour : 2026-10-07 · v0.7.0_
 | `api/students/[id]/route.ts` | DELETE, PATCH | Suppression / mise à jour élève |
 | `api/releases/route.ts` | GET, POST | Historique releases — lecture / écriture |
 | `api/health/route.ts` | GET | Réglages serveur présents (booléens, super admin) |
+| `api/competition/route.ts` | GET | Classement du centre (pseudos), défi de la semaine, mes médailles |
+| `api/competition/challenge/route.ts` | POST | Joue le défi de la semaine (score recalculé serveur, 1 essai) |
+| `api/competition/profile/route.ts` | PUT | Pseudo / visibilité au classement (enseignant) |
+| `api/competition/awards/route.ts` | GET, DELETE | Médailles de mes élèves / retrait (enseignant) |
 | `api/progress/route.ts` | PUT | XP / badge d'un apprenant (session apprenant ou enseignant, propriété du profil vérifiée) |
 | `api/me/route.ts` | GET | Mon e-mail, drapeau super admin, mes centres et rôles |
 | `api/organizations/route.ts` | GET, POST | Centres visibles / création (super admin) |
@@ -78,6 +82,7 @@ _Mis à jour : 2026-10-07 · v0.7.0_
 | `docker/supabase/migrate.sh` | Applique les migrations non jouées (table `_local_migrations`) + seed au 1er run |
 | `supabase/migrations/20260927000000_initial_schema.sql` | Schéma complet (10 tables + RLS) reconstruit depuis la prod |
 | `supabase/migrations/20260928000000_reading_mode.sql` | CHECK `students.mode` accepte `reading` |
+| `supabase/migrations/20261016000000_competition.sql` | `students.nickname/show_in_ranking`, `challenge_results`, `reward_revocations` |
 | `supabase/migrations/20261015000000_anon_parent_only.sql` | Accès anonymes limités aux lignes de la société mère (**non appliquée en prod**) |
 | `supabase/migrations/20261014000000_organizations.sql` | `organizations`, `memberships`, `platform_admins`, `organization_id` sur students / profiles / skill_enrollments / skill_evaluations |
 | `supabase/migrations/20261013000000_push_subscriptions.sql` | Table `push_subscriptions` |
@@ -99,6 +104,7 @@ _Mis à jour : 2026-10-07 · v0.7.0_
 |---|---|---|
 | `skills` | `domain/skill.ts`, `infra/skills-seed.ts` | `getSkills()`, `getSkillById(id)`, `SKILL_LEVELS`, `getSkillLevel(n)`, `syncSkillLevels/persistSkillLevel/mergeLevels/applyPlacements/validateLevelUpdate`, `getCourseSheet`, `CourseSheetView`, `EnrollmentForm`, `validateEnrollmentRequest/Decision`, `isEnrolled`, `useEnrollments`, `remainingMinutes/dailyMinutesNeeded/victoryDate/isReminderDue/reminderMessage`, `getSkillPlan/setSkillPlan`, `PlanEditor`, `sendDueReminders`, `ReminderRunner`, `enablePush/syncPushReminders/isPushActive`, `zonedNow/dueScheduledReminders` · `lib/push/{repository,send,dispatch,validate}.ts` (serveur), `useSkillLevels/getSkillLevelFor/setSkillLevel/advanceSkillLevel/getAllSkillLevels` (niveau par compétence), `pickSkillQuestions`, `toFlashcards`, `isQuizPassed`, `nextLevelAfterQuiz`, `validateSubmission`, `validateCorrection`, `levelAfterEvaluations`, `getEvaluationPrompt`, UI `SkillMap` (ville), `SkillDetailPanel`, `BuildingTile`, `GoalEditor`, `ReviewsSummary`, `masteryPercent/buildingFor/summarizeReviews/paceToGoal`, `loadSkillReviews/recordSkillAnswer`, `getSkillGoal/setSkillGoal`, `SkillActivityView`, `EvaluationPanel` · `server.ts` : évaluations (service role), types `Skill`, `SkillLevelNumber` |
 | `quizzes` | `domain/placement.ts`, `infra/placement-bank-{a,b}.ts`, `infra/placement-question.ts` | `getPlacementTest(skillId)`, `scoreAnswer(q, index\|null)`, `estimateStartLevel(answers)`, `reviewAnswers(questions, chosen)`, types `PlacementQuestion`, `PlacementAnswer`, `PlacementResult` |
+| `competition` | `domain/{week,nickname,ranking,seed}.ts`, `application/{challenge,view}.ts`, `infra/{competition-repository,competition-client}.ts`, `ui/{Leaderboard,ChallengePlayer,CompetitionPanel}.tsx`, `server.ts` | `isoWeek`, `previousWeek`, `validateNickname`, `generateNickname`, `rankBy`, `rankWeekly`, `awardsFor`, `challengeFor`, `scoreChallenge`, `buildCompetitionView`, `pastAwardsOf`, `CompetitionPanel` |
 | `organizations` | `domain/{access,inputs}.ts`, `infra/{organization-repository,organization-client}.ts`, `ui/{OrganizationCard,TeamLinks}.tsx`, `server.ts` | `DEFAULT_ORGANIZATION_ID`, `canRecruit`, `canManageStudents`, `canDecideEnrollments`, `canCorrectEvaluations`, `organizationsWhere`, `studentOrganization`, `validateOrganizationInput`, `validateMemberInput`, `fetchMyAccess`, `recruit`, `TeamLinks` · `lib/access-context.ts` : `getAccessContext(req)` |
 | `pricing` | `domain/plan.ts`, `infra/pricing-client.ts`, `infra/pricing-repository.ts` (serveur), `ui/{PricingSection,PlanEditor}.tsx`, `server.ts` | `formatPrice`, `billingSuffix`, `eurosToCents`, `centsToEuros`, `yearlySavingPercent`, `validatePlanUpdate`, `fetchActivePlans`, `fetchAllPlans`, `savePlan`, `PricingSection`, `PlanEditor` · `server.ts` : `fetchPlans`, `updatePlan` |
 | `landing` | `application/useLandingFlow.ts`, `infra/placement-storage.ts`, `ui/{LandingPage,Hero,FlowStepper,ModeChoice,SkillPicker,PlacementTest,PlacementResultView,ParentsSection}.tsx` | `LandingPage` |
@@ -356,6 +362,7 @@ Types : `src/types/reading.ts` (`ReadingWord`, `Syllable`, `ParsedWord`, `Readin
 |---|---|---|
 | `integration/faq-alignment.test.tsx` | Intégration | FAQ alignée sur README, version, avatars, XP, matières, fonctionnalités |
 | `unit/release-tag.test.ts` | Unit | Script `release:tag` — semver, CHANGELOG, tag, note persistée, README synchronisé |
+| `unit/competition-domain.test.ts`, `unit/competition-view.test.ts`, `unit/competition-routes.test.ts` | Unit | Semaines ISO, pseudos, classements, défi hebdomadaire, médailles, routes |
 | `unit/placement-review.test.ts`, `integration/PlacementReview.test.tsx` | Unit + intégration | Revue des réponses du test de niveau (`reviewAnswers`, stockage, page, lien depuis le résultat) |
 | `unit/progress-api.test.ts` | Unit | Validation et contrôle d'accès de la synchro XP / badges |
 | `unit/organization-permissions.test.ts`, `unit/org-scoped-routes.test.ts` | Unit | Rôles et permissions par centre ; routes d'inscription / correction limitées au centre |

@@ -65,7 +65,7 @@ describe('FAQ / README / version alignment', () => {
     expect(faq).toMatch(/niveau d'avancement.*propre à chaque compétence/);
     expect(faq).toMatch(/1 mois.*1 an.*à vie/);
     expect(faq).toContain('Lecture par syllabes');
-    ['code d\'accès', 'fiche du cours', 'demande d\'inscription', 'effort quotidien', 'heure du rappel', 'Revoir mes réponses', 'centre de formation', 'examinateurs'].forEach((t) => expect(faq).toContain(t));
+    ['code d\'accès', 'fiche du cours', 'demande d\'inscription', 'effort quotidien', 'heure du rappel', 'Revoir mes réponses', 'défi', 'pseudo', 'médaille', 'centre de formation', 'examinateurs'].forEach((t) => expect(faq).toContain(t));
     ['ville des compétences', 'objectif de date', 'château', 'Confidentialité'].forEach((t) => expect(faq).toContain(t));
     ['quiz', 'flashcards', 'évaluation'].forEach((a) => expect(faq).toContain(a));
   });

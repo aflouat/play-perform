@@ -117,11 +117,17 @@ export default function FaqPage() {
           <Q q="Comment être rappelé ?">Choisis l&apos;<strong>heure du rappel</strong> et active les notifications : tu reçois chaque jour l&apos;heure, l&apos;effort et l&apos;objectif. L&apos;application doit être ouverte dans le navigateur.</Q>
         </Section>
 
-        <Section title="10. Abonnements">
+        <Section title="10. Compétition">
+          <Q q="Comment fonctionne la compétition ?">Chaque semaine, un <strong>défi</strong> de 5 questions est le même pour tout le monde, à relever une seule fois. Le classement du défi tient compte des bonnes réponses puis de la vitesse. Le classement du centre compare l&apos;XP, la série de jours et les niveaux.</Q>
+          <Q q="Mon nom apparaît-il aux autres ?">Non : on n&apos;affiche qu&apos;un <strong>pseudo</strong>, choisi avec ton enseignant, et seulement aux élèves de ton centre. L&apos;enseignant peut aussi te retirer du classement.</Q>
+          <Q q="Quelles récompenses ?">Les trois meilleurs du défi reçoivent une <strong>médaille</strong> 🥇🥈🥉 automatiquement (3 bonnes réponses minimum). L&apos;enseignant peut en retirer une.</Q>
+        </Section>
+
+        <Section title="11. Abonnements">
           <Q q="Quelles formules existent ?">Abonnement <strong>1 mois</strong>, <strong>1 an</strong> ou <strong>à vie</strong>, affichés sur la page d'accueil. Le test de niveau reste gratuit.</Q>
         </Section>
 
-        <Section title="11. Astuces">
+        <Section title="12. Astuces">
           <Q q="Comment progresser le plus vite ?">
             <ol className="list-decimal pl-4 space-y-1">
               <li>Sessions Sciences du mode Clavier (15 XP × 5 = 75 XP)</li>

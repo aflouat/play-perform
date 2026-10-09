@@ -21,6 +21,7 @@ Fichier unique de pilotage : **en cours**, **backlog** et **bugs connus** (rempl
 - [ ] RLS sur `parcours` / `parcours_enrollments` / `questions` / `release_notes`
 
 ## Release, abonnements, déploiement
+- [ ] Compétition : relire les 12 pseudos générés (`generateNickname`) ; décider si l'élève peut proposer son pseudo à l'enseignant
 - [ ] **Définir `LEARNER_TOKEN_SECRET`** (Vercel) : signe les sessions apprenant ; à défaut, la clé service role sert de secret
 - [ ] **Web Push en prod** : variables VAPID + `CRON_SECRET` sur Vercel, planificateur toutes les 5 min vers `/api/push/dispatch` (procédure : `docs/deploiement.md`)
 - [ ] Centre de formation = admin (`ADMIN_EMAILS`) : prévoir un rôle « centre » distinct et des notifications de décision (inscription, correction)
@@ -43,7 +44,7 @@ Fichier unique de pilotage : **en cours**, **backlog** et **bugs connus** (rempl
 - [ ] Tests e2e Playwright à jour
 
 ## Backlog — Futur
-- [ ] Compétition live (strike entre joueurs, récompenses supervisées) et classement
+- [ ] Compétition : duels en temps réel (Supabase Realtime) — étape 2 après le classement et les défis différés
 - [ ] Dashboard parent avec suivi de chaque élève
 - [ ] Export portfolio de compétences d'un élève
 - c'est un SAAS de centre de formation pour vendre le modele en tant que franchise
