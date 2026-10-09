@@ -18,8 +18,8 @@ export async function submitChallenge(profileId: string, answers: ChallengeAnswe
   return res.ok ? ((await res.json()) as { correct: number; total: number }) : { error: await errorOf(res, 'Envoi impossible, réessaie plus tard.') };
 }
 
-/** Teacher: pseudonym and visibility in the ranking of one of their students. Returns an error message or null. */
-export async function updateRankingSettings(profileId: string, patch: { nickname?: string; showInRanking?: boolean }): Promise<string | null> {
+/** Teacher: show or hide one of their students in the ranking. Returns an error message or null. */
+export async function updateRankingSettings(profileId: string, patch: { showInRanking: boolean }): Promise<string | null> {
   const res = await fetch('/api/competition/profile', { method: 'PUT', headers: await headers(), body: JSON.stringify({ profileId, ...patch }) });
   return res.ok ? null : errorOf(res, 'Enregistrement impossible.');
 }
@@ -34,4 +34,21 @@ export async function fetchTeacherAwards(): Promise<TeacherAward[]> {
 export async function revokeAwardRequest(profileId: string, week: string): Promise<string | null> {
   const res = await fetch('/api/competition/awards', { method: 'DELETE', headers: await headers(), body: JSON.stringify({ profileId, week }) });
   return res.ok ? null : errorOf(res, 'Retrait impossible.');
+}
+
+export interface ProfileIdentity {
+  firstName: string | null; lastName: string | null; nickname: string | null; showInRanking: boolean; centreName: string | null;
+}
+
+export async function fetchIdentity(profileId: string): Promise<ProfileIdentity | null> {
+  try {
+    const res = await fetch(`/api/profile?profileId=${encodeURIComponent(profileId)}`, { headers: await headers() });
+    return res.ok ? ((await res.json()) as ProfileIdentity) : null;
+  } catch { return null; }
+}
+
+/** The learner (or their teacher) completes first name, last name and/or pseudonym. Returns an error message or null. */
+export async function saveIdentity(profileId: string, patch: { firstName?: string; lastName?: string; nickname?: string }): Promise<string | null> {
+  const res = await fetch('/api/profile', { method: 'PUT', headers: await headers(), body: JSON.stringify({ profileId, ...patch }) });
+  return res.ok ? null : errorOf(res, 'Enregistrement impossible.');
 }

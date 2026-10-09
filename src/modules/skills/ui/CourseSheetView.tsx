@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { useEffect } from 'react';
 import { getCourseSheet } from '../application/course-sheet';
 import { useEnrollments } from '../application/use-enrollments';
-import { useSkillLevels } from '../application/skill-progress';
 import { isEnrolled } from '../domain/enrollment';
 import { markSeen } from '../application/seen';
 import { EnrollmentForm } from './EnrollmentForm';
@@ -15,12 +14,11 @@ const ACTIVITY_LABEL = { quiz: '❓ Quiz', flashcards: '🗂️ Flashcards', eva
 export function CourseSheetView({ skillId, profileId }: { skillId: string; profileId: string }) {
   const sheet = getCourseSheet(skillId);
   const { enrollments, loaded, reload } = useEnrollments(profileId);
-  const level = useSkillLevels(profileId)[skillId] ?? null;
   useEffect(() => { if (loaded) markSeen(profileId, 'enrollments'); }, [loaded, profileId]);
   if (!sheet) return <p className="text-center text-slate-500">Cours introuvable.</p>;
 
   const mine = enrollments.find((e) => e.skillId === skillId);
-  const enrolled = isEnrolled(skillId, level, enrollments);
+  const enrolled = isEnrolled(skillId, enrollments);
   const hours = Math.round(sheet.minutesToMaster / 60);
 
   return (
@@ -44,7 +42,10 @@ export function CourseSheetView({ skillId, profileId }: { skillId: string; profi
       </section>
 
       {enrolled
-        ? <Link href={`/competences/${skillId}`} className="block rounded-2xl bg-violet-600 py-3 text-center font-bold text-white">Commencer le cours →</Link>
+        ? <div className="space-y-2">
+            <p role="status" className="rounded-xl bg-emerald-50 p-3 text-center text-sm font-bold text-emerald-800">✅ Tu es inscrit à la formation complète.</p>
+            <Link href={`/competences/${skillId}`} className="block rounded-2xl bg-violet-600 py-3 text-center font-bold text-white">Commencer le cours →</Link>
+          </div>
         : <EnrollmentForm profileId={profileId} skillId={skillId} existing={mine} onSent={reload} />}
     </div>
   );

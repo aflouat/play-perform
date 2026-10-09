@@ -13,7 +13,7 @@ const ctxOf = jest.mocked(accessContext.getAccessContext);
 const db = jest.mocked(repo);
 const req = () => new NextRequest('http://localhost/api/dashboard', { headers: { authorization: 'Bearer t' } });
 const ctx = (over: Partial<AccessContext>): AccessContext => ({ userId: 'u1', email: 'u@x.fr', isSuperAdmin: false, memberships: [], ...over });
-const empty = { students: [], pendingEnrollments: 0, pendingEvaluations: 0, challengePlayers: 0 };
+const empty = { students: [], newEnrollments: 0, pendingEvaluations: 0, challengePlayers: 0 };
 
 beforeEach(() => { jest.resetAllMocks(); db.loadCentreInput.mockResolvedValue(empty); db.loadExaminerRows.mockResolvedValue([]); });
 

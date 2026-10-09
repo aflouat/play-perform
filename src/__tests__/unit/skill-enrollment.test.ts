@@ -1,5 +1,5 @@
 import {
-  validateEnrollmentRequest, validateEnrollmentDecision, isEnrolled, getCourseSheet, MOTIVATION_MIN, type SkillEnrollment,
+  validateEnrollmentRequest, validateEnrollmentDecision, isEnrolled, getCourseSheet, type SkillEnrollment,
 } from '@/modules/skills';
 
 const enrollment = (status: SkillEnrollment['status'], skillId = 'logique'): SkillEnrollment => ({
@@ -12,7 +12,6 @@ describe('validateEnrollmentRequest', () => {
     expect(validateEnrollmentRequest(ok)).toEqual({ ok: true, value: ok });
   });
   it.each([
-    ['short motivation', { ...ok, motivation: 'court' }],
     ['huge motivation', { ...ok, motivation: 'x'.repeat(1001) }],
     ['unknown skill', { ...ok, skillId: 'nope' }],
     ['no profile', { ...ok, profileId: '' }],
@@ -20,8 +19,9 @@ describe('validateEnrollmentRequest', () => {
   ])('rejects %s', (_label, input) => {
     expect(validateEnrollmentRequest(input).ok).toBe(false);
   });
-  it('asks for at least the documented number of characters', () => {
-    expect(MOTIVATION_MIN).toBeGreaterThanOrEqual(30);
+  it('does not require a motivation any more: it is optional', () => {
+    expect(validateEnrollmentRequest({ ...ok, motivation: '' }).ok).toBe(true);
+    expect(validateEnrollmentRequest({ profileId: 'p1', skillId: 'logique' })).toEqual({ ok: true, value: { profileId: 'p1', skillId: 'logique', motivation: '' } });
   });
 });
 
@@ -39,13 +39,12 @@ describe('validateEnrollmentDecision', () => {
 });
 
 describe('isEnrolled', () => {
-  it('needs an approved enrollment, or a level already reached', () => {
-    expect(isEnrolled('logique', null, [])).toBe(false);
-    expect(isEnrolled('logique', null, [enrollment('pending')])).toBe(false);
-    expect(isEnrolled('logique', null, [enrollment('rejected')])).toBe(false);
-    expect(isEnrolled('logique', null, [enrollment('approved')])).toBe(true);
-    expect(isEnrolled('logique', null, [enrollment('approved', 'methode')])).toBe(false);
-    expect(isEnrolled('logique', 2, [])).toBe(true);
+  it('needs an approved enrollment: a level reached by quizzes does not open the complete training', () => {
+    expect(isEnrolled('logique', [])).toBe(false);
+    expect(isEnrolled('logique', [enrollment('pending')])).toBe(false);
+    expect(isEnrolled('logique', [enrollment('rejected')])).toBe(false);
+    expect(isEnrolled('logique', [enrollment('approved')])).toBe(true);
+    expect(isEnrolled('logique', [enrollment('approved', 'methode')])).toBe(false);
   });
 });
 

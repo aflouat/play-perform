@@ -36,3 +36,9 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .score-pop, .level-up { animation: none; }
 }
+
+/* Printing (diploma): A4 landscape, no page margin noise */
+@media print {
+  @page { size: A4 landscape; margin: 10mm; }
+  body { background: #fff; }
+}

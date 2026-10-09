@@ -100,7 +100,7 @@ export default function FaqPage() {
         <Section title="7. Niveaux par compétence">
           <Q q="Le niveau dépend-il de l'XP ?">Non. L&apos;XP et le rang sont ceux du compte ; le <strong>niveau d&apos;avancement (1 → 5) est propre à chaque compétence</strong> et au projet d&apos;apprentissage de l&apos;élève.</Q>
           <Q q="Où voir ma progression ?">Sur <strong>Ma ville des compétences</strong> : chaque compétence est un bâtiment qui grandit avec ton niveau, jusqu&apos;au château (niveau 5). Touche-le pour voir ta barre vers la maîtrise, tes révisions passées et à venir, et fixer un <strong>objectif de date</strong>.</Q>
-          <Q q="Comment monter d&apos;un niveau ?">Depuis <strong>Mes compétences</strong>, tu vois ton niveau puis tu choisis : un <strong>quiz</strong> (4 bonnes réponses sur 5 = niveau suivant), des <strong>flashcards</strong> pour réviser, ou une <strong>évaluation</strong> rédigée, corrigée par un examinateur.</Q>
+          <Q q="Comment monter d&apos;un niveau ?">Depuis <strong>Mes compétences</strong>, tu vois ton niveau puis tu choisis : un <strong>quiz</strong> (4 bonnes réponses sur 5 = niveau suivant), des <strong>flashcards</strong> pour réviser (libres, sans inscription), ou une <strong>évaluation</strong> rédigée, corrigée par un examinateur (formation complète).</Q>
           <Q q="Puis-je revoir mes réponses au test de niveau ?">Oui, même sans compte : le bouton « Revoir mes réponses » du résultat montre chaque question, ta réponse, la bonne réponse et les niveaux à retravailler.</Q>
           <Q q="Comment connaître son niveau de départ ?">Sur la page d&apos;accueil, le test de niveau (5 questions) donne un niveau de 1 à 5 pour la compétence choisie. Il est gratuit et fonctionne sans compte.</Q>
         </Section>
@@ -110,7 +110,9 @@ export default function FaqPage() {
           <Q q="Comment un centre s&apos;inscrit-il ?">Il dépose un dossier (raison sociale, SIREN, SIRET de l&apos;établissement, adresse). Play Perform l&apos;examine puis ouvre l&apos;espace du centre.</Q>
           <Q q="Qui fait quoi dans un centre de formation ?">Un <strong>centre de formation</strong> a ses élèves et ses <strong>enseignants</strong>. Les <strong>examinateurs</strong> corrigent les évaluations ; un examinateur peut être rattaché à plusieurs centres. Le <strong>responsable du centre</strong> recrute son équipe.</Q>
           <Q q="Comment un apprenant se connecte-t-il ?">Dans l&apos;<strong>Espace apprenant</strong>, il saisit son code à 8 caractères et retrouve ses compétences. Il n&apos;a accès qu&apos;à son propre profil.</Q>
-          <Q q="Comment s&apos;inscrire à un cours ?">Depuis la ville des compétences, l&apos;apprenant lit la <strong>fiche du cours</strong> puis envoie une <strong>demande d&apos;inscription</strong> avec ses motivations au centre de formation. Le cours s&apos;ouvre une fois la demande acceptée.</Q>
+          <Q q="Faut-il s&apos;inscrire pour jouer ?">Non : les <strong>quiz</strong> et les <strong>flashcards</strong> sont libres. Seule la <strong>formation complète</strong> (évaluations corrigées, plan de travail, diplôme) demande une inscription, <strong>validée automatiquement</strong> sur le moment après lecture de la <strong>fiche du cours</strong>. Le centre peut retirer un accès.</Q>
+          <Q q="Pseudo, prénom, nom : qui voit quoi ?">Tu choisis un <strong>pseudo</strong> : c&apos;est le seul nom vu par les autres élèves (classement, communauté). Ton <strong>prénom et ton nom</strong> ne servent qu&apos;à imprimer ton <strong>diplôme</strong>.</Q>
+          <Q q="Comment obtenir mon diplôme ?">Être inscrit à la formation complète, atteindre le niveau 5, faire valider par un examinateur une évaluation de niveau 4 ou plus, et renseigner ton prénom et ton nom. Tu l&apos;imprimes ensuite depuis ta ville.</Q>
         </Section>
 
         <Section title="9. Plan de travail et rappels">

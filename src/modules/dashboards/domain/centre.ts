@@ -19,11 +19,12 @@ export interface StudentRow {
 }
 export type StudentLine = StudentRow & { status: ActivityStatus };
 
-export interface CentreInput { students: StudentRow[]; pendingEnrollments: number; pendingEvaluations: number; challengePlayers: number }
+export interface CentreInput { students: StudentRow[]; newEnrollments: number; pendingEvaluations: number; challengePlayers: number }
 
 export interface CentreDashboard {
   totalStudents: number; activeThisWeek: number; averageLevels: number;
-  pendingEnrollments: number; pendingEvaluations: number; challengePlayers: number;
+  /** Enrollments in the complete training during the last 7 days (validated automatically) */
+  newEnrollments: number; pendingEvaluations: number; challengePlayers: number;
   /** Everyone, those who need a nudge first */
   students: StudentLine[];
   needAttention: StudentLine[];
@@ -40,7 +41,7 @@ export function buildCentreDashboard(input: CentreInput, now: Date): CentreDashb
     totalStudents: total,
     activeThisWeek: students.filter((s) => s.status === 'active').length,
     averageLevels: total === 0 ? 0 : students.reduce((sum, s) => sum + s.levelsTotal, 0) / total,
-    pendingEnrollments: input.pendingEnrollments,
+    newEnrollments: input.newEnrollments,
     pendingEvaluations: input.pendingEvaluations,
     challengePlayers: input.challengePlayers,
     students,

@@ -25,6 +25,7 @@ interface StudentCardProps {
 export function StudentCard({ student, onDelete, onUpdated }: StudentCardProps) {
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(student.name);
+  const [lastName, setLastName] = useState(student.last_name ?? '');
   const [age, setAge] = useState(String(student.age));
   const [grade, setGrade] = useState(student.grade);
   const [saving, setSaving] = useState(false);
@@ -34,7 +35,7 @@ export function StudentCard({ student, onDelete, onUpdated }: StudentCardProps) 
   async function handleSave() {
     if (!student.id || !name.trim()) return;
     setSaving(true);
-    const updates: Partial<DbStudent> = { name: name.trim(), age: parseInt(age) || student.age, grade: grade.trim() || student.grade };
+    const updates: Partial<DbStudent> = { name: name.trim(), last_name: lastName.trim() || null, age: parseInt(age) || student.age, grade: grade.trim() || student.grade };
     const ok = await apiUpdateStudent(student.id, updates);
     if (ok) onUpdated({ ...student, ...updates });
     setEditing(false);
@@ -61,6 +62,8 @@ export function StudentCard({ student, onDelete, onUpdated }: StudentCardProps) 
             <div className="space-y-2">
               <input value={name} onChange={(e) => setName(e.target.value)}
                 className="w-full rounded-lg border border-slate-200 px-2 py-1 text-sm focus:outline-none focus:border-violet-400" placeholder="Prénom" />
+              <input value={lastName} onChange={(e) => setLastName(e.target.value)}
+                className="w-full rounded-lg border border-slate-200 px-2 py-1 text-sm focus:outline-none focus:border-violet-400" placeholder="Nom (diplôme)" aria-label="Nom" />
               <div className="grid grid-cols-2 gap-2">
                 <input value={age} onChange={(e) => setAge(e.target.value)} type="number" min="4" max="18"
                   className="rounded-lg border border-slate-200 px-2 py-1 text-sm focus:outline-none focus:border-violet-400" placeholder="Âge" />
@@ -70,7 +73,7 @@ export function StudentCard({ student, onDelete, onUpdated }: StudentCardProps) 
             </div>
           ) : (
             <>
-              <div className="font-bold text-[#1a1a2e]">{student.name}</div>
+              <div className="font-bold text-[#1a1a2e]">{student.name}{student.last_name ? ` ${student.last_name}` : ''}</div>
               <div className="text-slate-400 text-xs">{student.grade} · {student.age} ans</div>
             </>
           )}
@@ -102,7 +105,7 @@ export function StudentCard({ student, onDelete, onUpdated }: StudentCardProps) 
             className="flex-1 py-1.5 rounded-lg bg-violet-600 text-white text-xs font-bold disabled:opacity-40">
             {saving ? '…' : 'Enregistrer'}
           </button>
-          <button onClick={() => { setEditing(false); setName(student.name); setAge(String(student.age)); setGrade(student.grade); }}
+          <button onClick={() => { setEditing(false); setName(student.name); setLastName(student.last_name ?? ''); setAge(String(student.age)); setGrade(student.grade); }}
             className="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-500 text-xs font-bold">
             Annuler
           </button>

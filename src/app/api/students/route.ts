@@ -81,7 +81,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
     student = await insertStudent(payload);
   } catch {
-    const { mode: _m, learning_mode: _lm, access_code: _ac, organization_id: _org, ...base } = payload as Record<string, unknown>;
+    const { mode: _m, learning_mode: _lm, access_code: _ac, organization_id: _org, last_name: _ln, ...base } = payload as Record<string, unknown>;
     try {
       student = await insertStudent(base);
     } catch (fallbackError: unknown) {

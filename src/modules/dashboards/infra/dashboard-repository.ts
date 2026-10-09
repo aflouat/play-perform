@@ -23,7 +23,8 @@ export async function loadCentreInput(scope: CentreScope, now: Date): Promise<Ce
   const [scores, levels, enrollments, evaluations, challenge] = await Promise.all([
     ids.length ? db().from('scores').select('profile_id, xp, streak, last_activity_at').in('profile_id', ids) : Promise.resolve({ data: [] }),
     ids.length ? db().from('skill_levels').select('profile_id, level').in('profile_id', ids) : Promise.resolve({ data: [] }),
-    db().from('skill_enrollments').select('id', { count: 'exact', head: true }).eq('organization_id', scope.organizationId).eq('status', 'pending'),
+    db().from('skill_enrollments').select('id', { count: 'exact', head: true }).eq('organization_id', scope.organizationId).eq('status', 'approved')
+      .gte('created_at', new Date(now.getTime() - 7 * 86_400_000).toISOString()),
     db().from('skill_evaluations').select('id', { count: 'exact', head: true }).eq('organization_id', scope.organizationId).eq('status', 'pending'),
     db().from('challenge_results').select('id', { count: 'exact', head: true }).eq('organization_id', scope.organizationId).eq('week', isoWeek(now)),
   ]);
@@ -40,7 +41,7 @@ export async function loadCentreInput(scope: CentreScope, now: Date): Promise<Ce
     levelsTotal: levelSum.get(r.id)?.total ?? 0, skillsStarted: levelSum.get(r.id)?.started ?? 0,
   }));
   return {
-    students: students_, pendingEnrollments: enrollments.count ?? 0, pendingEvaluations: evaluations.count ?? 0, challengePlayers: challenge.count ?? 0,
+    students: students_, newEnrollments: enrollments.count ?? 0, pendingEvaluations: evaluations.count ?? 0, challengePlayers: challenge.count ?? 0,
   };
 }
 

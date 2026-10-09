@@ -28,7 +28,7 @@ export function SkillMap({ profileId }: { profileId: string }) {
       </ul>
       {selected
         ? <SkillDetailPanel key={selected.id} skill={selected} profileId={profileId} level={levels[selected.id] ?? null} now={now}
-            enrolled={isEnrolled(selected.id, levels[selected.id] ?? null, enrollments)} />
+            enrolled={isEnrolled(selected.id, enrollments)} />
         : <p className="text-center text-sm text-slate-500">Touche un bâtiment pour voir ton niveau et tes révisions.</p>}
     </div>
   );

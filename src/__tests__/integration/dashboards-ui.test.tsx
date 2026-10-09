@@ -15,13 +15,13 @@ const student = (name: string, status: 'active' | 'idle' | 'dormant') => ({
 describe('centre dashboard', () => {
   it('shows the figures, links to what waits, and who to nudge first', async () => {
     jest.mocked(client.fetchCentreDashboard).mockResolvedValue({
-      totalStudents: 3, activeThisWeek: 1, averageLevels: 2.4, pendingEnrollments: 2, pendingEvaluations: 0, challengePlayers: 1,
+      totalStudents: 3, activeThisWeek: 1, averageLevels: 2.4, newEnrollments: 2, pendingEvaluations: 0, challengePlayers: 1,
       students: [student('Cléo', 'dormant'), student('Ben', 'idle'), student('Ana', 'active')],
       needAttention: [student('Cléo', 'dormant'), student('Ben', 'idle')],
     });
     render(<CentreDashboardView />);
     expect(await screen.findByText('1/3')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /Demandes d’inscription/ })).toHaveAttribute('href', '/admin/inscriptions');
+    expect(screen.getByRole('link', { name: /Inscriptions cette semaine/ })).toHaveAttribute('href', '/admin/inscriptions');
     expect(screen.getByRole('heading', { name: /À relancer \(2\)/ })).toBeInTheDocument();
     expect(screen.getAllByRole('img').map((e) => e.getAttribute('aria-label'))).toEqual([
       'Inactif depuis plus d’un mois, ou jamais commencé', 'Inactif depuis plus d’une semaine']);
@@ -29,7 +29,7 @@ describe('centre dashboard', () => {
 
   it('congratulates a centre whose students all worked', async () => {
     jest.mocked(client.fetchCentreDashboard).mockResolvedValue({
-      totalStudents: 1, activeThisWeek: 1, averageLevels: 1, pendingEnrollments: 0, pendingEvaluations: 0, challengePlayers: 0,
+      totalStudents: 1, activeThisWeek: 1, averageLevels: 1, newEnrollments: 0, pendingEvaluations: 0, challengePlayers: 0,
       students: [student('Ana', 'active')], needAttention: [],
     });
     render(<CentreDashboardView />);
@@ -65,7 +65,7 @@ describe('learner home', () => {
   it('lists what to do now, most useful first', () => {
     jest.mocked(snapshot.useLearnerSnapshot).mockReturnValue({
       streak: 4, xp: 250, dueReviews: 3, enrolledSkills: [{ skillId: 'logique', name: 'Logique', level: 2, dailyMinutes: 20 }],
-      answeredEnrollments: 0, pendingEnrollments: 0, evaluationsToRead: 1, challengePlayed: false, studiedToday: false, canEnroll: true,
+      answeredEnrollments: 0, pendingEnrollments: 0, evaluationsToRead: 1, challengePlayed: false, studiedToday: false, canEnroll: true, identityComplete: true,
     });
     render(<LearnerHome profileId="p1" />);
     const links = screen.getAllByRole('link').map((l) => l.textContent);

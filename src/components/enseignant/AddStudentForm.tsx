@@ -13,6 +13,7 @@ interface Props { onAdded: (student: DbStudent) => void; }
 
 export function AddStudentForm({ onAdded }: Props) {
   const [name, setName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [age, setAge] = useState('');
   const [grade, setGrade] = useState('');
   const [emoji, setEmoji] = useState(EMOJIS[0]);
@@ -27,7 +28,7 @@ export function AddStudentForm({ onAdded }: Props) {
     if (!name.trim()) return;
     setAdding(true); setAddError(null);
     const student = await apiInsertStudent({
-      name: name.trim(), emoji, gradient,
+      name: name.trim(), ...(lastName.trim() ? { last_name: lastName.trim() } : {}), emoji, gradient,
       grade: grade.trim() || 'CE1',
       tagline: `${name.trim()} apprend avec  Play Perform`,
       age: parseInt(age) || 10,
@@ -35,7 +36,7 @@ export function AddStudentForm({ onAdded }: Props) {
     });
     if (student) {
       onAdded(student);
-      setName(''); setAge(''); setGrade('');
+      setName(''); setLastName(''); setAge(''); setGrade('');
     } else {
       setAddError('Erreur lors de l\'ajout. Vérifiez votre connexion ou relancez la page.');
     }
@@ -47,6 +48,8 @@ export function AddStudentForm({ onAdded }: Props) {
       <h2 className="font-black text-[#1a1a2e]">Ajouter un élève</h2>
       <div className="grid grid-cols-2 gap-3">
         <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Prénom *" required
+          className="rounded-xl border border-slate-200 px-3 py-2.5 text-sm focus:outline-none focus:border-violet-400" />
+        <input value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Nom (pour le diplôme)" aria-label="Nom"
           className="rounded-xl border border-slate-200 px-3 py-2.5 text-sm focus:outline-none focus:border-violet-400" />
         <input value={age} onChange={(e) => setAge(e.target.value)} placeholder="Âge" type="number" min="4" max="18"
           className="rounded-xl border border-slate-200 px-3 py-2.5 text-sm focus:outline-none focus:border-violet-400" />

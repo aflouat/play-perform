@@ -44,7 +44,7 @@ export function CentreDashboardView() {
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <Tile value={dash.totalStudents} label="Élèves" />
         <Tile value={`${dash.activeThisWeek}/${dash.totalStudents}`} label="Actifs cette semaine" />
-        <Tile value={dash.pendingEnrollments} label="Demandes d’inscription" href="/admin/inscriptions" alert={dash.pendingEnrollments > 0} />
+        <Tile value={dash.newEnrollments} label="Inscriptions cette semaine" href="/admin/inscriptions" />
         <Tile value={dash.pendingEvaluations} label="Évaluations à corriger" href="/admin/evaluations" alert={dash.pendingEvaluations > 0} />
       </div>
       <p className="text-xs text-slate-500">

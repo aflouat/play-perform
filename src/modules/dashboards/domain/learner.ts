@@ -11,6 +11,8 @@ export interface LearnerSnapshot {
   challengePlayed: boolean; studiedToday: boolean;
   /** The profile can apply to courses (it is a real student, not a demo) */
   canEnroll: boolean;
+  /** Pseudonym, first name and last name are all filled in */
+  identityComplete: boolean;
 }
 
 export interface NextAction { id: string; icon: string; text: string; href: string }
@@ -20,6 +22,7 @@ const DEFAULT_MINUTES = 15;
 /** The learner's "what now?": the most useful things first, never more than a handful. */
 export function nextActionsFor(s: LearnerSnapshot): NextAction[] {
   const actions: NextAction[] = [];
+  if (!s.identityComplete) actions.push({ id: 'profile', icon: '🎭', text: 'Complète ton profil : un pseudo pour le classement, ton nom et prénom pour ton diplôme', href: '#profil' });
   if (s.dueReviews > 0) actions.push({ id: 'reviews', icon: '⏰', text: `${s.dueReviews} révision${s.dueReviews > 1 ? 's' : ''} à faire maintenant`, href: '/competences' });
   if (s.evaluationsToRead > 0) actions.push({ id: 'feedback', icon: '📝', text: `Ton examinateur a corrigé ${s.evaluationsToRead} évaluation${s.evaluationsToRead > 1 ? 's' : ''} : lis ses commentaires`, href: '/competences' });
   if (s.answeredEnrollments > 0) actions.push({ id: 'enrollment-answer', icon: '📨', text: 'Ton centre a répondu à ta demande d’inscription', href: '/competences' });
@@ -29,7 +32,7 @@ export function nextActionsFor(s: LearnerSnapshot): NextAction[] {
     actions.push({ id: 'practice', icon: '🎯', text: `Avance sur « ${pick.name} » : ${pick.dailyMinutes ?? DEFAULT_MINUTES} min aujourd’hui`, href: `/competences/${pick.skillId}` });
   }
   if (s.enrolledSkills.length === 0 && s.pendingEnrollments === 0 && s.canEnroll) {
-    actions.push({ id: 'discover', icon: '🏰', text: 'Choisis un cours dans ta ville : lis sa fiche et dépose ta demande', href: '/competences' });
+    actions.push({ id: 'discover', icon: '🏰', text: 'Choisis une formation complète dans ta ville : inscription immédiate, évaluations corrigées, diplôme', href: '/competences' });
   }
   if (s.enrolledSkills.length === 0 && s.pendingEnrollments > 0) {
     actions.push({ id: 'waiting', icon: '⏳', text: 'Ta demande d’inscription est en cours d’examen par ton centre', href: '/competences' });

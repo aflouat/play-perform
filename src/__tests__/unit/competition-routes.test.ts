@@ -75,18 +75,16 @@ describe('POST /api/competition/challenge', () => {
 });
 
 describe('PUT /api/competition/profile', () => {
-  it('is for teachers only (a learner cannot rename themselves or others)', async () => {
-    expect((await PUT(request('/api/competition/profile', 'PUT', { profileId: 'p1', nickname: 'Champion1' }))).status).toBe(401);
+  it('is for teachers only (a learner cannot hide themselves from or force themselves into the ranking)', async () => {
+    expect((await PUT(request('/api/competition/profile', 'PUT', { profileId: 'p1', showInRanking: false }))).status).toBe(401);
     expect(repo.updateRankingProfile).not.toHaveBeenCalled();
   });
 
-  it('validates the pseudonym and reports a clash', async () => {
+  it('lets a teacher hide a student, and rejects other bodies', async () => {
     actor.getActorFromRequest.mockResolvedValue(teacher);
-    expect((await PUT(request('/api/competition/profile', 'PUT', { profileId: 'p1', nickname: 'Jean Dupont' }))).status).toBe(400);
-    repo.updateRankingProfile.mockResolvedValue('taken');
-    expect((await PUT(request('/api/competition/profile', 'PUT', { profileId: 'p1', nickname: 'Champion1' }))).status).toBe(409);
     repo.updateRankingProfile.mockResolvedValue('ok');
     expect((await PUT(request('/api/competition/profile', 'PUT', { profileId: 'p1', showInRanking: false }))).status).toBe(200);
     expect(repo.updateRankingProfile).toHaveBeenLastCalledWith('p1', { showInRanking: false });
+    expect((await PUT(request('/api/competition/profile', 'PUT', { profileId: 'p1', nickname: 'Champion1' }))).status).toBe(400);
   });
 });

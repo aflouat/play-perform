@@ -21,10 +21,14 @@ export function SkillDetailPanel({ skill, profileId, level, now, enrolled }: Pro
       <SkillLevelMeter level={level} />
       <ReviewsSummary reviews={reviews} />
       {enrolled && <PlanEditor profileId={profileId} skillId={skill.id} level={level} now={now} />}
-      {enrolled ? (
-        <Link href={`/competences/${skill.id}`} className="block rounded-2xl bg-violet-600 py-3 text-center font-bold text-white">Progresser →</Link>
-      ) : (
-        <Link href={`/competences/${skill.id}/fiche`} className="block rounded-2xl bg-amber-400 py-3 text-center font-bold text-slate-900">Voir la fiche du cours et demander l’inscription →</Link>
+      <Link href={`/competences/${skill.id}`} className="block rounded-2xl bg-violet-600 py-3 text-center font-bold text-white">Progresser →</Link>
+      {level === 5 && enrolled && (
+        <Link href={`/diplome/${skill.id}`} className="block rounded-2xl bg-amber-400 py-2.5 text-center text-sm font-black text-violet-950">🎓 Mon diplôme</Link>
+      )}
+      {!enrolled && (
+        <Link href={`/competences/${skill.id}/fiche`} className="block rounded-2xl border-2 border-violet-200 py-2.5 text-center text-sm font-bold text-violet-700">
+          🎓 Suivre la formation complète (inscription immédiate)
+        </Link>
       )}
     </section>
   );

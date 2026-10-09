@@ -24,6 +24,11 @@ export async function fetchPendingEnrollments(token: string): Promise<(SkillEnro
   return ((await res.json()) as { enrollments: (SkillEnrollment & { studentName: string })[] }).enrollments;
 }
 
+export async function fetchRecentEnrollments(token: string): Promise<(SkillEnrollment & { studentName: string })[]> {
+  const res = await fetch('/api/skill-enrollments?status=recent', { headers: await headers(token) });
+  return res.ok ? ((await res.json()) as { enrollments: (SkillEnrollment & { studentName: string })[] }).enrollments : [];
+}
+
 export async function sendEnrollmentDecision(token: string, id: string, status: 'approved' | 'rejected', comment: string): Promise<string | null> {
   const res = await fetch(`/api/skill-enrollments/${id}`, { method: 'PATCH', headers: await headers(token), body: JSON.stringify({ status, comment }) });
   return res.ok ? null : errorOf(res, 'Décision impossible.');

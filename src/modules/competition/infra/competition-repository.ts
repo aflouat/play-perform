@@ -76,3 +76,30 @@ export async function revokeAward(profileId: string, week: string): Promise<void
   const { error } = await db().from('reward_revocations').upsert({ profile_id: profileId, week }, { onConflict: 'profile_id,week' });
   if (error) throw new Error(error.message);
 }
+
+export interface StoredIdentity {
+  firstName: string | null; lastName: string | null; nickname: string | null; showInRanking: boolean;
+  /** Legal name of the centre the learner belongs to (printed on the diploma) */
+  centreName: string | null;
+}
+
+export async function readIdentity(profileId: string): Promise<StoredIdentity | null> {
+  const { data } = await db().from('students').select('name, last_name, nickname, show_in_ranking, organization_id').eq('id', profileId).maybeSingle();
+  if (!data) return null;
+  const row = data as { name: string; last_name: string | null; nickname: string | null; show_in_ranking: boolean | null; organization_id: string };
+  const { data: centre } = await db().from('organizations').select('name, legal_name').eq('id', row.organization_id).maybeSingle();
+  const c = centre as { name: string; legal_name: string | null } | null;
+  return { firstName: row.name, lastName: row.last_name, nickname: row.nickname, showInRanking: row.show_in_ranking !== false, centreName: c ? (c.legal_name ?? c.name) : null };
+}
+
+/** Saves first name (students.name), last name and pseudonym. 'taken' when the pseudonym is used in the centre. */
+export async function writeIdentity(profileId: string, patch: { firstName?: string; lastName?: string; nickname?: string }): Promise<'ok' | 'taken'> {
+  const update: Record<string, unknown> = {};
+  if (patch.firstName !== undefined) update.name = patch.firstName;
+  if (patch.lastName !== undefined) update.last_name = patch.lastName;
+  if (patch.nickname !== undefined) update.nickname = patch.nickname;
+  const { error } = await db().from('students').update(update).eq('id', profileId);
+  if (!error) return 'ok';
+  if (error.code === '23505') return 'taken';
+  throw new Error(error.message);
+}

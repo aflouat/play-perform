@@ -57,6 +57,8 @@ _Mis à jour : 2026-10-07 · v0.7.0_
 | `api/progress/route.ts` | PUT | XP / badge d'un apprenant (session apprenant ou enseignant, propriété du profil vérifiée) |
 | `api/dashboard/centre/route.ts` | GET | Tableau de bord du centre (responsable : tout le centre ; enseignant : ses élèves) |
 | `api/dashboard/examiner/route.ts` | GET | File de corrections de l'examinateur, par centre |
+| `api/profile/route.ts` | GET, PUT | Pseudo, prénom, nom, centre d'un apprenant (lui-même ou son enseignant) |
+| `api/diploma/route.ts` | GET | Éligibilité et contenu du diplôme, calculés depuis la base |
 | `api/me/route.ts` | GET | Mon e-mail, drapeau super admin, mes centres et rôles |
 | `api/organizations/route.ts` | GET, POST | Centres visibles / création (super admin) |
 | `api/centre-applications/route.ts` | POST, GET | Dossier d'un nouveau centre (public, 5 / h / IP) ; dossiers en attente (super admin) |
@@ -88,6 +90,7 @@ _Mis à jour : 2026-10-07 · v0.7.0_
 | `docker/supabase/migrate.sh` | Applique les migrations non jouées (table `_local_migrations`) + seed au 1er run |
 | `supabase/migrations/20260927000000_initial_schema.sql` | Schéma complet (10 tables + RLS) reconstruit depuis la prod |
 | `supabase/migrations/20260928000000_reading_mode.sql` | CHECK `students.mode` accepte `reading` |
+| `supabase/migrations/20261019000000_learner_identity.sql` | `students.last_name` (diplôme) |
 | `supabase/migrations/20261018000000_centre_applications.sql` | `centre_applications` (dossiers de centres, SIRET unique si ouvert) |
 | `supabase/migrations/20261017000000_centre_identity.sql` | `organizations` : raison sociale, SIREN, SIRET (unique), adresse, code postal, ville |
 | `supabase/migrations/20261016000000_competition.sql` | `students.nickname/show_in_ranking`, `challenge_results`, `reward_revocations` |
@@ -114,8 +117,8 @@ _Mis à jour : 2026-10-07 · v0.7.0_
 | `quizzes` | `domain/placement.ts`, `infra/placement-bank-{a,b}.ts`, `infra/placement-question.ts` | `getPlacementTest(skillId)`, `scoreAnswer(q, index\|null)`, `estimateStartLevel(answers)`, `reviewAnswers(questions, chosen)`, types `PlacementQuestion`, `PlacementAnswer`, `PlacementResult` |
 | (partagé) | `hooks/useRole.ts`, `shared/ui/{SiteHeader,RoleGate}.tsx` | `useRole()` → `loading \| visitor \| learner \| teacher` ; `RoleGate deny=…` |
 | `dashboards` | `domain/{centre,examiner,learner}.ts`, `application/useLearnerSnapshot.ts`, `infra/{dashboard-repository,dashboard-client}.ts`, `ui/{CentreDashboardView,ExaminerDashboardView,LearnerHome}.tsx`, `server.ts` | `activityStatus`, `buildCentreDashboard`, `buildExaminerDashboard`, `nextActionsFor`, `useLearnerSnapshot` · `skills` : `getSeen/markSeen` (nouveautés vues) |
-| `competition` | `domain/{week,nickname,ranking,seed}.ts`, `application/{challenge,view}.ts`, `infra/{competition-repository,competition-client}.ts`, `ui/{Leaderboard,ChallengePlayer,CompetitionPanel}.tsx`, `server.ts` | `isoWeek`, `previousWeek`, `validateNickname`, `generateNickname`, `rankBy`, `rankWeekly`, `awardsFor`, `challengeFor`, `scoreChallenge`, `buildCompetitionView`, `pastAwardsOf`, `CompetitionPanel` |
-| `organizations` | `domain/{access,inputs}.ts`, `infra/{organization-repository,organization-client}.ts`, `ui/{OrganizationCard,TeamLinks}.tsx`, `server.ts` | `DEFAULT_ORGANIZATION_ID`, `canRecruit`, `canManageStudents`, `canDecideEnrollments`, `canCorrectEvaluations`, `organizationsWhere`, `studentOrganization`, `validateOrganizationInput`, `validateMemberInput`, `validateSiren/Siret`, `validateCentreIdentity`, `isIdentityComplete`, `adminLinks`, `centreHeaderLinks`, `navAccessOf`, `AdminNav`, `SuperAdminGate`, `CentreCard`, `CentreIdentityForm`, `CentreSignupForm`, `CentreApplicationBanner`, `ApplicationsReview`, `validateCentreApplication`, `validateApplicationDecision`, `fetchMyAccess`, `recruit`, `TeamLinks` · `lib/access-context.ts` : `getAccessContext(req)` |
+| `competition` | `domain/{week,nickname,identity,ranking,seed}.ts`, `ui/IdentityForm.tsx` (+ `validatePersonName`, `validateIdentityUpdate`, `isIdentityReady`, `canPrintDiploma`), `application/{challenge,view}.ts`, `infra/{competition-repository,competition-client}.ts`, `ui/{Leaderboard,ChallengePlayer,CompetitionPanel}.tsx`, `server.ts` | `isoWeek`, `previousWeek`, `validateNickname`, `generateNickname`, `rankBy`, `rankWeekly`, `awardsFor`, `challengeFor`, `scoreChallenge`, `buildCompetitionView`, `pastAwardsOf`, `CompetitionPanel` |
+| `organizations` | `domain/{access,inputs}.ts`, `infra/{organization-repository,organization-client}.ts`, `ui/{OrganizationCard,TeamLinks}.tsx`, `server.ts` | `DEFAULT_ORGANIZATION_ID`, `canRecruit`, `canManageStudents`, `canDecideEnrollments`, `canCorrectEvaluations`, `organizationsWhere`, `studentOrganization`, `validateOrganizationInput`, `validateMemberInput`, `validateSiren/Siret`, `validateCentreIdentity`, `isIdentityComplete`, `adminLinks`, `centreHome`, `navAccessOf`, `AdminNav`, `SuperAdminGate`, `CentreCard`, `CentreIdentityForm`, `CentreSignupForm`, `CentreApplicationBanner`, `ApplicationsReview`, `validateCentreApplication`, `validateApplicationDecision`, `fetchMyAccess`, `recruit`, `TeamLinks` · `lib/access-context.ts` : `getAccessContext(req)` |
 | `pricing` | `domain/plan.ts`, `infra/pricing-client.ts`, `infra/pricing-repository.ts` (serveur), `ui/{PricingSection,PlanEditor}.tsx`, `server.ts` | `formatPrice`, `billingSuffix`, `eurosToCents`, `centsToEuros`, `yearlySavingPercent`, `validatePlanUpdate`, `fetchActivePlans`, `fetchAllPlans`, `savePlan`, `PricingSection`, `PlanEditor` · `server.ts` : `fetchPlans`, `updatePlan` |
 | `landing` | `application/useLandingFlow.ts`, `infra/placement-storage.ts`, `ui/{LandingPage,Hero,FlowStepper,ModeChoice,SkillPicker,PlacementTest,PlacementResultView,ParentsSection}.tsx` | `LandingPage` |
 
@@ -372,6 +375,7 @@ Types : `src/types/reading.ts` (`ReadingWord`, `Syllable`, `ParsedWord`, `Readin
 |---|---|---|
 | `integration/faq-alignment.test.tsx` | Intégration | FAQ alignée sur README, version, avatars, XP, matières, fonctionnalités |
 | `unit/release-tag.test.ts` | Unit | Script `release:tag` — semver, CHANGELOG, tag, note persistée, README synchronisé |
+| `unit/learner-identity.test.ts`, `unit/profile-route.test.ts`, `unit/diploma.test.ts`, `unit/diploma-route.test.ts`, `unit/enrollment-routes.test.ts`, `integration/learner-journey.test.tsx` | Unit + intégration | Pseudo / prénom / nom, diplôme, inscription automatique, quiz libres |
 | `unit/dashboards-domain.test.ts`, `unit/dashboard-routes.test.ts`, `integration/dashboards-ui.test.tsx` | Unit + intégration | Tableaux de bord centre / examinateur / accueil apprenant |
 | `unit/admin-navigation.test.ts`, `integration/admin-navigation.test.tsx`, `unit/admin-auth.test.ts` | Unit + intégration | Menu d'administration par rôle, pages réservées à la société mère, `isAdminAuthorized` |
 | `unit/centre-application.test.ts`, `unit/centre-application-routes.test.ts` | Unit | Dossier de centre : validation, public + limite de débit, décision réservée au super admin |

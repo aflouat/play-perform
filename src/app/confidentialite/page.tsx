@@ -25,12 +25,12 @@ export default function PrivacyPage() {
       <p className="mb-8 text-slate-500">Play &amp; Perform est fait pour des jeunes : nous gardons le strict nécessaire.</p>
 
       <Block title="Qui crée le compte ?">
-        <p>Le compte est ouvert par un enseignant, un tuteur ou un adulte responsable, avec son adresse e-mail. Il crée ensuite les profils des apprenants et leur donne un accès (prénom, âge, classe). Aucun nom de famille n&apos;est demandé.</p>
+        <p>Le compte est ouvert par un enseignant, un tuteur ou un adulte responsable, avec son adresse e-mail. Il crée ensuite les profils des apprenants et leur donne un accès (prénom, nom, âge, classe). Le nom de famille ne sert qu&apos;à imprimer le diplôme.</p>
       </Block>
       <Block title="Quelles données sont conservées ?">
         <ul className="list-disc space-y-1 pl-5">
           <li>Adulte : adresse e-mail et mot de passe (chiffré par le service d&apos;authentification).</li>
-          <li>Jeune : prénom, âge, classe, avatar, XP, série de jours, niveaux par compétence.</li>
+          <li>Jeune : prénom et nom (diplôme uniquement), pseudo (classement et communauté), âge, classe, avatar, XP, série de jours, niveaux par compétence.</li>
           <li>Accès apprenant : un code à 8 caractères, régénérable par l&apos;enseignant.</li>
           <li>Cours : les demandes d&apos;inscription (motivations) et les réponses du centre de formation.</li>
           <li>Compétition : un pseudo (jamais le nom) visible des seuls élèves du centre, les résultats du défi de la semaine et les médailles. L&apos;enseignant peut masquer un élève du classement.</li>

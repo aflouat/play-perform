@@ -1,13 +1,16 @@
 'use client';
 
 import Link from 'next/link';
+import { useState } from 'react';
 import { getActiveProfileMeta } from '@/lib/profiles';
+import { IdentityForm } from '@/modules/competition';
 import { useLearnerSnapshot } from '../application/useLearnerSnapshot';
 import { nextActionsFor } from '../domain/learner';
 
 /** The learner's home: where they are (streak, XP) and what to do now, before the city. */
 export function LearnerHome({ profileId }: { profileId: string }) {
   const snapshot = useLearnerSnapshot(profileId);
+  const [editingProfile, setEditingProfile] = useState(false);
   const name = getActiveProfileMeta()?.name;
   if (!snapshot) return <p className="text-center text-sm text-slate-400">Chargement…</p>;
   const actions = nextActionsFor(snapshot);
@@ -33,6 +36,11 @@ export function LearnerHome({ profileId }: { profileId: string }) {
           </li>
         ))}
       </ul>
+      <div id="profil" className="pt-1">
+        {snapshot.identityComplete && !editingProfile
+          ? <button onClick={() => setEditingProfile(true)} className="text-xs font-semibold text-violet-100 underline underline-offset-2">Mon profil : pseudo, nom pour le diplôme</button>
+          : <IdentityForm profileId={profileId} onSaved={() => setEditingProfile(false)} />}
+      </div>
     </section>
   );
 }

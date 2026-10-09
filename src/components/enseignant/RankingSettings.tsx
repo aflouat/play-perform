@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import type { DbStudent } from '@/lib/db';
-import { updateRankingSettings } from '@/modules/competition';
+import { saveIdentity, updateRankingSettings } from '@/modules/competition';
 
 /** Pseudonym of a student in rankings (never their real name) and whether they appear at all. */
 export function RankingSettings({ student, onChange }: { student: DbStudent; onChange: (patch: Partial<DbStudent>) => void }) {
@@ -12,7 +12,7 @@ export function RankingSettings({ student, onChange }: { student: DbStudent; onC
 
   async function saveNickname() {
     if (!student.id || !nickname.trim() || nickname === student.nickname) return;
-    const failure = await updateRankingSettings(student.id, { nickname });
+    const failure = await saveIdentity(student.id, { nickname });
     if (failure) setMessage({ ok: false, text: failure });
     else { setMessage({ ok: true, text: 'Pseudo enregistré.' }); onChange({ nickname: nickname.trim() }); }
   }

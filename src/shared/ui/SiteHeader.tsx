@@ -46,14 +46,14 @@ export function SiteHeader() {
     <>
       {/* B2B corner: the centres' entry lives apart from the learner's calls to action */}
       {role === 'visitor' && (
-        <div className="bg-slate-800 text-xs text-slate-300">
+        <div className="bg-slate-800 text-xs text-slate-300 print:hidden">
           <div className="mx-auto flex max-w-3xl items-center justify-end gap-2 px-4 py-1.5">
             <span>Vous êtes un centre de formation ?</span>
             <Link href="/auth" className="font-semibold text-white underline-offset-2 hover:underline">Gérer mon centre →</Link>
           </div>
         </div>
       )}
-    <header className="border-b border-slate-200 bg-white">
+    <header className="border-b border-slate-200 bg-white print:hidden">
       <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-3">
         <Link href={role === 'learner' ? '/competences' : role === 'teacher' ? home : '/'} className="text-lg font-black tracking-tight text-[#1a1a2e]">🏰 Play Perform</Link>
         <nav aria-label="Navigation principale" className="flex flex-wrap items-center justify-end gap-x-4 gap-y-1 text-sm font-semibold text-slate-600">

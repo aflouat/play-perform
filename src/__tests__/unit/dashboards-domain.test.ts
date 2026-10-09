@@ -25,10 +25,10 @@ describe('buildCentreDashboard', () => {
     student('Ben', { lastActivityAt: daysAgo(12), xp: 80, levelsTotal: 2, skillsStarted: 1 }),
     student('Cléo'),
   ];
-  const dash = buildCentreDashboard({ students, pendingEnrollments: 3, pendingEvaluations: 2, challengePlayers: 1 }, NOW);
+  const dash = buildCentreDashboard({ students, newEnrollments: 3, pendingEvaluations: 2, challengePlayers: 1 }, NOW);
 
   it('counts the centre’s students and who worked this week', () => {
-    expect(dash).toMatchObject({ totalStudents: 3, activeThisWeek: 1, pendingEnrollments: 3, pendingEvaluations: 2, challengePlayers: 1 });
+    expect(dash).toMatchObject({ totalStudents: 3, activeThisWeek: 1, newEnrollments: 3, pendingEvaluations: 2, challengePlayers: 1 });
   });
   it('puts students who need attention first: never started, then idle, then active', () => {
     expect(dash.students.map((s) => [s.name, s.status])).toEqual([['Cléo', 'dormant'], ['Ben', 'idle'], ['Ana', 'active']]);
@@ -38,7 +38,7 @@ describe('buildCentreDashboard', () => {
     expect(dash.averageLevels).toBeCloseTo(8 / 3, 5);
   });
   it('handles a centre without students', () => {
-    expect(buildCentreDashboard({ students: [], pendingEnrollments: 0, pendingEvaluations: 0, challengePlayers: 0 }, NOW))
+    expect(buildCentreDashboard({ students: [], newEnrollments: 0, pendingEvaluations: 0, challengePlayers: 0 }, NOW))
       .toMatchObject({ totalStudents: 0, activeThisWeek: 0, averageLevels: 0, students: [], needAttention: [] });
   });
 });
@@ -70,13 +70,16 @@ describe('buildExaminerDashboard', () => {
 describe('nextActionsFor (learner home)', () => {
   const base: LearnerSnapshot = {
     streak: 3, xp: 120, dueReviews: 0, enrolledSkills: [{ skillId: 'logique', name: 'Logique', level: 2, dailyMinutes: 20 }],
-    answeredEnrollments: 0, pendingEnrollments: 0, evaluationsToRead: 0, challengePlayed: true, studiedToday: true, canEnroll: true,
+    answeredEnrollments: 0, pendingEnrollments: 0, evaluationsToRead: 0, challengePlayed: true, studiedToday: true, canEnroll: true, identityComplete: true,
   };
   const ids = (s: LearnerSnapshot) => nextActionsFor(s).map((a) => a.id);
 
   it('puts reviews due first, then feedback, then the weekly challenge', () => {
     expect(ids({ ...base, dueReviews: 4, evaluationsToRead: 1, challengePlayed: false, studiedToday: false }))
       .toEqual(['reviews', 'feedback', 'challenge', 'practice']);
+  });
+  it('asks first for the pseudonym and the names (ranking and diploma)', () => {
+    expect(ids({ ...base, identityComplete: false, dueReviews: 2 })).toEqual(['profile', 'reviews']);
   });
   it('announces an answered enrollment request', () => {
     expect(ids({ ...base, answeredEnrollments: 1 })).toContain('enrollment-answer');

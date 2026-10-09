@@ -11,7 +11,15 @@ Fichier unique de pilotage : **en cours**, **backlog** et **bugs connus** (rempl
 - [ ] Étape 3 — Modèle de données skills + seed (catalogue en base) ; vérifier côté serveur la réussite d'un quiz avant de relever le niveau (aujourd'hui le client demande le relèvement)
 - [ ] Étape 4 — Landing : constellation, célébrations + XP via `rewards`, badge « Premier pas »
 - [ ] Rôle examinateur dédié (aujourd'hui = admin `ADMIN_EMAILS`) ; contenu quiz/flashcards pour « Logique » et « Méthode » (évaluation seule pour l'instant)
-- [ ] Notifier l'élève / le parent quand une évaluation est corrigée
+- [ ] Notifier l'élève (Web Push) quand une évaluation est corrigée ou qu'un centre retire un accès
+
+## Parcours de l'apprenant avec code (optimisations proposées)
+- [ ] **Première connexion guidée en 3 étapes** : pseudo → test de niveau → premier quiz (aujourd'hui : accueil + ville vide, profil en bas de page)
+- [ ] **« Mon chemin vers le diplôme »** : liste à cocher (inscrit, niveau 5, évaluation validée, nom renseigné) dans le panneau de la compétence, à partir de `GET /api/diploma`
+- [ ] **Communauté** : le pseudo sert déjà au classement ; l'entraide / le fil de la communauté n'existe pas encore (à cadrer, modération par le centre)
+- [ ] Questions de niveau 4-5 dans les banques (le diplôme s'appuie sur l'évaluation validée par un examinateur, pas sur les quiz)
+- [ ] Le centre peut corriger prénom / nom d'un élève avant impression (déjà possible dans sa fiche) ; ajouter une date de naissance si le diplôme l'exige
+- [ ] Diplôme : signature numérique / page publique de vérification de la référence `PP-…`
 
 ## UX par rôle (avant le backend centre mère / franchises)
 - [ ] Vérifier le SIREN / SIRET auprès de l'API Sirene (INSEE) à l'inscription d'un centre (aujourd'hui : somme de contrôle + examen manuel par la société mère)
@@ -25,7 +33,6 @@ Fichier unique de pilotage : **en cours**, **backlog** et **bugs connus** (rempl
 - [ ] Nommer un responsable pour la société mère elle-même (aujourd'hui : super admin via `ADMIN_EMAILS`) ; ajouter `platform_admins` côté UI
 - [ ] Marque par centre (logo, couleurs, sous-domaine) ; facturation par centre. *Décision : catalogue, questions et tarifs restent communs à tous les centres.*
 - [ ] RLS sur `parcours` / `parcours_enrollments` (lecture ouverte à tous), `questions` / `release_notes` (sans RLS)
-- [ ] Libre-service d'un apprenant (page publique du centre + code du centre)
 
 ## Release, abonnements, déploiement
 - [ ] Compétition : relire les 12 pseudos générés (`generateNickname`) ; décider si l'élève peut proposer son pseudo à l'enseignant
@@ -59,6 +66,3 @@ Fichier unique de pilotage : **en cours**, **backlog** et **bugs connus** (rempl
 
 ## Bugs connus (supprimer une fois corrigé)
 _Aucun bug ouvert._ (profiles/scores, `/api/releases` et hydration `/mots` `/keyboard` corrigés, à livrer en 0.7.1 ; migrations prod appliquées le 2026-10-07.)
-- l'acces parent a remplacer par acces enseignant pour ajouter ses eleves et leur donner un acces
-- un accès apprenant permet a un eleve d'acceder a ses comptences et apprentissage
-avant de s'inscrire a un cours l'eleve doit consulter la fiche du cours et presenter une demande au centre de formation qui propose le cours/compétence

@@ -37,7 +37,7 @@ export function SkillActivityView({ skillId, profileId, mode, addXp, triggerGain
   const levels = useSkillLevels(profileId);
   const level = levels[skillId] ?? null;
   const { enrollments, loaded } = useEnrollments(profileId);
-  const enrolled = isEnrolled(skillId, level, enrollments);
+  const enrolled = isEnrolled(skillId, enrollments);
   const [activity, setActivity] = useState<SkillActivity | null>(null);
   const [round, setRound] = useState(0);
   const hasBank = hasQuestionBank(skillId);
@@ -71,34 +71,35 @@ export function SkillActivityView({ skillId, profileId, mode, addXp, triggerGain
         <SkillLevelMeter level={level} />
       </header>
 
-      {!loaded && <p className="text-center text-sm text-slate-400">Chargement…</p>}
-      {loaded && !enrolled && (
-        <div className="space-y-3 rounded-3xl bg-amber-50 p-5 text-sm text-amber-900">
-          <p>Pour travailler ce cours, consulte sa fiche et présente ta demande au centre de formation.</p>
-          <Link href={`/competences/${skillId}/fiche`} className="block rounded-2xl bg-amber-400 py-3 text-center font-bold text-slate-900">Voir la fiche du cours →</Link>
-        </div>
-      )}
-
-      {loaded && enrolled && <div className="grid gap-2">
+      {/* Quizzes and flashcards are free; the corrected evaluations belong to the complete training (enrollment) */}
+      <div className="grid gap-2">
         {ACTIVITIES.map((a) => {
           const disabled = a.id !== 'evaluation' && !hasBank;
+          const locked = a.id === 'evaluation' && loaded && !enrolled;
           return (
-            <button key={a.id} disabled={disabled} onClick={() => choose(a.id)} aria-pressed={activity === a.id}
+            <button key={a.id} disabled={disabled} onClick={() => choose(a.id)} aria-pressed={activity === a.id} aria-describedby={locked ? 'enroll-hint' : undefined}
               className={`flex items-center gap-3 rounded-2xl border-2 p-3 text-left disabled:opacity-40 ${activity === a.id ? 'border-violet-600 bg-violet-50' : 'border-slate-200 bg-white'}`}>
               <span className="text-2xl" aria-hidden>{a.emoji}</span>
               <span><span className="block font-bold text-[#1a1a2e]">{a.label}</span>
-                <span className="text-xs text-slate-500">{disabled ? 'Bientôt disponible pour cette compétence' : a.hint}</span></span>
+                <span className="text-xs text-slate-500">{disabled ? 'Bientôt disponible pour cette compétence' : locked ? '🔒 Réservé à la formation complète' : a.hint}</span></span>
             </button>
           );
         })}
-      </div>}
+      </div>
 
       {activity === 'quiz' && questions.length > 0 && (
         <SkillQuiz key={round} questions={questions} mode={mode} onFinish={finishQuiz} onAnswered={(q, ok) => recordSkillAnswer(profileId, q, ok)} />
       )}
       {activity === 'flashcards' && questions.length > 0 && <Flashcards key={round} cards={toFlashcards(questions)} onFinish={finishCards}
         onCardSeen={(card, known) => { const q = questions.find((x) => x.id === card.id); if (q) recordSkillAnswer(profileId, q, known); }} />}
-      {activity === 'evaluation' && <EvaluationPanel profileId={profileId} skillId={skillId} level={level} />}
+      {activity === 'evaluation' && (enrolled
+        ? <EvaluationPanel profileId={profileId} skillId={skillId} level={level} />
+        : (
+          <div id="enroll-hint" className="space-y-3 rounded-3xl bg-violet-50 p-5 text-sm text-violet-900">
+            <p>Les évaluations corrigées font partie de la <strong>formation complète</strong>. L’inscription est immédiate.</p>
+            <Link href={`/competences/${skillId}/fiche`} className="block rounded-2xl bg-violet-600 py-3 text-center font-bold text-white">Voir la formation et m’inscrire →</Link>
+          </div>
+        ))}
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { getServerClient } from '@/lib/db/client';
-import type { EnrollmentDecision, EnrollmentRequest, EnrollmentStatus, SkillEnrollment } from '../domain/enrollment';
+import { AUTO_VALIDATION_COMMENT, type EnrollmentDecision, type EnrollmentRequest, type EnrollmentStatus, type SkillEnrollment } from '../domain/enrollment';
 
 interface Row {
   id: string; profile_id: string; organization_id: string; skill_id: string; motivation: string; status: EnrollmentStatus;
@@ -23,11 +23,7 @@ export async function listEnrollmentsForProfile(profileId: string): Promise<Skil
   return ((data ?? []) as Row[]).map(toEnrollment);
 }
 
-/** `organizations`: "all" for the super admin, else the centres the caller decides for. */
-export async function listPendingEnrollments(organizations: 'all' | string[]): Promise<PendingEnrollment[]> {
-  if (organizations !== 'all' && organizations.length === 0) return [];
-  let query = table().select('*').eq('status', 'pending').order('created_at');
-  if (organizations !== 'all') query = query.in('organization_id', organizations);
+async function listWithNames(query: PromiseLike<{ data: unknown; error: { message: string } | null }>): Promise<PendingEnrollment[]> {
   const { data, error } = await query;
   if (error) throw new Error(error.message);
   const rows = (data ?? []) as Row[];
@@ -36,22 +32,40 @@ export async function listPendingEnrollments(organizations: 'all' | string[]): P
   return rows.map((r) => ({ ...toEnrollment(r), studentName: names.get(r.profile_id) ?? 'Élève' }));
 }
 
-/** Returns null when a request for this skill is already waiting or already approved. */
+/** Legacy requests still waiting. `organizations`: "all" for the super admin, else the centres the caller decides for. */
+export async function listPendingEnrollments(organizations: 'all' | string[]): Promise<PendingEnrollment[]> {
+  if (organizations !== 'all' && organizations.length === 0) return [];
+  let query = table().select('*').eq('status', 'pending').order('created_at');
+  if (organizations !== 'all') query = query.in('organization_id', organizations);
+  return listWithNames(query);
+}
+
+/** Enrollments validated automatically since `since`, newest first: the centre can withdraw one. */
+export async function listRecentEnrollments(organizations: 'all' | string[], since: string): Promise<PendingEnrollment[]> {
+  if (organizations !== 'all' && organizations.length === 0) return [];
+  let query = table().select('*').eq('status', 'approved').gte('created_at', since).order('created_at', { ascending: false });
+  if (organizations !== 'all') query = query.in('organization_id', organizations);
+  return listWithNames(query);
+}
+
+/** Enrolls at once (automatic validation). Returns null when the learner is already enrolled or a legacy request is waiting. */
 export async function createEnrollment(request: EnrollmentRequest, organizationId: string): Promise<SkillEnrollment | null> {
   const { data: open } = await table().select('id').eq('profile_id', request.profileId).eq('skill_id', request.skillId)
     .in('status', ['pending', 'approved']).limit(1);
   if ((open ?? []).length > 0) return null;
   const { data, error } = await table().insert({
     profile_id: request.profileId, organization_id: organizationId, skill_id: request.skillId, motivation: request.motivation,
+    status: 'approved', center_comment: AUTO_VALIDATION_COMMENT, decided_at: new Date().toISOString(),
   }).select().single();
   if (error) throw new Error(error.message);
   return toEnrollment(data as Row);
 }
 
+/** A waiting request can be approved or refused; an enrollment already granted can only be withdrawn. */
 export async function decideEnrollment(id: string, decision: EnrollmentDecision): Promise<SkillEnrollment | null> {
   const { data, error } = await table()
     .update({ status: decision.status, center_comment: decision.comment || null, decided_at: new Date().toISOString() })
-    .eq('id', id).eq('status', 'pending').select().maybeSingle();
+    .eq('id', id).in('status', decision.status === 'approved' ? ['pending'] : ['pending', 'approved']).select().maybeSingle();
   if (error) throw new Error(error.message);
   return data ? toEnrollment(data as Row) : null;
 }
