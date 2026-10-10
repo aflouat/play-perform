@@ -24,6 +24,8 @@ Fichier unique de pilotage : **en cours**, **backlog** et **bugs connus** (rempl
 - [ ] Binômes : message d'encouragement au partenaire (texte préécrit) ; choix d'un binôme par le centre ; bonus plus riche (badge d'équipe)
 - [ ] Pièges classiques : alimenter aussi `/quiz/[subject]` (matières) en statistiques ; notifier le centre des questions réussies par presque personne (question à revoir)
 
+- [ ] Centre de commande : feuille de route définie par le centre (table + éditeur), dates de complétion des phases en base (aujourd'hui sur l'appareil), événement « a validé la Phase n » dans le fil ; contenu quiz pour Logique / Méthode (la remise à niveau y mène à l'évaluation)
+
 ## UX par rôle (avant le backend centre mère / franchises)
 - [ ] Vérifier le SIREN / SIRET auprès de l'API Sirene (INSEE) à l'inscription d'un centre (aujourd'hui : somme de contrôle + examen manuel par la société mère)
 - [ ] Tableaux de bord : graphiques de progression dans le temps (activité par semaine), export CSV pour le centre, notification au centre quand une demande attend depuis plus de 3 jours

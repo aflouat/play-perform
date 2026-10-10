@@ -1,5 +1,5 @@
 # Code Index — Play Perform
-_Mis à jour : 2026-10-07 · v0.7.0_
+_Mis à jour : 2026-10-10 · v0.11.0_
 > Lire avant de coder. Mettre à jour quand un fichier est créé, supprimé ou dépasse 150 lignes.
 
 ---
@@ -122,7 +122,7 @@ _Mis à jour : 2026-10-07 · v0.7.0_
 | `skills` | `domain/skill.ts`, `infra/skills-seed.ts` | `getSkills()`, `getSkillById(id)`, `SKILL_LEVELS`, `getSkillLevel(n)`, `syncSkillLevels/persistSkillLevel/mergeLevels/applyPlacements/validateLevelUpdate`, `getCourseSheet`, `CourseSheetView`, `EnrollmentForm`, `validateEnrollmentRequest/Decision`, `isEnrolled`, `useEnrollments`, `remainingMinutes/dailyMinutesNeeded/victoryDate/isReminderDue/reminderMessage`, `getSkillPlan/setSkillPlan`, `PlanEditor`, `sendDueReminders`, `ReminderRunner`, `enablePush/syncPushReminders/isPushActive`, `zonedNow/dueScheduledReminders` · `lib/push/{repository,send,dispatch,validate}.ts` (serveur), `useSkillLevels/getSkillLevelFor/setSkillLevel/advanceSkillLevel/getAllSkillLevels` (niveau par compétence), `pickSkillQuestions`, `toFlashcards`, `isQuizPassed`, `nextLevelAfterQuiz`, `validateSubmission`, `validateCorrection`, `levelAfterEvaluations`, `getEvaluationPrompt`, UI `SkillMap` (ville), `SkillDetailPanel`, `BuildingTile`, `GoalEditor`, `ReviewsSummary`, `masteryPercent/buildingFor/summarizeReviews/paceToGoal`, `loadSkillReviews/recordSkillAnswer`, `getSkillGoal/setSkillGoal`, `SkillActivityView`, `EvaluationPanel` · `server.ts` : évaluations (service role), types `Skill`, `SkillLevelNumber` |
 | `quizzes` | `domain/placement.ts`, `infra/placement-bank-{a,b}.ts`, `infra/placement-question.ts` | `getPlacementTest(skillId)`, `scoreAnswer(q, index\|null)`, `estimateStartLevel(answers)`, `reviewAnswers(questions, chosen)`, types `PlacementQuestion`, `PlacementAnswer`, `PlacementResult` |
 | (partagé) | `hooks/useRole.ts`, `shared/ui/{SiteHeader,RoleGate}.tsx` | `useRole()` → `loading \| visitor \| learner \| teacher` ; `RoleGate deny=…` |
-| `dashboards` | `domain/{centre,examiner,learner}.ts`, `application/useLearnerSnapshot.ts`, `infra/{dashboard-repository,dashboard-client}.ts`, `ui/{CentreDashboardView,ExaminerDashboardView,LearnerHome}.tsx`, `server.ts` | `onboardingSteps`, `firstQuizHref`, `applyStartLevel`, `FirstSteps`, `PlacementStep`, `activityStatus`, `buildCentreDashboard`, `buildExaminerDashboard`, `nextActionsFor`, `useLearnerSnapshot` · `skills` : `getSeen/markSeen` (nouveautés vues) |
+| `dashboards` | `domain/{centre,examiner,learner,roadmap,scorecard}.ts`, `application/{useLearnerSnapshot,useRoadmap}.ts`, `infra/{dashboard-repository,dashboard-client,roadmap-seed,roadmap-storage}.ts`, `ui/{CentreDashboardView,ExaminerDashboardView,LearnerHome,CommandCenter,RoadmapBanner,PhaseDetail,ResumeButton,Scorecard,LearnerFeed}.tsx`, `server.ts` | Centre de commande : `CommandCenter`, `useRoadmap(profileId)` → `{ phases, resume }`, `buildRoadmap(phases, levels, progress, today)`, `courseState`, `courseHref`, `plannedDates`, `newlyCompleted`, `resumeTarget(views, lastSkillId, hasQuiz?)`, `rankProgress(xp)`, `latestBadges(badges, n?)`, `trapAlerts(questions, distributions, skillId)`, `getRoadmap`, `rememberLastSkill` · `onboardingSteps`, `firstQuizHref`, `applyStartLevel`, `FirstSteps`, `PlacementStep`, `activityStatus`, `buildCentreDashboard`, `buildExaminerDashboard`, `nextActionsFor`, `useLearnerSnapshot` · `skills` : `getSeen/markSeen` (nouveautés vues) |
 | `community` | `domain/traps.ts`, `infra/{stats-repository,community-client}.ts`, `ui/ClassicTraps.tsx`, `server.ts` | `trapSummary`, `trapMessage`, `constructiveFeedback`, `rankTraps`, `fetchDistributions`, `sendAnswers`, `ClassicTraps` |
 | `competition` | `domain/{week,nickname,identity,ranking,seed}.ts`, `ui/IdentityForm.tsx` (+ `validatePersonName`, `validateIdentityUpdate`, `isIdentityReady`, `canPrintDiploma`), `application/{challenge,view}.ts`, `infra/{competition-repository,competition-client}.ts`, `ui/{Leaderboard,ChallengePlayer,CompetitionPanel}.tsx`, `server.ts` | `pairsFor`, `groupOf`, `bonusStatus`, `buildPairView`, `describeEvent`, `canCheer`, `PairCard`, `ActivityFeed`, `isoWeek`, `previousWeek`, `validateNickname`, `generateNickname`, `rankBy`, `rankWeekly`, `awardsFor`, `challengeFor`, `scoreChallenge`, `buildCompetitionView`, `pastAwardsOf`, `CompetitionPanel` |
 | `organizations` | `domain/{access,inputs}.ts`, `infra/{organization-repository,organization-client}.ts`, `ui/{OrganizationCard,TeamLinks}.tsx`, `server.ts` | `DEFAULT_ORGANIZATION_ID`, `canRecruit`, `canManageStudents`, `canDecideEnrollments`, `canCorrectEvaluations`, `organizationsWhere`, `studentOrganization`, `validateOrganizationInput`, `validateMemberInput`, `validateSiren/Siret`, `validateCentreIdentity`, `isIdentityComplete`, `adminLinks`, `centreHome`, `navAccessOf`, `AdminNav`, `SuperAdminGate`, `CentreCard`, `CentreIdentityForm`, `CentreSignupForm`, `CentreApplicationBanner`, `ApplicationsReview`, `validateCentreApplication`, `validateApplicationDecision`, `fetchMyAccess`, `recruit`, `TeamLinks` · `lib/access-context.ts` : `getAccessContext(req)` |
@@ -382,6 +382,7 @@ Types : `src/types/reading.ts` (`ReadingWord`, `Syllable`, `ParsedWord`, `Readin
 |---|---|---|
 | `integration/faq-alignment.test.tsx` | Intégration | FAQ alignée sur README, version, avatars, XP, matières, fonctionnalités |
 | `unit/release-tag.test.ts` | Unit | Script `release:tag` — semver, CHANGELOG, tag, note persistée, README synchronisé |
+| `unit/learner-roadmap.test.ts`, `integration/command-center.test.tsx` | Unit + intégration | Centre de commande : verrou de phase, filtre de niveau, planification / retard, reprise, rang, badges, alertes de pièges |
 | `unit/onboarding.test.ts`, `integration/first-connection.test.tsx` | Unit + intégration | Première connexion en 3 étapes (profil, niveau, premier quiz) |
 | `unit/community-traps.test.ts`, `unit/community-social.test.ts`, `unit/community-routes.test.ts`, `integration/community-ui.test.tsx` | Unit + intégration | Pièges classiques, échec constructif, binômes, bonus, fil, Bravo, modération |
 | `unit/learner-identity.test.ts`, `unit/profile-route.test.ts`, `unit/diploma.test.ts`, `unit/diploma-route.test.ts`, `unit/enrollment-routes.test.ts`, `integration/learner-journey.test.tsx` | Unit + intégration | Pseudo / prénom / nom, diplôme, inscription automatique, quiz libres |
@@ -427,6 +428,11 @@ Quiz (/quiz/[subject])
   → useScore.addXp() → syncScoreToDb()
   → logQuizAnswer()
   → si erreurs : AnkiReviewSession
+
+Centre de commande (/competences)
+  → useSkillLevels (niveaux synchronisés avec skill_levels) + pp:roadmap:<profil> (départ, complétions)
+  → buildRoadmap → RoadmapBanner / PhaseDetail ; resumeTarget (+ pp:last-skill, posé par /competences/[skillId]) → ResumeButton
+  → Scorecard (score:<profil>) ; LearnerFeed → GET /api/competition/feed + GET /api/stats/answers
 
 Admin CSV import
   → ImportDropzone → parseAndValidateCsv

@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { SkillMap } from '@/modules/skills';
-import { LearnerHome } from '@/modules/dashboards';
+import { CommandCenter } from '@/modules/dashboards';
 import { useActiveProfileId, isProfileReady } from '@/hooks/useActiveProfileId';
 import { useSkillBootstrap } from '@/hooks/useSkillBootstrap';
 
@@ -16,7 +16,7 @@ export default function CompetencesPage() {
     return <div className="flex-1 flex items-center justify-center text-slate-400 text-sm">Chargement…</div>;
   }
   return (
-    <main className="mx-auto max-w-md px-5 pt-8 pb-16">
+    <main className="mx-auto w-full max-w-6xl px-4 pt-8 pb-16 sm:px-6">
       <div className="mb-4 flex items-center justify-between text-sm text-slate-400">
         <button onClick={() => router.push('/')}>← Changer d&apos;élève</button>
         <span className="flex gap-4">
@@ -24,10 +24,13 @@ export default function CompetencesPage() {
           <button onClick={() => router.push('/home')} className="font-semibold text-violet-600">Quiz par matière →</button>
         </span>
       </div>
-      <LearnerHome profileId={profileId} />
-      <h2 className="mt-8 text-2xl font-black text-[#1a1a2e]">Ma ville des compétences</h2>
-      <p className="mb-5 mt-1 text-sm text-slate-500">Chaque bâtiment grandit avec ton niveau. Objectif : le château (niveau 5) !</p>
-      <SkillMap profileId={profileId} />
+      <CommandCenter key={profileId} profileId={profileId}>
+        <section>
+          <h2 className="text-2xl font-black text-[#1a1a2e]">Ma ville des compétences</h2>
+          <p className="mb-5 mt-1 text-sm text-slate-500">Chaque bâtiment grandit avec ton niveau. Objectif : le château (niveau 5) !</p>
+          <SkillMap profileId={profileId} />
+        </section>
+      </CommandCenter>
     </main>
   );
 }
