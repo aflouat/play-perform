@@ -38,7 +38,7 @@ export function EnrollModal({ parcoursId, parcoursName, token, onClose }: Props)
     });
     setEnrolled((prev) => {
       const next = new Set(prev);
-      isEnrolled ? next.delete(studentId) : next.add(studentId);
+      if (isEnrolled) next.delete(studentId); else next.add(studentId);
       return next;
     });
   }

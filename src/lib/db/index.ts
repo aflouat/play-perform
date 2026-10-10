@@ -3,7 +3,7 @@ export { getClient, getServerClient } from './client';
 export type { DbScore, DbBadge, DbQuizAnswer, DbKeyboardProgress } from './scores';
 export { syncScoreToDb, fetchScoreFromDb, syncBadgeToDb, logQuizAnswer, logKeyboardSession } from './scores';
 export type { DbQuestion } from './questions';
-export { insertQuestions, fetchQuestionsFromDb, fetchAllQuestionsFromDb, updateQuestion, deleteQuestion } from './questions';
+export { insertQuestions, fetchQuestionsFromDb, fetchPublishedQuestions, seedQuestions, fetchAllQuestionsFromDb, updateQuestion, deleteQuestion } from './questions';
 export type { DbStudent, StudentMode, StudentLearningMode } from './students';
 export { fetchStudents, insertStudent, deleteStudent, updateStudent } from './students';
 export type { DbReleaseNote, ReleaseNoteFilter } from './releases';

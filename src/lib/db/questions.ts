@@ -21,6 +21,10 @@ export interface DbQuestion {
   correct_option_id: string;
   explanation: string;
   explanation_assisted: string | null;
+  /** Skill the question belongs to; null = follows its school subject */
+  skill_id: string | null;
+  status: 'draft' | 'published';
+  hint: string | null;
 }
 
 export async function insertQuestions(rows: DbQuestion[]): Promise<void> {
@@ -33,6 +37,21 @@ export async function fetchQuestionsFromDb(subject: string): Promise<DbQuestion[
   if (!db) return [];
   const { data } = await db.from('questions').select('*').eq('subject', subject);
   return (data as DbQuestion[]) ?? [];
+}
+
+/** Published questions only (drafts stay in the admin). Server-side. */
+export async function fetchPublishedQuestions(): Promise<DbQuestion[]> {
+  const db = getServerClient();
+  const { data } = await db.from('questions').select('*').eq('status', 'published').order('id');
+  return (data as DbQuestion[]) ?? [];
+}
+
+/** Inserts the questions that do not exist yet; never overwrites an admin edit. Returns how many were added. */
+export async function seedQuestions(rows: DbQuestion[]): Promise<number> {
+  const db = getServerClient();
+  const { data, error } = await db.from('questions').upsert(rows, { onConflict: 'id', ignoreDuplicates: true }).select('id');
+  if (error) throw new Error(error.message);
+  return data?.length ?? 0;
 }
 
 export async function fetchAllQuestionsFromDb(subject?: string): Promise<DbQuestion[]> {

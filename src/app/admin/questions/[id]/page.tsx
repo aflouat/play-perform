@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
-import { createClient } from '@supabase/supabase-js';
+import { adminFetch } from '@/lib/admin-fetch';
 import type { DbQuestion } from '@/lib/db';
 import { NAV_SUBJECTS } from '@/lib/subjects';
 
@@ -23,26 +23,17 @@ function Field({ label, value, onChange, textarea = false }: {
   );
 }
 
-function getSupabase() {
-  return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL ?? '', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '');
-}
-
 export default function EditQuestionPage({ params }: { params: Params }) {
   const { id } = use(params);
   const router = useRouter();
   const [q, setQ] = useState<DbQuestion | null>(null);
-  const [token, setToken] = useState('');
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
 
   useEffect(() => {
-    getSupabase().auth.getSession().then(({ data }) => {
-      if (!data.session) { window.location.href = '/auth'; return; }
-      setToken(data.session.access_token);
-      fetch('/api/questions').then((r) => r.json()).then((d: { questions: DbQuestion[] }) => {
-        const found = d.questions.find((x) => x.id === id);
-        if (found) setQ(found);
-      });
+    adminFetch('/api/questions').then((r) => r.json()).then((d: { questions: DbQuestion[] }) => {
+      const found = (d.questions ?? []).find((x) => x.id === id);
+      if (found) setQ(found);
     });
   }, [id]);
 
@@ -54,9 +45,9 @@ export default function EditQuestionPage({ params }: { params: Params }) {
     e.preventDefault();
     if (!q) return;
     setSaving(true); setMsg(null);
-    const res = await fetch(`/api/questions/${q.id}`, {
+    const res = await adminFetch(`/api/questions/${q.id}`, {
       method: 'PUT',
-      headers: { 'content-type': 'application/json', authorization: `Bearer ${token}` },
+      headers: { 'content-type': 'application/json' },
       body: JSON.stringify(q),
     });
     setSaving(false);
@@ -88,6 +79,17 @@ export default function EditQuestionPage({ params }: { params: Params }) {
           </select>
         </div>
       </div>
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Compétence (vide = suit la matière)" value={q.skill_id ?? ''} onChange={(v) => set('skill_id', v.trim() || null)} />
+        <div>
+          <label className="block text-xs font-bold text-slate-500 mb-1">Statut</label>
+          <select value={q.status} onChange={(e) => set('status', e.target.value === 'draft' ? 'draft' : 'published')}
+            className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-violet-400">
+            <option value="published">Publiée (vue par les élèves)</option>
+            <option value="draft">Brouillon (cachée)</option>
+          </select>
+        </div>
+      </div>
       <div className="grid grid-cols-3 gap-3">
         <Field label="XP" value={String(q.xp_reward)} onChange={(v) => set('xp_reward', parseInt(v) || 0)} />
         <Field label="Emoji" value={q.emoji ?? ''} onChange={(v) => set('emoji', v)} />
@@ -113,6 +115,7 @@ export default function EditQuestionPage({ params }: { params: Params }) {
           ))}
         </div>
       </div>
+      <Field label="Indice (optionnel)" value={q.hint ?? ''} onChange={(v) => set('hint', v || null)} />
       <Field label="Explication" value={q.explanation} onChange={(v) => set('explanation', v)} textarea />
       {msg && <p className="text-sm font-semibold">{msg}</p>}
       <button type="submit" disabled={saving}

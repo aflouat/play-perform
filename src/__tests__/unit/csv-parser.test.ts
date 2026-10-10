@@ -105,3 +105,20 @@ describe('parseAndValidateCsv', () => {
     expect(errors).toHaveLength(0);
   });
 });
+
+describe('banque en base : colonnes optionnelles', () => {
+  const full = HEADER + ',skillId,status,hint';
+  const row = (extra: string) => `${makeRow()},${extra}`;
+
+  it('reads skillId, status and hint', () => {
+    const { valid, errors } = parseAndValidateCsv([full, row('labo-securite,draft,Pense aux EPI')].join('\n'), new Set());
+    expect(errors).toEqual([]);
+    expect(valid[0]).toMatchObject({ skill_id: 'labo-securite', status: 'draft', hint: 'Pense aux EPI' });
+  });
+
+  it('publishes by default and rejects an unknown status', () => {
+    expect(parseAndValidateCsv(HEADER + '\n' + makeRow(), new Set()).valid[0]).toMatchObject({ status: 'published', skill_id: null, hint: null });
+    const res = parseAndValidateCsv([full, row(',brouillon,')].join('\n'), new Set());
+    expect(res.errors.map((e) => e.column)).toContain('status');
+  });
+});

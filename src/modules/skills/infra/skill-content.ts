@@ -1,5 +1,6 @@
 import type { QuizDifficulty, QuizQuestion, Subject } from '@/types';
-import { getQuestions } from '@/lib/question-banks';
+import { getBuiltInQuestions, getQuestions } from '@/lib/question-banks';
+import { mergeById, overlayForSkill } from '@/lib/question-bank-overlay';
 import type { SkillLevelNumber } from '../domain/skill';
 import { CLAUDE_PLATFORM_BANK } from './claude-platform-bank';
 import { LAB_QUALITY_BANK, LAB_SAFETY_BANK } from './lab-bank-safety-quality';
@@ -29,8 +30,22 @@ const CUSTOM_BANKS: Record<string, QuizQuestion[]> = {
   'labo-mesures': LAB_MEASURES_BANK, 'labo-qualite': LAB_QUALITY_BANK,
 };
 
-export function hasQuestionBank(skillId: string): boolean {
+/** Built-in bank only (see getBuiltInSkillBank). */
+export function hasBuiltInQuestionBank(skillId: string): boolean {
   return skillId in CUSTOM_BANKS || skillId in SKILL_SUBJECT;
+}
+
+export function hasQuestionBank(skillId: string): boolean {
+  return hasBuiltInQuestionBank(skillId) || overlayForSkill(skillId).length > 0;
+}
+
+/** Built-in questions per skill (null = follows its subject), used to seed the database. */
+export function listBuiltInBanks(): { skillId: string | null; questions: QuizQuestion[] }[] {
+  const subjects = [...new Set(Object.values(SKILL_SUBJECT))];
+  return [
+    ...subjects.map((s) => ({ skillId: null, questions: getBuiltInQuestions(s) })),
+    ...Object.entries(CUSTOM_BANKS).map(([skillId, questions]) => ({ skillId, questions })),
+  ];
 }
 
 export function getSkillSubject(skillId: string): Subject | null {
@@ -54,7 +69,13 @@ function shuffle<T>(items: T[], random: () => number): T[] {
 /** Every question of the skill's bank (SRS reviews are tracked on these). */
 export function getSkillBank(skillId: string): QuizQuestion[] {
   const subject = getSkillSubject(skillId);
-  return CUSTOM_BANKS[skillId] ?? (subject ? getQuestions(subject) : []);
+  return mergeById(CUSTOM_BANKS[skillId] ?? (subject ? getQuestions(subject) : []), overlayForSkill(skillId));
+}
+
+/** Built-in bank only: the weekly challenge is scored on the server, which does not load the database overlay. */
+export function getBuiltInSkillBank(skillId: string): QuizQuestion[] {
+  const subject = getSkillSubject(skillId);
+  return CUSTOM_BANKS[skillId] ?? (subject ? getBuiltInQuestions(subject) : []);
 }
 
 /** Questions of the skill's subject; the level's difficulty first, then the closest ones. */

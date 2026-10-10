@@ -16,6 +16,7 @@ import { getQuestions } from '@/lib/question-banks';
 import { SUBJECT_META } from '@/lib/subjects';
 import { SubjectBadge } from '@/components/home/SubjectBadge';
 import type { DbParcours } from '@/lib/db';
+import { useQuestionBankVersion } from '@/lib/question-bank-overlay';
 
 export default function HomePage() {
   const router = useRouter();
@@ -32,6 +33,7 @@ export default function HomePage() {
       .catch(() => {});
   }, [profileId, router]);
 
+  useQuestionBankVersion(); // refresh the subject counters once the database bank is loaded
   const { score, xpToNextLevel } = useScore(profileId);
   const { avatar, avatarId, allAvatars, selectAvatar } = useAvatar(profileId, score.xp);
   const { mode, setMode } = useLearningMode(isProfileReady(profileId) ? profileId : 'demo-quiz');

@@ -1,4 +1,5 @@
 import type { QuizQuestion, Subject } from '@/types';
+import { mergeById, overlayForSubject } from '@/lib/question-bank-overlay';
 
 // Legacy subjects (from quiz-data.ts)
 const MATHS: QuizQuestion[] = [
@@ -59,7 +60,8 @@ import {
   ANGLAIS_BREVET,
   ESPAGNOL_BREVET,
 } from './brevet_questions';
-import { HINTS_MATHS, HINTS_FRANCAIS, HINTS_HISTOIRE, HINTS_SVT } from './hints-questions';
+import { HINTS_MATHS, HINTS_FRANCAIS } from './hints-questions';
+import { HINTS_HISTOIRE, HINTS_SVT } from './hints-histoire-svt';
 
 export const ALL_QUESTIONS: Record<Subject, QuizQuestion[]> = {
   maths: [...MATHS, ...MATHS_BREVET, ...HINTS_MATHS],
@@ -81,6 +83,12 @@ export const ALL_QUESTIONS: Record<Subject, QuizQuestion[]> = {
   italien: [],
 };
 
-export function getQuestions(subject: Subject): QuizQuestion[] {
+/** Built-in bank only (the weekly challenge is scored on the server, which has no database overlay). */
+export function getBuiltInQuestions(subject: Subject): QuizQuestion[] {
   return ALL_QUESTIONS[subject] ?? [];
+}
+
+/** Built-in questions, replaced/completed by the ones published in the database. */
+export function getQuestions(subject: Subject): QuizQuestion[] {
+  return mergeById(getBuiltInQuestions(subject), overlayForSubject(subject));
 }

@@ -1,5 +1,5 @@
 import type { QuizQuestion } from '@/types';
-import { getSkillBank, getSkills, hasQuestionBank, isGeneralSkill } from '@/modules/skills';
+import { getBuiltInSkillBank, getSkills, hasBuiltInQuestionBank, isGeneralSkill } from '@/modules/skills';
 import { hash32, seededRandom } from '../domain/seed';
 
 export const CHALLENGE_LENGTH = 5;
@@ -10,10 +10,10 @@ export interface ChallengeAnswer { questionId: string; optionId: string }
 /** The challenge of a week: same skill and same questions for everyone, whatever the device (seeded by the week). */
 export function challengeFor(week: string): WeeklyChallenge {
   // Same challenge for the whole centre: general skills only (trade skills belong to some training paths)
-  const skills = getSkills().filter((s) => isGeneralSkill(s) && hasQuestionBank(s.id));
+  const skills = getSkills().filter((s) => isGeneralSkill(s) && hasBuiltInQuestionBank(s.id));
   const skill = skills[hash32(`skill:${week}`) % skills.length];
   const random = seededRandom(hash32(`questions:${week}`));
-  const pool = [...getSkillBank(skill.id)].sort((a, b) => a.id.localeCompare(b.id));
+  const pool = [...getBuiltInSkillBank(skill.id)].sort((a, b) => a.id.localeCompare(b.id));
   for (let i = pool.length - 1; i > 0; i--) {
     const j = Math.floor(random() * (i + 1));
     [pool[i], pool[j]] = [pool[j], pool[i]];

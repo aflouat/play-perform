@@ -1,5 +1,6 @@
 'use client';
 
+import { adminFetch } from '@/lib/admin-fetch';
 import React, { useState } from 'react';
 import { ImportDropzone } from '@/components/admin/ImportDropzone';
 import type { RowError } from '@/lib/csv-parser';
@@ -44,7 +45,7 @@ export default function AdminImportPage() {
     formData.append('csv', file);
 
     try {
-      const res = await fetch('/api/questions/import', { method: 'POST', body: formData });
+      const res = await adminFetch('/api/questions/import', { method: 'POST', body: formData });
       if (!res.ok) {
         const body = await res.json() as { error?: string };
         setFatalError(body.error ?? 'Erreur serveur');

@@ -2,50 +2,14 @@ import type { Subject } from '@/types';
 import type { DbQuestion } from '@/lib/db';
 import { splitRow, opt, req, type RowError, type ParseResult } from '@/lib/csv-tokenizer';
 import { ALL_SUBJECT_IDS } from '@/lib/subjects';
+import { buildIdx } from '@/lib/csv-headers';
 
 export type { RowError, ParseResult } from '@/lib/csv-tokenizer';
 
 const SUBJECTS: Subject[] = ALL_SUBJECT_IDS;
 const VALID_DIFFICULTY = new Set(['1', '2', '3', '4']);
 const VALID_OPTION_ID = new Set(['A', 'B', 'C', 'D']);
-
-// Normalize header: lowercase, remove underscores/dashes/spaces
-function norm(h: string): string {
-  return h.toLowerCase().replace(/[_\- ]/g, '');
-}
-
-// Maps normalized variants → canonical field key
-const HEADER_MAP: Record<string, string> = {
-  id: 'id',
-  subject: 'subject',
-  category: 'category',
-  difficulty: 'difficulty',
-  xpreward: 'xpReward',
-  emoji: 'emoji',
-  imageurl: 'imageUrl',
-  question: 'question',
-  questionassisted: 'questionAssisted',
-  optiona: 'optionA',
-  optionb: 'optionB',
-  optionc: 'optionC',
-  optiond: 'optionD',
-  optionaassisted: 'optionAAssisted',
-  optionbassisted: 'optionBAssisted',
-  optioncassisted: 'optionCAssisted',
-  optiondassisted: 'optionDAssisted',
-  correctoptionid: 'correctOptionId',
-  explanation: 'explanation',
-  explanationassisted: 'explanationAssisted',
-};
-
-function buildIdx(headers: string[]): Map<string, number> {
-  const idx = new Map<string, number>();
-  headers.forEach((h, i) => {
-    const key = HEADER_MAP[norm(h.trim())];
-    if (key) idx.set(key, i);
-  });
-  return idx;
-}
+const VALID_STATUS = new Set(['draft', 'published']);
 
 export function parseAndValidateCsv(
   csvText: string,
@@ -128,6 +92,11 @@ export function parseAndValidateCsv(
       rowErrors.push({ row, column: 'correctOptionId', message: 'Doit être A, B, C ou D.' });
     }
 
+    const status = col(cols, 'status').trim().toLowerCase() || 'published';
+    if (!VALID_STATUS.has(status)) {
+      rowErrors.push({ row, column: 'status', message: 'Doit être draft ou published.' });
+    }
+
     if (rawImageUrl.trim()) {
       const img = rawImageUrl.trim();
       if (!img.startsWith('/') && !/^https?:\/\//.test(img)) {
@@ -161,6 +130,9 @@ export function parseAndValidateCsv(
       correct_option_id: correct!,
       explanation: explanation!,
       explanation_assisted: opt(col(cols, 'explanationAssisted')),
+      skill_id: opt(col(cols, 'skillId')),
+      status: status as DbQuestion['status'],
+      hint: opt(col(cols, 'hint')),
     });
   }
 

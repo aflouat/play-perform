@@ -119,7 +119,7 @@ async function insertIntoDatabase(note) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) return console.warn('⚠ Note non insérée en base (NEXT_PUBLIC_SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY absents). Elle reste dans le fichier généré.');
-  const { id: _id, ...row } = note;
+  const row = Object.fromEntries(Object.entries(note).filter(([k]) => k !== 'id'));
   try {
     const res = await fetch(`${url}/rest/v1/release_notes`, {
       method: 'POST',

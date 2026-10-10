@@ -112,3 +112,4 @@ export interface QuizSession {
 
 // ── Lecture syllabique ──────────────────────────────────────────────────────
 export * from './reading';
+export * from './question-bank';

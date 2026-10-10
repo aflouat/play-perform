@@ -1,5 +1,6 @@
 'use client';
 
+import { useQuestionBankReady } from '@/lib/question-bank-overlay';
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import type { Subject } from '@/types';
@@ -41,7 +42,8 @@ export default function QuizPage() {
 
   const validSubject = isValidSubject(subject) ? (subject as Subject) : 'maths';
   const { getQuestions: srsSelect, recordAnswer } = useSpacedRepetition(profileId, validSubject);
-  const allForSubject = isValidSubject(subject) ? getQuestions(subject as Subject) : [];
+  const bankReady = useQuestionBankReady();
+  const allForSubject = bankReady && isValidSubject(subject) ? getQuestions(subject as Subject) : [];
 
   const { questions, currentIndex, answers, finished, questionsLoaded, handleAnswer, replay, continueAnyway } =
     useQuizSession({ profileId, allForSubject, srsSelect, addXp, triggerGain, recordAnswer });
