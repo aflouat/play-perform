@@ -30,8 +30,8 @@ function Course({ course, active }: { course: CourseView; active: boolean }) {
     <li className="flex items-start gap-3 rounded-2xl bg-slate-50 p-3 text-sm">
       <span aria-hidden="true">{ICON[course.state]}</span>
       <div className="flex-1">
-        <p className={`font-bold ${course.state === 'done' ? 'text-slate-500 line-through' : 'text-[#1a1a2e]'}`}>{target}</p>
-        <p className="text-xs text-slate-500">Ton niveau : {course.level ?? '—'}</p>
+        <p className={`font-bold ${course.state === 'done' ? 'text-slate-500 line-through' : 'text-[#1a1a2e]'}`}>{course.title}</p>
+        <p className="text-xs text-slate-500">{target} · ton niveau : {course.level ?? '—'}</p>
         {req && (
           <p className={`text-xs ${course.state === 'needs-level' ? 'font-bold text-amber-700' : 'text-slate-500'}`}>
             Niveau {req.level} en {skillName(req.skillId)} requis pour débloquer ce cours
@@ -48,14 +48,14 @@ function Course({ course, active }: { course: CourseView; active: boolean }) {
   );
 }
 
-/** Detail of a phase: its label, its courses with the minimum level required, and its planning. */
+/** Detail of a phase: its label, its chapters (specific to the training path) with the minimum level required, and its planning. */
 export function PhaseDetail({ phase }: { phase: PhaseView }) {
   return (
     <div role="region" aria-label={`Détail de la phase ${phase.number}`} className="mt-5 space-y-3 border-t border-slate-100 pt-4">
       <h3 className="font-black text-[#1a1a2e]">Phase {phase.number} · {phase.title}</h3>
       <Schedule phase={phase} />
       <ul className="space-y-2">
-        {phase.courses.map((c) => <Course key={`${c.skillId}-${c.targetLevel}`} course={c} active={phase.status === 'current'} />)}
+        {phase.courses.map((c) => <Course key={c.title} course={c} active={phase.status === 'current'} />)}
       </ul>
     </div>
   );

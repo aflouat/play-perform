@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { PhaseView } from '../domain/roadmap';
+import type { TrainingPath } from '../domain/training-path';
 import { PhaseDetail } from './PhaseDetail';
 
 const STATUS_TEXT = { done: 'accomplie', current: 'en cours', locked: 'à venir, verrouillée' } as const;
@@ -24,13 +25,16 @@ function PhaseCircle({ phase }: { phase: PhaseView }) {
 }
 
 /** The "treasure map": numbered phases on a line (done ✓, current pulsing, locked 🔒); a click opens the phase's detail below. */
-export function RoadmapBanner({ phases }: { phases: PhaseView[] }) {
+export function RoadmapBanner({ phases, path }: { phases: PhaseView[]; path: TrainingPath }) {
   const [openId, setOpenId] = useState<string | null>(null);
   const open = phases.find((p) => p.id === openId && p.status !== 'locked');
 
   return (
     <section aria-label="Ma feuille de route" className="rounded-3xl bg-white p-5 shadow-sm">
-      <h2 className="font-black text-[#1a1a2e]">🗺️ Ma carte au trésor</h2>
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <h2 className="font-black text-[#1a1a2e]">🗺️ Ma carte au trésor</h2>
+        <p className="text-xs font-bold text-violet-700">Parcours : {path.emoji} {path.name}</p>
+      </div>
       <ol className="mt-4 flex items-start">
         {phases.map((phase, i) => (
           <li key={phase.id} className="relative flex flex-1 flex-col items-center text-center">

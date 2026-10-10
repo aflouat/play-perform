@@ -5,6 +5,7 @@ import type { DbStudent } from '@/lib/db';
 import { apiDeleteStudent, apiUpdateStudent } from '@/lib/students-api';
 import { AccessCodeBox } from './AccessCodeBox';
 import { RankingSettings } from './RankingSettings';
+import { TrainingPathSelect } from '@/modules/dashboards';
 
 interface StudentScore { xp: number; level: number; }
 
@@ -98,6 +99,7 @@ export function StudentCard({ student, onDelete, onUpdated }: StudentCardProps) 
 
       <AccessCodeBox student={student} onCode={(code) => onUpdated({ ...student, access_code: code })} />
       <RankingSettings student={student} onChange={(patch) => onUpdated({ ...student, ...patch })} />
+      {student.id && <TrainingPathSelect studentId={student.id} />}
 
       {editing && (
         <div className="flex gap-2 pt-1">

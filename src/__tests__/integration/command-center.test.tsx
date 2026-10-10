@@ -1,10 +1,13 @@
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { CommandCenter } from '@/modules/dashboards/ui/CommandCenter';
+import { TrainingPathSelect } from '@/modules/dashboards/ui/TrainingPathSelect';
+import * as client from '@/modules/dashboards/infra/dashboard-client';
 import * as snapshot from '@/modules/dashboards/application/useLearnerSnapshot';
 import * as competition from '@/modules/competition';
 import * as community from '@/modules/community';
 
 jest.mock('@/modules/dashboards/application/useLearnerSnapshot');
+jest.mock('@/modules/dashboards/infra/dashboard-client');
 jest.mock('@/modules/competition', () => ({
   ...jest.requireActual('@/modules/competition'),
   fetchFeed: jest.fn(), sendCheer: jest.fn(), fetchIdentity: jest.fn(),
@@ -29,6 +32,8 @@ beforeEach(() => {
   ] as never);
   jest.mocked(competition.sendCheer).mockResolvedValue(true);
   jest.mocked(community.fetchDistributions).mockResolvedValue({});
+  jest.mocked(client.fetchTrainingPath).mockResolvedValue('college');
+  jest.mocked(client.saveTrainingPath).mockResolvedValue(null);
 });
 
 describe('learner command center', () => {
@@ -39,8 +44,9 @@ describe('learner command center', () => {
     expect(within(status).getByText('Rang 3')).toBeInTheDocument();
     expect(within(status).getByRole('img', { name: 'Premier Quiz' })).toBeInTheDocument();
 
-    expect(screen.getByRole('button', { name: /Phase 1 : Fondations, accomplie/ })).toBeEnabled();
-    expect(screen.getByRole('button', { name: /Phase 2 : Les bases du collège, en cours, 0 cours sur 3/ })).toBeEnabled();
+    expect(await screen.findByRole('button', { name: /Phase 1 : Fondations, accomplie/ })).toBeEnabled();
+    expect(screen.getByText(/Parcours : 🎒 Réussir au collège/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Phase 2 : Bases, en cours, 0 cours sur 3/ })).toBeEnabled();
     expect(screen.getByRole('button', { name: /Phase 3 : Consolidation, à venir, verrouillée/ })).toBeDisabled();
 
     const resume = screen.getByRole('link', { name: /Reprendre mon apprentissage/ });
@@ -55,7 +61,20 @@ describe('learner command center', () => {
     expect(within(detail).getByText(/Niveau 2 en Logique et raisonnement requis pour débloquer ce cours/)).toBeInTheDocument();
     expect(within(detail).getByRole('link', { name: /Remise à niveau/ })).toHaveAttribute('href', '/competences/logique');
     expect(within(detail).getByText(/^Objectif :/)).toBeInTheDocument();
-    expect(JSON.parse(localStorage.getItem('pp:roadmap:p1') ?? '{}')).toMatchObject({ startedAt: today(), completedAt: { fondations: today() } });
+    expect(JSON.parse(localStorage.getItem('pp:roadmap:p1:college') ?? '{}')).toMatchObject({ startedAt: today(), completedAt: { fondations: today() } });
+  });
+
+  it('asks for a training path first, then shows the chapters of that path', async () => {
+    jest.mocked(client.fetchTrainingPath).mockResolvedValue(null);
+    render(<CommandCenter profileId="p1" />);
+    fireEvent.click(await screen.findByRole('button', { name: /Technicien\(ne\) de laboratoire/ }));
+    expect(client.saveTrainingPath).toHaveBeenCalledWith('p1', 'technicien-laboratoire');
+    // Same generic phase, the lab chapters: méthode is done, the safety chapter is not
+    fireEvent.click(await screen.findByRole('button', { name: /Phase 1 : Fondations, en cours, 1 cours sur 2/ }));
+    const detail = screen.getByRole('region', { name: 'Détail de la phase 1' });
+    expect(within(detail).getByText('Sécurité, pictogrammes et unités de mesure')).toBeInTheDocument();
+    expect(within(detail).queryByText('Repérer et déduire')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Phase 2 : Bases, à venir, verrouillée/ })).toBeDisabled();
   });
 
   it('shows the centre feed with a Bravo button', async () => {
@@ -64,5 +83,17 @@ describe('learner command center', () => {
     fireEvent.click(bravo);
     expect(competition.sendCheer).toHaveBeenCalledWith('p1', 'e1');
     expect(bravo).toBeDisabled();
+  });
+});
+
+describe('training path assigned by the centre', () => {
+  it('lets the teacher change a student’s path', async () => {
+    jest.mocked(client.fetchTrainingPath).mockResolvedValue('mathematiques');
+    render(<TrainingPathSelect studentId="s1" />);
+    const select = await screen.findByRole('combobox', { name: /Parcours/ });
+    expect(select).toHaveValue('mathematiques');
+    fireEvent.change(select, { target: { value: 'technicien-laboratoire' } });
+    await waitFor(() => expect(client.saveTrainingPath).toHaveBeenCalledWith('s1', 'technicien-laboratoire'));
+    expect(await screen.findByRole('status')).toHaveTextContent(/Parcours enregistré/);
   });
 });

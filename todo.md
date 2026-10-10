@@ -24,7 +24,8 @@ Fichier unique de pilotage : **en cours**, **backlog** et **bugs connus** (rempl
 - [ ] Binômes : message d'encouragement au partenaire (texte préécrit) ; choix d'un binôme par le centre ; bonus plus riche (badge d'équipe)
 - [ ] Pièges classiques : alimenter aussi `/quiz/[subject]` (matières) en statistiques ; notifier le centre des questions réussies par presque personne (question à revoir)
 
-- [ ] Centre de commande : feuille de route définie par le centre (table + éditeur), dates de complétion des phases en base (aujourd'hui sur l'appareil), événement « a validé la Phase n » dans le fil ; contenu quiz pour Logique / Méthode (la remise à niveau y mène à l'évaluation)
+- [ ] **Prod : appliquer `supabase/migrations/20261021000000_training_path.sql`** (`students.training_path`) — sans elle, l'élève ne peut pas enregistrer son parcours (le choix reste sur l'appareil seulement pour un profil démo)
+- [ ] Centre de commande : catalogue des parcours en base + éditeur (chapitres par phase) pour la société mère ; compétences propres aux métiers (ex. sécurité au laboratoire, aujourd'hui rattachée à « Matière et énergie ») ; dates de complétion des phases en base (aujourd'hui sur l'appareil) ; événement « a validé la Phase n » dans le fil ; contenu quiz pour Logique / Méthode (la remise à niveau y mène à l'évaluation) ; lien avec la table historique `parcours` (sessions de quiz multi-matières, sans rapport aujourd'hui)
 
 ## UX par rôle (avant le backend centre mère / franchises)
 - [ ] Vérifier le SIREN / SIRET auprès de l'API Sirene (INSEE) à l'inscription d'un centre (aujourd'hui : somme de contrôle + examen manuel par la société mère)

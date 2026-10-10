@@ -14,10 +14,14 @@ export { onboardingSteps, firstQuizHref, applyStartLevel } from './domain/onboar
 export { FirstSteps } from './ui/FirstSteps';
 export { PlacementStep } from './ui/PlacementStep';
 export type { RoadmapCourse, RoadmapPhase, RoadmapProgress, PhaseStatus, CourseState, CourseView, PhaseView, ResumeTarget } from './domain/roadmap';
-export { buildRoadmap, courseState, courseHref, plannedDates, newlyCompleted, resumeTarget } from './domain/roadmap';
+export { buildRoadmap, courseState, courseHref, plannedDates, newlyCompleted, resumeTarget, currentSkillIds } from './domain/roadmap';
+export type { GenericPhaseId, PathPhase, TrainingPath, PathChoice } from './domain/training-path';
+export { GENERIC_PHASES, phasesOf, validatePathChoice } from './domain/training-path';
+export { getTrainingPaths, getTrainingPath } from './infra/training-paths-seed';
+export { useTrainingPath } from './application/useTrainingPath';
+export { TrainingPathSelect } from './ui/TrainingPathSelect';
 export type { RankProgress, TrapAlert } from './domain/scorecard';
 export { rankProgress, latestBadges, trapAlerts } from './domain/scorecard';
-export { getRoadmap } from './infra/roadmap-seed';
 export { rememberLastSkill } from './infra/roadmap-storage';
 export { useRoadmap } from './application/useRoadmap';
 export { CommandCenter } from './ui/CommandCenter';

@@ -7,9 +7,9 @@ const skillName = (id: string) => getSkillById(id)?.name ?? id;
 function detailOf(target: ResumeTarget): string {
   if (target.kind === 'finished') return 'Feuille de route terminée ! Vise la maîtrise dans ta ville.';
   if (target.kind === 'remediation') {
-    return `D’abord « ${skillName(target.skillId)} » niveau ${target.level}, requis pour « ${skillName(target.forSkillId)} »`;
+    return `D’abord « ${skillName(target.skillId)} » niveau ${target.level}, requis pour « ${target.forTitle} »`;
   }
-  return `« ${skillName(target.skillId)} » · vers le niveau ${target.level}`;
+  return `« ${target.title} » · ${skillName(target.skillId)} vers le niveau ${target.level}`;
 }
 
 /** "Action immédiate": one big button that takes the learner straight back where they stopped. */

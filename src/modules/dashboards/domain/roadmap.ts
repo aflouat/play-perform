@@ -1,7 +1,9 @@
 import { hasQuestionBank, type SkillLevelNumber } from '@/modules/skills';
 
-/** One course of a phase: bring a skill to a target level, possibly once another skill reaches a minimum level. */
+/** One chapter of a phase: bring a skill to a target level, possibly once another skill reaches a minimum level. */
 export interface RoadmapCourse {
+  /** Pedagogical title, specific to the training path (e.g. "Proportions, dilutions et concentrations") */
+  title: string;
   skillId: string;
   targetLevel: SkillLevelNumber;
   /** Minimum level required in a skill before opening this course */
@@ -29,8 +31,8 @@ export interface PhaseView {
 }
 
 export type ResumeTarget =
-  | { kind: 'course'; skillId: string; level: SkillLevelNumber; href: string }
-  | { kind: 'remediation'; skillId: string; level: SkillLevelNumber; forSkillId: string; href: string }
+  | { kind: 'course'; title: string; skillId: string; level: SkillLevelNumber; href: string }
+  | { kind: 'remediation'; skillId: string; level: SkillLevelNumber; forTitle: string; href: string }
   | { kind: 'finished'; href: string };
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -94,7 +96,13 @@ export function resumeTarget(views: readonly PhaseView[], lastSkillId: string | 
   const course = todo.find((c) => c.skillId === lastSkillId) ?? todo[0];
   if (course.state === 'needs-level' && course.requires) {
     const { skillId, level } = course.requires;
-    return { kind: 'remediation', skillId, level, forSkillId: course.skillId, href: courseHref(skillId, hasQuiz) };
+    return { kind: 'remediation', skillId, level, forTitle: course.title, href: courseHref(skillId, hasQuiz) };
   }
-  return { kind: 'course', skillId: course.skillId, level: course.targetLevel, href: courseHref(course.skillId, hasQuiz) };
+  return { kind: 'course', title: course.title, skillId: course.skillId, level: course.targetLevel, href: courseHref(course.skillId, hasQuiz) };
+}
+
+/** Skills still to work on in the current phase (the feed's classic mistakes are taken from them). */
+export function currentSkillIds(views: readonly PhaseView[]): string[] {
+  const current = views.find((v) => v.status === 'current');
+  return current ? [...new Set(current.courses.filter((c) => c.state !== 'done').map((c) => c.skillId))] : [];
 }

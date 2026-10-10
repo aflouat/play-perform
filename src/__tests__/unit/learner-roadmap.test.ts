@@ -5,12 +5,12 @@ import { latestBadges, rankProgress, trapAlerts } from '@/modules/dashboards/dom
 import type { Badge } from '@/types';
 
 const PHASES: RoadmapPhase[] = [
-  { id: 'p1', title: 'Fondations', weeks: 2, courses: [{ skillId: 'methode', targetLevel: 2 }, { skillId: 'logique', targetLevel: 1 }] },
+  { id: 'p1', title: 'Fondations', weeks: 2, courses: [{ title: 'Chapitre methode 2', skillId: 'methode', targetLevel: 2 }, { title: 'Chapitre logique 1', skillId: 'logique', targetLevel: 1 }] },
   { id: 'p2', title: 'Bases', weeks: 3, courses: [
-    { skillId: 'maths', targetLevel: 2, requires: { skillId: 'logique', level: 2 } },
-    { skillId: 'francais', targetLevel: 2 },
+    { title: 'Chapitre maths 2', skillId: 'maths', targetLevel: 2, requires: { skillId: 'logique', level: 2 } },
+    { title: 'Chapitre francais 2', skillId: 'francais', targetLevel: 2 },
   ] },
-  { id: 'p3', title: 'Consolidation', weeks: 1, courses: [{ skillId: 'maths', targetLevel: 3 }] },
+  { id: 'p3', title: 'Consolidation', weeks: 1, courses: [{ title: 'Chapitre maths 3', skillId: 'maths', targetLevel: 3 }] },
 ];
 const START = { startedAt: '2026-10-01', completedAt: {} };
 const withQuiz = () => true;
@@ -67,7 +67,7 @@ describe('phase lock', () => {
 describe('resume (where the learner stopped)', () => {
   it('goes to the next course of the current phase', () => {
     const views = buildRoadmap(PHASES, { methode: 2 }, START, '2026-10-05');
-    expect(resumeTarget(views, null, withQuiz)).toEqual({ kind: 'course', skillId: 'logique', level: 1, href: '/competences/logique?activity=quiz' });
+    expect(resumeTarget(views, null, withQuiz)).toEqual({ kind: 'course', title: 'Chapitre logique 1', skillId: 'logique', level: 1, href: '/competences/logique?activity=quiz' });
   });
 
   it('prefers the last skill worked on when it is still to do in the current phase', () => {
@@ -79,7 +79,7 @@ describe('resume (where the learner stopped)', () => {
   it('suggests the catch-up course when the required level is missing', () => {
     const views = buildRoadmap(PHASES, { methode: 2, logique: 1 }, START, '2026-10-05');
     expect(resumeTarget(views, null, withQuiz)).toEqual({
-      kind: 'remediation', skillId: 'logique', level: 2, forSkillId: 'maths', href: '/competences/logique?activity=quiz',
+      kind: 'remediation', skillId: 'logique', level: 2, forTitle: 'Chapitre maths 2', href: '/competences/logique?activity=quiz',
     });
   });
 
