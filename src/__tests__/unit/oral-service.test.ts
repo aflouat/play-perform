@@ -7,6 +7,8 @@ import type { BookingDetail } from '@/modules/exams/infra/booking-repository';
 
 jest.mock('@/modules/exams/infra/slot-repository');
 jest.mock('@/modules/exams/infra/booking-repository');
+jest.mock('@/modules/exams/infra/staffing-repository');
+import * as staffing from '@/modules/exams/infra/staffing-repository';
 jest.mock('@/modules/skills/server', () => ({
   ...jest.requireActual('@/modules/skills/domain/enrollment'),
   getEvaluationPrompt: () => 'Explique ton raisonnement.',
@@ -34,6 +36,7 @@ describe('bookOral', () => {
   it('books at the learner’s current level', async () => {
     expect(await bookOral({ profileId: 'p1', slotId: 's1', skillId: 'logique' }, NOW)).toEqual({ bookingId: 'b1' });
     expect(bookings.bookSlot).toHaveBeenCalledWith('s1', 'p1', 'logique', 2);
+    expect(staffing.resolveRequests).toHaveBeenCalledWith({ profileId: 'p1', skillId: 'logique' }, 'booked');
   });
 
   it('counts only the orals still to come', async () => {

@@ -1,10 +1,10 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { fetchMyAccess } from '@/modules/organizations';
 import { groupByDay } from '../domain/slots';
 import type { AgendaSlot } from '../domain/types';
 import { fetchAgenda } from '../infra/exam-client';
+import { fetchExaminerStatus } from '../infra/staffing-client';
 import { AvailabilityForm } from './AvailabilityForm';
 import { SlotRow } from './SlotRow';
 import { dayLabel, TIME_ZONE } from './format';
@@ -24,11 +24,12 @@ export function ExamAgenda() {
   }, [monday]);
   useEffect(load, [load]);
   useEffect(() => {
-    fetchMyAccess().then((me) => setCentres((me?.memberships ?? []).filter((m) => m.role === 'examiner').map((m) => ({ id: m.organizationId, name: m.organizationName }))));
+    // Centres that allowed this person to give orals
+    fetchExaminerStatus().then((status) => setCentres(status?.centres ?? []));
   }, []);
 
   if (centres && centres.length === 0) {
-    return <p role="alert" className="rounded-2xl bg-amber-50 p-4 text-sm text-amber-900">Seul un examinateur rattaché à un centre peut ouvrir des créneaux d’oral.</p>;
+    return <p role="alert" className="rounded-2xl bg-amber-50 p-4 text-sm text-amber-900">Ton centre ne t’a pas encore confié les oraux : son responsable peut l’activer pour toi dans « Mon centre » (« Peut faire passer les oraux »).</p>;
   }
   const days = groupByDay(slots ?? [], TIME_ZONE);
   const booked = (slots ?? []).filter((s) => s.booking).length;

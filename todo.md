@@ -5,7 +5,9 @@ Fichier unique de pilotage : **en cours**, **backlog** et **bugs connus** (rempl
 ## En cours — v0.13 : oraux sur créneaux + landing de chaque centre franchisé
 Décisions (2026-10-10) : back-office centralisé (société mère) ; le centre recrute les élèves et fait le support commercial ; **seul le créneau d'oral est payant**, **encaissé en central** puis la part du centre lui est **reversée** (commission de la plateforme retenue). Modèle repris d'app-store / freelancehub (créneaux, réservation atomique, montants recalculés serveur).
 - [x] Créneaux, réservation, résultat de l'oral, landing des centres et demandes de rappel (livrés, voir README modules `exams` et `storefront`)
-- [ ] **Prod : appliquer `20261023000000_exam_slots.sql` puis `20261024000000_centre_leads.sql`** (SQL Editor, dans cet ordre ; testées sur Postgres 17, rejouables)
+- [x] « Peut faire passer les oraux » (réglage du centre), notification aux examinateurs, liste d'attente de l'oral final avec alerte au centre et à l'élève
+- [ ] **Prod : appliquer `20261023000000_exam_slots.sql`, `20261024000000_centre_leads.sql` puis `20261025000000_oral_staffing.sql`** (SQL Editor, dans cet ordre ; testées sur Postgres 17, rejouables)
+- [ ] Notifications hors application (Web Push / e-mail) : examinateur autorisé, élève en attente quand des créneaux s'ouvrent, centre quand un élève attend depuis plus de 3 jours ; lien « Agenda des oraux » dans le menu pour un enseignant autorisé
 - [ ] Rappel de l'oral la veille (Web Push / e-mail) ; « Ton oral : mardi 10:00 » dans « Aujourd'hui » ; notifier l'examinateur d'une réservation ou annulation
 - [ ] Lien visio de l'oral (ou salle du centre) sur la réservation ; vérifier l'identité de l'élève avant l'oral
 - [ ] Landing : logo / photo et horaires du centre (édités par le centre), sitemap des pages `/centres/*`, lien vers la page depuis l'accueil (« Trouver un centre près de chez moi »)

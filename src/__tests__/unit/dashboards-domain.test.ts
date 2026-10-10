@@ -81,6 +81,11 @@ describe('nextActionsFor (learner home)', () => {
   it('asks first for the pseudonym and the names (ranking and diploma)', () => {
     expect(ids({ ...base, identityComplete: false, dueReviews: 2 })).toEqual(['profile', 'reviews']);
   });
+  it('tells a learner waiting for an examiner that the centre is on it', () => {
+    const actions = nextActionsFor({ ...base, dueReviews: 1, waitingOrals: [{ skillId: 'logique', name: 'Logique' }] });
+    expect(actions.map((x) => x.id)).toEqual(['reviews', 'oral-logique']);
+    expect(actions[1]).toMatchObject({ text: expect.stringMatching(/liste d’attente/), href: '/competences/logique' });
+  });
   it('announces an answered enrollment request', () => {
     expect(ids({ ...base, answeredEnrollments: 1 })).toContain('enrollment-answer');
   });

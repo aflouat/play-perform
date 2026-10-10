@@ -28,8 +28,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const validation = validateAvailability(await req.json().catch(() => null), new Date());
   if (!validation.ok) return fail(validation.error, 400);
   const { organizationId, durationMin, starts } = validation.value;
-  if (!canOpenSlots(ctx, organizationId)) return fail('Tu n’es pas examinateur de ce centre.', 403);
   try {
+    if (!(await canOpenSlots(ctx.userId, organizationId))) return fail('Ton centre ne t’a pas (encore) confié les oraux.', 403);
     return NextResponse.json(await createSlots(ctx.userId, organizationId, durationMin, starts), { status: 201 });
   } catch (err) {
     console.error('[POST /api/exam-slots]', err);

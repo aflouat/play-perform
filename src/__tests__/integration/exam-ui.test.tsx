@@ -2,10 +2,10 @@ import { fireEvent, render, screen, waitFor, within } from '@testing-library/rea
 import { OralBooking } from '@/modules/exams/ui/OralBooking';
 import { ExamAgenda } from '@/modules/exams/ui/ExamAgenda';
 import * as client from '@/modules/exams/infra/exam-client';
-import * as organizations from '@/modules/organizations';
 
 jest.mock('@/modules/exams/infra/exam-client');
-jest.mock('@/modules/organizations', () => ({ ...jest.requireActual('@/modules/organizations'), fetchMyAccess: jest.fn() }));
+jest.mock('@/modules/exams/infra/staffing-client');
+import * as staffing from '@/modules/exams/infra/staffing-client';
 const enrollments = { current: [{ id: 'e1', skillId: 'logique', status: 'approved' }] };
 jest.mock('@/modules/skills/application/use-enrollments', () => ({ useEnrollments: () => ({ enrollments: enrollments.current, loaded: true }) }));
 
@@ -20,6 +20,9 @@ beforeEach(() => {
   jest.mocked(client.fetchOpenSlots).mockResolvedValue([slot('s1', 50), slot('s2', 50.5)]);
   jest.mocked(client.bookOralSlot).mockResolvedValue(null);
   jest.mocked(client.cancelOral).mockResolvedValue(null);
+  jest.mocked(staffing.fetchMyOralRequests).mockResolvedValue([]);
+  jest.mocked(staffing.joinOralWaitingList).mockResolvedValue(null);
+  localStorage.clear();
 });
 
 describe('learner: booking an oral', () => {
@@ -55,8 +58,7 @@ describe('learner: booking an oral', () => {
 
 describe('examiner: agenda', () => {
   beforeEach(() => {
-    jest.mocked(organizations.fetchMyAccess).mockResolvedValue({ email: 'e@x', isSuperAdmin: false, memberships: [
-      { organizationId: 'org-1', organizationName: 'Centre Alpha', role: 'examiner' }, { organizationId: 'org-2', organizationName: 'Centre Beta', role: 'teacher' }] });
+    jest.mocked(staffing.fetchExaminerStatus).mockResolvedValue({ centres: [{ id: 'org-1', name: 'Centre Alpha' }], openSlots: 1, waiting: 0 });
     jest.mocked(client.openAvailability).mockResolvedValue(null);
     jest.mocked(client.fetchAgenda).mockResolvedValue([
       { ...slot('s1', -0.2), status: 'booked', booking: { id: 'b1', profileId: 'p1', studentName: 'Léa Martin', skillId: 'logique', level: 2, status: 'booked', outcome: null } },
@@ -79,5 +81,51 @@ describe('examiner: agenda', () => {
     expect(screen.getByText('Libre')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: /Validé/ }));
     await waitFor(() => expect(client.sendOutcome).toHaveBeenCalledWith('b1', 'passed', ''));
+  });
+});
+
+describe('final oral without any examiner available', () => {
+  it('puts the learner on the waiting list once and tells them the centre is looking for an examiner', async () => {
+    localStorage.setItem('pp:skill-levels:p1', JSON.stringify({ logique: 4 }));
+    jest.mocked(client.fetchOpenSlots).mockResolvedValue([]);
+    jest.mocked(staffing.fetchMyOralRequests).mockResolvedValueOnce([])
+      .mockResolvedValue([{ id: 'r1', skillId: 'logique', level: 4, status: 'waiting', createdAt: '2026-10-10T10:00:00Z' }]);
+    jest.mocked(staffing.joinOralWaitingList).mockResolvedValue(null);
+    render(<OralBooking profileId="p1" skillId="logique" />);
+    expect(await screen.findByText(/Tu es en liste d’attente pour ton oral final/)).toBeInTheDocument();
+    expect(staffing.joinOralWaitingList).toHaveBeenCalledTimes(1);
+    expect(staffing.joinOralWaitingList).toHaveBeenCalledWith('p1', 'logique');
+  });
+
+  it('does not wait before the final phase, and announces the slots once opened', async () => {
+    localStorage.setItem('pp:skill-levels:p1', JSON.stringify({ logique: 2 }));
+    jest.mocked(client.fetchOpenSlots).mockResolvedValue([]);
+    jest.mocked(staffing.fetchMyOralRequests).mockResolvedValue([]);
+    const { unmount } = render(<OralBooking profileId="p1" skillId="logique" />);
+    expect(await screen.findByText(/Pas de créneau libre/)).toBeInTheDocument();
+    expect(staffing.joinOralWaitingList).not.toHaveBeenCalled();
+    unmount();
+    jest.mocked(client.fetchOpenSlots).mockResolvedValue([slot('s1', 50)]);
+    jest.mocked(staffing.fetchMyOralRequests).mockResolvedValue([{ id: 'r1', skillId: 'logique', level: 4, status: 'waiting', createdAt: '2026-10-10T10:00:00Z' }]);
+    render(<OralBooking profileId="p1" skillId="logique" />);
+    expect(await screen.findByText(/Bonne nouvelle/)).toBeInTheDocument();
+  });
+});
+
+describe('centre: staffing the orals', () => {
+  it('shows the learners waiting and lets the manager entrust orals to a teacher', async () => {
+    const { OralWaitingList } = await import('@/modules/exams/ui/OralWaitingList');
+    jest.mocked(staffing.fetchWaitingRequests).mockResolvedValue([{ id: 'r1', profileId: 'p1', studentName: 'Léa Martin', organizationId: 'org-1', skillId: 'logique', level: 4, createdAt: new Date().toISOString() }]);
+    render(<OralWaitingList />);
+    expect(await screen.findByRole('heading', { name: /1 élève attend un examinateur/ })).toBeInTheDocument();
+    expect(screen.getByText('Léa Martin')).toBeInTheDocument();
+  });
+
+  it('notifies an examiner the centre allowed but who has no availability', async () => {
+    const { OralAvailabilityNotice } = await import('@/modules/exams/ui/OralAvailabilityNotice');
+    jest.mocked(staffing.fetchExaminerStatus).mockResolvedValue({ centres: [{ id: 'org-1', name: 'Alpha' }], openSlots: 0, waiting: 0 });
+    render(<OralAvailabilityNotice />);
+    expect(await screen.findByRole('status')).toHaveTextContent(/saisis tes disponibilités/);
+    expect(screen.getByRole('link', { name: /Saisir mes disponibilités/ })).toHaveAttribute('href', '/examinateur/agenda');
   });
 });

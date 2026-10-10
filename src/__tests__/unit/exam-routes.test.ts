@@ -13,10 +13,10 @@ import type { BookingDetail } from '@/modules/exams/server';
 jest.mock('@/lib/actor-auth');
 jest.mock('@/lib/access-context');
 jest.mock('@/modules/competition/server');
-jest.mock('@/modules/exams/server', () => ({ ...jest.requireActual('@/modules/exams/application/oral-service'), ...jestMocks() }));
+jest.mock('@/modules/exams/server', () => jestMocks());
 function jestMocks() {
   return {
-    createSlots: jest.fn(), getSlot: jest.fn(), closeFreeSlot: jest.fn(), liveBookingOfSlot: jest.fn(), cancelBooking: jest.fn(),
+    canOpenSlots: jest.fn(), createSlots: jest.fn(), getSlot: jest.fn(), closeFreeSlot: jest.fn(), liveBookingOfSlot: jest.fn(), cancelBooking: jest.fn(),
     getBooking: jest.fn(), bookOral: jest.fn(), recordOutcome: jest.fn(), listBookingsForProfile: jest.fn(),
   };
 }
@@ -41,7 +41,8 @@ beforeEach(() => {
 describe('examiner slots', () => {
   const range = (org: string) => ({ organizationId: org, from: inDays(2), to: new Date(Date.parse(inDays(2)) + 3_600_000).toISOString() });
 
-  it('opens 30-minute slots in a centre where the caller is an examiner only', async () => {
+  it('opens 30-minute slots only in a centre that allowed the caller to give orals', async () => {
+    repo.canOpenSlots.mockImplementation(async (_user, org) => org === 'org-1');
     repo.createSlots.mockResolvedValue({ created: 2, skipped: 0 });
     expect((await openSlots(req('POST', range('org-1')))).status).toBe(201);
     expect(repo.createSlots).toHaveBeenCalledWith('u-exam', 'org-1', 30, expect.any(Array));

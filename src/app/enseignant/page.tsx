@@ -10,6 +10,7 @@ import { apiFetchStudents } from '@/lib/students-api';
 import { CentreApplicationBanner, CentreCard, fetchMyAccess, isExaminerOnly, navAccessOf } from '@/modules/organizations';
 import { CentreDashboardView } from '@/modules/dashboards';
 import { CentreLeads } from '@/modules/storefront';
+import { OralAvailabilityNotice, OralStaffSettings, OralWaitingList } from '@/modules/exams';
 
 function getClient() {
   return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL ?? '', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '');
@@ -44,7 +45,10 @@ export default function TeacherPage() {
         </div>
 
         <CentreApplicationBanner />
+        <OralAvailabilityNotice />
+        <OralWaitingList />
         <CentreDashboardView />
+        <OralStaffSettings />
         <CentreLeads />
         <CentreCard />
 

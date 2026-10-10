@@ -6,6 +6,7 @@ import {
   fetchEnrollments, fetchProfileEvaluations, getAllPlans, getAllSkillLevels, getSeen, getSkills, isEnrolled, loadSkillReviews,
 } from '@/modules/skills';
 import { fetchCompetition, fetchIdentity, isIdentityReady } from '@/modules/competition';
+import { fetchMyOralRequests } from '@/modules/exams';
 import type { LearnerSnapshot } from '../domain/learner';
 
 const isAfter = (iso: string | null, since: string | null) => Boolean(iso) && (!since || (iso as string) > since);
@@ -18,7 +19,7 @@ export function useLearnerSnapshot(profileId: string, version = 0): LearnerSnaps
   useEffect(() => {
     let alive = true;
     const now = new Date();
-    Promise.all([fetchEnrollments(profileId), fetchProfileEvaluations(profileId), fetchCompetition(profileId, 'xp'), fetchIdentity(profileId)]).then(([enrollments, evaluations, competition, identity]) => {
+    Promise.all([fetchEnrollments(profileId), fetchProfileEvaluations(profileId), fetchCompetition(profileId, 'xp'), fetchIdentity(profileId), fetchMyOralRequests(profileId)]).then(([enrollments, evaluations, competition, identity, oralRequests]) => {
       if (!alive) return;
       const score = loadFromStorage(profileId) ?? initScore(profileId);
       const levels = getAllSkillLevels(profileId);
@@ -42,6 +43,7 @@ export function useLearnerSnapshot(profileId: string, version = 0): LearnerSnaps
         identityComplete: identity === null ? true : isIdentityReady(identity),
         hasLevel: Object.keys(levels).length > 0,
         startedSkillId: Object.entries(levels).sort(([, a], [, b]) => b - a)[0]?.[0] ?? null,
+        waitingOrals: oralRequests.filter((r) => r.status === 'waiting').map((r) => ({ skillId: r.skillId, name: getSkills().find((s) => s.id === r.skillId)?.name ?? r.skillId })),
       });
     });
     return () => { alive = false; };

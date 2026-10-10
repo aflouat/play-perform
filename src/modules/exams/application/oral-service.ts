@@ -1,13 +1,12 @@
 import { getSkillById, type SkillLevelNumber } from '@/modules/skills';
 import { getEvaluationPrompt, isEnrolled, listEnrollmentsForProfile, listLevels, recordOralEvaluation } from '@/modules/skills/server';
-import type { AccessContext } from '@/modules/organizations';
 import { bookingRefusal, type BookingRequest, type Outcome } from '../domain/slots';
 import { getSlot } from '../infra/slot-repository';
 import { bookSlot, completeBooking, listBookingsForProfile, studentOrganization, type BookingDetail } from '../infra/booking-repository';
+import { oralCentresOf, resolveRequests } from '../infra/staffing-repository';
 
-/** Server-side only. An examiner opens slots in the centres where they are an examiner. */
-export const canOpenSlots = (ctx: AccessContext, organizationId: string): boolean =>
-  ctx.memberships.some((m) => m.organizationId === organizationId && m.role === 'examiner');
+/** Server-side only. Slots are opened by the people the centre allowed to give orals ("peut faire passer les oraux"). */
+export const canOpenSlots = async (userId: string, organizationId: string): Promise<boolean> => (await oralCentresOf(userId)).includes(organizationId);
 
 const formatDay = (iso: string) => new Date(iso).toLocaleString('fr-FR', { timeZone: 'Europe/Paris', dateStyle: 'long', timeStyle: 'short' });
 
@@ -26,7 +25,10 @@ export async function bookOral(request: BookingRequest, now: Date): Promise<{ bo
   if (refusal) return refusal;
   const level = (levels[request.skillId] ?? 1) as SkillLevelNumber;
   const bookingId = await bookSlot(slot.id, request.profileId, request.skillId, level);
-  return bookingId ? { bookingId } : { status: 409, error: 'Ce créneau vient d’être réservé par quelqu’un d’autre : choisis-en un autre.' };
+  if (!bookingId) return { status: 409, error: 'Ce créneau vient d’être réservé par quelqu’un d’autre : choisis-en un autre.' };
+  // A learner on the waiting list for this skill is now served
+  await resolveRequests({ profileId: request.profileId, skillId: request.skillId }, 'booked');
+  return { bookingId };
 }
 
 /** The examiner's result: a pass or a fail becomes a corrected evaluation (a pass raises the level); an absence just closes the oral. */

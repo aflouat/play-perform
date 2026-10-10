@@ -17,6 +17,8 @@ export interface LearnerSnapshot {
   hasLevel: boolean;
   /** Skill of the best level: where the first quiz goes */
   startedSkillId: string | null;
+  /** Final orals waiting for an examiner (the centre is looking for one) */
+  waitingOrals?: { skillId: string; name: string }[];
 }
 
 export interface NextAction { id: string; icon: string; text: string; href: string }
@@ -28,6 +30,9 @@ export function nextActionsFor(s: LearnerSnapshot): NextAction[] {
   const actions: NextAction[] = [];
   if (!s.identityComplete) actions.push({ id: 'profile', icon: '🎭', text: 'Complète ton profil : un pseudo pour le classement, ton nom et prénom pour ton diplôme', href: '#profil' });
   if (s.dueReviews > 0) actions.push({ id: 'reviews', icon: '⏰', text: `${s.dueReviews} révision${s.dueReviews > 1 ? 's' : ''} à faire maintenant`, href: '/competences' });
+  for (const o of s.waitingOrals ?? []) {
+    actions.push({ id: `oral-${o.skillId}`, icon: '⏳', text: `Oral final de « ${o.name} » : liste d’attente, ton centre te cherche un examinateur`, href: `/competences/${o.skillId}` });
+  }
   if (s.evaluationsToRead > 0) actions.push({ id: 'feedback', icon: '📝', text: `Ton examinateur a corrigé ${s.evaluationsToRead} évaluation${s.evaluationsToRead > 1 ? 's' : ''} : lis ses commentaires`, href: '/competences' });
   if (s.answeredEnrollments > 0) actions.push({ id: 'enrollment-answer', icon: '📨', text: 'Ton centre a répondu à ta demande d’inscription', href: '/competences' });
   if (!s.challengePlayed) actions.push({ id: 'challenge', icon: '🏆', text: 'Relève le défi de la semaine (5 questions)', href: '/classement' });
