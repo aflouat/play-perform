@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import type { TrainingPath } from '../domain/training-path';
-import { getTrainingPath } from '../infra/training-paths-seed';
+import { useTrainingPathCatalog } from './useTrainingPathCatalog';
 import { fetchTrainingPath, saveTrainingPath } from '../infra/dashboard-client';
 import { cachePath, getCachedPath } from '../infra/roadmap-storage';
 
@@ -10,6 +10,8 @@ export interface TrainingPathState {
   /** False until the database answered (or turned out to be unavailable) */
   loaded: boolean;
   path: TrainingPath | null;
+  /** The whole catalogue */
+  paths: readonly TrainingPath[];
   choose: (pathId: string) => Promise<string | null>;
 }
 
@@ -17,6 +19,7 @@ export interface TrainingPathState {
 export function useTrainingPath(profileId: string): TrainingPathState {
   const [pathId, setPathId] = useState<string | null>(() => getCachedPath(profileId));
   const [loaded, setLoaded] = useState(false);
+  const catalog = useTrainingPathCatalog();
 
   useEffect(() => {
     let alive = true;
@@ -37,5 +40,5 @@ export function useTrainingPath(profileId: string): TrainingPathState {
     return null;
   }, [profileId]);
 
-  return { loaded, path: getTrainingPath(pathId), choose };
+  return { loaded: loaded && catalog.loaded, path: catalog.paths.find((p) => p.id === pathId) ?? null, paths: catalog.paths, choose };
 }

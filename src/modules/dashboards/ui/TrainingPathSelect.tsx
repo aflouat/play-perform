@@ -1,13 +1,16 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getTrainingPaths } from '../infra/training-paths-seed';
+import { useTrainingPathCatalog } from '../application/useTrainingPathCatalog';
 import { fetchTrainingPath, saveTrainingPath } from '../infra/dashboard-client';
 
 /** The centre assigns (or changes) a student's training path: it decides the chapters of their roadmap. */
 export function TrainingPathSelect({ studentId }: { studentId: string }) {
   const [pathId, setPathId] = useState<string | null | undefined>(undefined);
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
+  const { paths } = useTrainingPathCatalog();
+  // The student's current path stays listed even once it is no longer offered
+  const options = paths.filter((p) => p.active !== false || p.id === pathId);
 
   useEffect(() => {
     let alive = true;
@@ -30,7 +33,7 @@ export function TrainingPathSelect({ studentId }: { studentId: string }) {
         🗺️ Parcours
         <select value={pathId ?? ''} onChange={(e) => change(e.target.value)} className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-2 py-1 text-slate-700">
           <option value="">Au choix de l’élève</option>
-          {getTrainingPaths().map((p) => <option key={p.id} value={p.id}>{p.emoji} {p.name}</option>)}
+          {options.map((p) => <option key={p.id} value={p.id}>{p.emoji} {p.name}</option>)}
         </select>
       </label>
       {message && <p role={message.ok ? 'status' : 'alert'} className={message.ok ? 'text-emerald-700' : 'text-rose-700'}>{message.text}</p>}

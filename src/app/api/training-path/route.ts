@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { canAccessProfile, getActorFromRequest } from '@/lib/actor-auth';
-import { getTrainingPaths, validatePathChoice } from '@/modules/dashboards';
-import { readTrainingPath, writeTrainingPath } from '@/modules/dashboards/server';
+import { validatePathChoice } from '@/modules/dashboards';
+import { choosablePathIds, readTrainingPath, writeTrainingPath } from '@/modules/dashboards/server';
 
 const fail = (error: string, status: number) => NextResponse.json({ error }, { status });
 
@@ -27,7 +27,7 @@ export async function PUT(req: NextRequest): Promise<NextResponse> {
   const profileId = typeof body?.profileId === 'string' ? body.profileId : '';
   try {
     if (!(await canAccessProfile(actor, profileId))) return fail('Élève introuvable', 404);
-    const ids = getTrainingPaths().map((p) => p.id);
+    const ids = await choosablePathIds();
     const choice = validatePathChoice(body, actor.kind, await readTrainingPath(profileId), ids);
     if (!choice.ok) return fail(choice.error, choice.status);
     await writeTrainingPath(profileId, choice.value);

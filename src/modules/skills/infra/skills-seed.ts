@@ -20,4 +20,13 @@ export const SKILLS_SEED: readonly Skill[] = [
     description: 'Apprendre, réviser et s’organiser efficacement.' },
   { id: 'claude-platform-docs', name: 'Claude Platform (docs)', domain: 'IA et développement', emoji: '🤖',
     description: "Utiliser l'API Claude : messages, outils, cache de prompt, limites et bonnes pratiques." },
+  // Technicien(ne) de laboratoire
+  { id: 'labo-securite', name: 'Sécurité au laboratoire', domain: 'Technicien de laboratoire', emoji: '🦺', trade: 'laboratoire',
+    description: 'Pictogrammes de danger, équipements de protection, bons gestes et déchets : travailler sans risque.' },
+  { id: 'labo-solutions', name: 'Solutions et dilutions', domain: 'Technicien de laboratoire', emoji: '⚗️', trade: 'laboratoire',
+    description: 'Préparer une solution, calculer une concentration, diluer et doser avec précision.' },
+  { id: 'labo-mesures', name: 'Mesures et incertitudes', domain: 'Technicien de laboratoire', emoji: '📏', trade: 'laboratoire',
+    description: 'Choisir la verrerie, peser, étalonner et exprimer un résultat avec son incertitude.' },
+  { id: 'labo-qualite', name: 'Qualité et traçabilité', domain: 'Technicien de laboratoire', emoji: '📋', trade: 'laboratoire',
+    description: 'Cahier de laboratoire, bonnes pratiques, non-conformités et contrôle qualité.' },
 ];

@@ -17,6 +17,8 @@ export interface PathPhase { weeks: number; chapters: RoadmapCourse[] }
 export interface TrainingPath {
   id: string; name: string; emoji: string; description: string;
   phases: Record<GenericPhaseId, PathPhase>;
+  /** Offered to new learners (an inactive path stays visible to those who follow it). Absent = active. */
+  active?: boolean;
 }
 
 /** The learner's roadmap for a path: the generic phases, filled with the path's chapters. */

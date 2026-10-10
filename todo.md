@@ -24,8 +24,9 @@ Fichier unique de pilotage : **en cours**, **backlog** et **bugs connus** (rempl
 - [ ] Binômes : message d'encouragement au partenaire (texte préécrit) ; choix d'un binôme par le centre ; bonus plus riche (badge d'équipe)
 - [ ] Pièges classiques : alimenter aussi `/quiz/[subject]` (matières) en statistiques ; notifier le centre des questions réussies par presque personne (question à revoir)
 
-- [ ] **Prod : appliquer `supabase/migrations/20261021000000_training_path.sql`** (`students.training_path`) — sans elle, l'élève ne peut pas enregistrer son parcours (le choix reste sur l'appareil seulement pour un profil démo)
-- [ ] Centre de commande : catalogue des parcours en base + éditeur (chapitres par phase) pour la société mère ; compétences propres aux métiers (ex. sécurité au laboratoire, aujourd'hui rattachée à « Matière et énergie ») ; dates de complétion des phases en base (aujourd'hui sur l'appareil) ; événement « a validé la Phase n » dans le fil ; contenu quiz pour Logique / Méthode (la remise à niveau y mène à l'évaluation) ; lien avec la table historique `parcours` (sessions de quiz multi-matières, sans rapport aujourd'hui)
+- [ ] **Prod : appliquer `supabase/migrations/20261022000000_training_paths.sql`** (table `training_paths` + les 3 parcours actuels ; copier-coller dans le SQL Editor) — sans elle, `/admin/formations` ne peut pas enregistrer ; la carte des élèves utilise en attendant les parcours intégrés
+- [ ] Catalogue métier : compétences pharma / environnement (ex. BPF, prélèvements d'eau) avec leurs banques, pour que les futurs parcours n'empruntent pas les compétences du laboratoire ; relire les questions « laboratoire » avec un formateur du métier ; questions de niveau 5 (aujourd'hui les quiz s'arrêtent à la difficulté 4)
+- [ ] Centre de commande : dates de complétion des phases en base (aujourd'hui sur l'appareil) ; événement « a validé la Phase n » dans le fil ; contenu quiz pour Logique / Méthode (la remise à niveau y mène à l'évaluation) ; lien avec la table historique `parcours` (sessions de quiz multi-matières, sans rapport aujourd'hui)
 
 ## UX par rôle (avant le backend centre mère / franchises)
 - [ ] Vérifier le SIREN / SIRET auprès de l'API Sirene (INSEE) à l'inscription d'un centre (aujourd'hui : somme de contrôle + examen manuel par la société mère)

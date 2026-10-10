@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { GENERIC_PHASES } from '../domain/training-path';
-import { getTrainingPaths } from '../infra/training-paths-seed';
+import { GENERIC_PHASES, type TrainingPath } from '../domain/training-path';
+import { activePaths } from '../application/useTrainingPathCatalog';
 
 /** No training path yet: the learner picks one (afterwards only the centre changes it). */
-export function TrainingPathPicker({ onChoose }: { onChoose: (pathId: string) => Promise<string | null> }) {
+export function TrainingPathPicker({ paths, onChoose }: { paths: readonly TrainingPath[]; onChoose: (pathId: string) => Promise<string | null> }) {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -22,7 +22,7 @@ export function TrainingPathPicker({ onChoose }: { onChoose: (pathId: string) =>
         Ta carte suit {GENERIC_PHASES.length} phases ({GENERIC_PHASES.map((p) => p.title).join(' → ')}) ; leurs chapitres dépendent de ton parcours. Ton centre peut aussi le choisir pour toi.
       </p>
       <ul className="grid gap-3 sm:grid-cols-3">
-        {getTrainingPaths().map((p) => (
+        {activePaths(paths).map((p) => (
           <li key={p.id}>
             <button type="button" disabled={busy} onClick={() => pick(p.id)}
               className="h-full w-full rounded-2xl border-2 border-violet-100 p-4 text-left hover:border-violet-500 disabled:opacity-60">

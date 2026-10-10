@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor, within } from '@testing-library/rea
 import { CommandCenter } from '@/modules/dashboards/ui/CommandCenter';
 import { TrainingPathSelect } from '@/modules/dashboards/ui/TrainingPathSelect';
 import * as client from '@/modules/dashboards/infra/dashboard-client';
+import type { TrainingPath } from '@/modules/dashboards/domain/training-path';
 import * as snapshot from '@/modules/dashboards/application/useLearnerSnapshot';
 import * as competition from '@/modules/competition';
 import * as community from '@/modules/community';
@@ -34,6 +35,7 @@ beforeEach(() => {
   jest.mocked(community.fetchDistributions).mockResolvedValue({});
   jest.mocked(client.fetchTrainingPath).mockResolvedValue('college');
   jest.mocked(client.saveTrainingPath).mockResolvedValue(null);
+  jest.mocked(client.fetchTrainingPathCatalog).mockResolvedValue(null);
 });
 
 describe('learner command center', () => {
@@ -69,10 +71,11 @@ describe('learner command center', () => {
     render(<CommandCenter profileId="p1" />);
     fireEvent.click(await screen.findByRole('button', { name: /Technicien\(ne\) de laboratoire/ }));
     expect(client.saveTrainingPath).toHaveBeenCalledWith('p1', 'technicien-laboratoire');
-    // Same generic phase, the lab chapters: méthode is done, the safety chapter is not
-    fireEvent.click(await screen.findByRole('button', { name: /Phase 1 : Fondations, en cours, 1 cours sur 2/ }));
+    // Same generic phase, the lab chapters (trade skills)
+    fireEvent.click(await screen.findByRole('button', { name: /Phase 1 : Fondations, en cours, 0 cours sur 3/ }));
     const detail = screen.getByRole('region', { name: 'Détail de la phase 1' });
-    expect(within(detail).getByText('Sécurité, pictogrammes et unités de mesure')).toBeInTheDocument();
+    expect(within(detail).getByText('Sécurité : pictogrammes, EPI et bons gestes')).toBeInTheDocument();
+    expect(within(detail).getByText(/Sécurité au laboratoire · niveau 2/)).toBeInTheDocument();
     expect(within(detail).queryByText('Repérer et déduire')).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Phase 2 : Bases, à venir, verrouillée/ })).toBeDisabled();
   });
@@ -95,5 +98,33 @@ describe('training path assigned by the centre', () => {
     fireEvent.change(select, { target: { value: 'technicien-laboratoire' } });
     await waitFor(() => expect(client.saveTrainingPath).toHaveBeenCalledWith('s1', 'technicien-laboratoire'));
     expect(await screen.findByRole('status')).toHaveTextContent(/Parcours enregistré/);
+  });
+});
+
+describe('catalogue edited by the parent company', () => {
+  it('a path created in the database is offered to the learner and drives the map', async () => {
+    const pharma: TrainingPath = { id: 'technicien-pharma', name: 'Technicien Pharma', emoji: '💊', description: 'Production et contrôle pharmaceutique.', active: true, phases: {
+      fondations: { weeks: 2, chapters: [{ title: 'Bonnes pratiques de fabrication', skillId: 'labo-qualite', targetLevel: 2 }] },
+      bases: { weeks: 2, chapters: [{ title: 'Pesées et formulations', skillId: 'labo-mesures', targetLevel: 2 }] },
+      consolidation: { weeks: 2, chapters: [{ title: 'Contrôle des matières premières', skillId: 'labo-solutions', targetLevel: 3 }] },
+      approfondissement: { weeks: 2, chapters: [{ title: 'Libération des lots', skillId: 'labo-qualite', targetLevel: 4 }] },
+    } };
+    const retired = { ...pharma, id: 'ancien', name: 'Ancien parcours', active: false };
+    jest.mocked(client.fetchTrainingPathCatalog).mockResolvedValue([pharma, retired]);
+    jest.mocked(client.fetchTrainingPath).mockResolvedValue(null);
+    render(<CommandCenter profileId="p1" />);
+    expect(await screen.findByRole('button', { name: /Technicien Pharma/ })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Ancien parcours/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Réussir au collège/ })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: /Technicien Pharma/ }));
+    fireEvent.click(await screen.findByRole('button', { name: /Phase 1 : Fondations/ }));
+    expect(screen.getByText('Bonnes pratiques de fabrication')).toBeInTheDocument();
+  });
+
+  it('gives the city the skills of the path (trade skills appear only there)', async () => {
+    jest.mocked(client.fetchTrainingPath).mockResolvedValue('technicien-laboratoire');
+    const city = jest.fn(() => null);
+    render(<CommandCenter profileId="p1">{city}</CommandCenter>);
+    await waitFor(() => expect(city).toHaveBeenLastCalledWith(expect.arrayContaining(['labo-securite', 'labo-qualite', 'svt-vivant'])));
   });
 });

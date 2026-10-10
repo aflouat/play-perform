@@ -6,7 +6,12 @@ export interface Skill {
   /** Subject area, e.g. "Mathématiques" */
   domain: string;
   emoji: string;
+  /** Trade-specific skill (e.g. "laboratoire"): only shown to learners whose training path uses it. Absent = general skill. */
+  trade?: string;
 }
+
+/** A general skill is offered to everyone (visitor test, weekly challenge, town); a trade skill only within its paths. */
+export const isGeneralSkill = (skill: Skill): boolean => !skill.trade;
 
 export type SkillLevelNumber = 1 | 2 | 3 | 4 | 5;
 

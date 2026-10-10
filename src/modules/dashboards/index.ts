@@ -18,8 +18,12 @@ export { buildRoadmap, courseState, courseHref, plannedDates, newlyCompleted, re
 export type { GenericPhaseId, PathPhase, TrainingPath, PathChoice } from './domain/training-path';
 export { GENERIC_PHASES, phasesOf, validatePathChoice } from './domain/training-path';
 export { getTrainingPaths, getTrainingPath } from './infra/training-paths-seed';
+export type { PathInput } from './domain/training-path-input';
+export { validateTrainingPath, slugify, emptyTrainingPath } from './domain/training-path-input';
 export { useTrainingPath } from './application/useTrainingPath';
 export { TrainingPathSelect } from './ui/TrainingPathSelect';
+export { TrainingPathAdmin } from './ui/TrainingPathAdmin';
+export { useTrainingPathCatalog, activePaths } from './application/useTrainingPathCatalog';
 export type { RankProgress, TrapAlert } from './domain/scorecard';
 export { rankProgress, latestBadges, trapAlerts } from './domain/scorecard';
 export { rememberLastSkill } from './infra/roadmap-storage';

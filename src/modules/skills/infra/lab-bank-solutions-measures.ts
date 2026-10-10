@@ -1,0 +1,58 @@
+import type { QuizQuestion } from '@/types';
+import { bankQuestion } from './question-builder';
+
+/** "Solutions et dilutions" (technicien de laboratoire), difficulty 1 → 4. */
+export const LAB_SOLUTIONS_BANK: QuizQuestion[] = [
+  bankQuestion('labo-sol-01', 'chimie', '⚗️', 1, 'Dans de l’eau salée, comment appelle-t-on le sel ?',
+    ['Le solvant', 'Le soluté', 'La solution', 'Le précipité'], 1,
+    'Le soluté (le sel) est dissous dans le solvant (l’eau) ; le mélange obtenu est la solution.'),
+  bankQuestion('labo-sol-02', 'chimie', '⚗️', 1, 'Quelle est l’unité usuelle d’une concentration en masse ?',
+    ['g/L', 'mol', 'g', 'L/g'], 0,
+    'Concentration en masse = masse de soluté (g) / volume de solution (L) : elle s’exprime en g/L.'),
+  bankQuestion('labo-sol-03', 'chimie', '⚗️', 2, 'On dissout 5 g de sucre pour obtenir 250 mL de solution. Quelle est sa concentration en masse ?',
+    ['1,25 g/L', '50 g/L', '20 g/L', '0,02 g/L'], 2,
+    'Cm = m / V = 5 g / 0,250 L = 20 g/L : attention à convertir les mL en L.'),
+  bankQuestion('labo-sol-04', 'chimie', '⚗️', 2, 'Pour préparer exactement 100,0 mL de solution, quelle verrerie utilise-t-on ?',
+    ['Un bécher de 100 mL', 'Une éprouvette graduée de 100 mL', 'Un erlenmeyer de 100 mL', 'Une fiole jaugée de 100 mL'], 3,
+    'La fiole jaugée contient un volume précis au trait de jauge ; bécher et erlenmeyer ne servent pas à mesurer.'),
+  bankQuestion('labo-sol-05', 'chimie', '⚗️', 3, 'Pour obtenir 100 mL de solution à 0,10 mol/L à partir d’une solution mère à 1,0 mol/L, quel volume de solution mère prélève-t-on ?',
+    ['10 mL', '1 mL', '100 mL', '0,1 mL'], 0,
+    'Conservation de la matière : C₁V₁ = C₂V₂, donc V₁ = 0,10 × 100 / 1,0 = 10 mL (prélevés à la pipette jaugée).'),
+  bankQuestion('labo-sol-06', 'chimie', '⚗️', 3, 'Une solution à 4,0 g/L est diluée 20 fois. Quelle est sa nouvelle concentration ?',
+    ['80 g/L', '0,20 g/L', '0,40 g/L', '2,0 g/L'], 1,
+    'Diluer F fois divise la concentration par F : 4,0 / 20 = 0,20 g/L.'),
+  bankQuestion('labo-sol-07', 'chimie', '⚗️', 4, 'Quelle quantité de matière contiennent 11,7 g de NaCl (M = 58,5 g/mol) ?',
+    ['5,00 mol', '0,500 mol', '684 mol', '0,200 mol'], 3,
+    'n = m / M = 11,7 / 58,5 = 0,200 mol.'),
+  bankQuestion('labo-sol-08', 'chimie', '⚗️', 4, 'Lors d’un titrage, quand l’équivalence est-elle atteinte ?',
+    ['Quand le pH vaut 7', 'Quand les réactifs titré et titrant ont été mélangés dans les proportions de l’équation', 'Quand la burette est vide', 'Quand la solution devient incolore'], 1,
+    'À l’équivalence, les réactifs sont en proportions stœchiométriques ; le pH ne vaut 7 que pour un acide fort titré par une base forte.'),
+];
+
+/** "Mesures et incertitudes" (technicien de laboratoire), difficulty 1 → 4. */
+export const LAB_MEASURES_BANK: QuizQuestion[] = [
+  bankQuestion('labo-mes-01', 'chimie', '📏', 1, 'Avec quel instrument mesure-t-on une masse ?',
+    ['Un thermomètre', 'Une burette', 'Une balance', 'Un pH-mètre'], 2,
+    'La balance mesure une masse ; on la tare avec le récipient vide avant de peser.'),
+  bankQuestion('labo-mes-02', 'chimie', '📏', 1, 'Combien y a-t-il de millilitres dans 1 litre ?',
+    ['100 mL', '1 000 mL', '10 mL', '10 000 mL'], 1,
+    '1 L = 1 000 mL ; et 1 mL = 1 cm³.'),
+  bankQuestion('labo-mes-03', 'chimie', '📏', 2, 'Comment lit-on un volume dans une éprouvette graduée ?',
+    ['L’œil au niveau du bas du ménisque', 'En regardant d’au-dessus', 'Au niveau du haut du ménisque', 'En penchant l’éprouvette'], 0,
+    'On place l’œil à hauteur du liquide et on lit le bas du ménisque pour éviter l’erreur de parallaxe.'),
+  bankQuestion('labo-mes-04', 'chimie', '📏', 2, 'Quelle verrerie est la plus précise pour prélever 10,0 mL ?',
+    ['Un bécher', 'Une éprouvette graduée de 100 mL', 'Un erlenmeyer', 'Une pipette jaugée de 10 mL'], 3,
+    'La pipette jaugée délivre un volume précis ; le bécher et l’erlenmeyer ne sont pas des instruments de mesure.'),
+  bankQuestion('labo-mes-05', 'chimie', '📏', 3, 'Combien de chiffres significatifs compte 0,0250 g ?',
+    ['5', '2', '3', '4'], 2,
+    'Les zéros de tête ne comptent pas, le zéro final compte : 2, 5 et 0 font 3 chiffres significatifs.'),
+  bankQuestion('labo-mes-06', 'chimie', '📏', 3, 'Que fait-on avant d’utiliser un pH-mètre ?',
+    ['On l’étalonne avec des solutions tampons', 'On rince l’électrode à l’acide', 'On le tare', 'On chauffe l’électrode'], 0,
+    'L’étalonnage avec des tampons de pH connu (ex. 4 et 7) corrige la dérive de l’électrode.'),
+  bankQuestion('labo-mes-07', 'chimie', '📏', 4, 'Une masse vaut 12,46 g avec une incertitude de 0,02 g. Comment écrit-on le résultat ?',
+    ['m = 12 g ± 0,02 g', 'm = (12,46 ± 0,02) g', 'm = (12,460 ± 0,0200) g', 'm = 12,46 g ± 2 %'], 1,
+    'On écrit valeur ± incertitude avec la même unité et le même nombre de décimales : (12,46 ± 0,02) g.'),
+  bankQuestion('labo-mes-08', 'chimie', '📏', 4, 'Dix mesures répétées donnent une moyenne de 5,12 mL et un écart-type de 0,04 mL. Que traduit l’écart-type ?',
+    ['L’erreur systématique (justesse)', 'La valeur vraie', 'La dispersion des mesures (fidélité, répétabilité)', 'Le nombre de mesures nécessaires'], 2,
+    'L’écart-type mesure la dispersion autour de la moyenne ; un biais systématique, lui, ne se voit pas en répétant.'),
+];

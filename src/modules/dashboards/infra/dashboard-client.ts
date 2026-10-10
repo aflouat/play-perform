@@ -1,6 +1,7 @@
 import { getAuthToken } from '@/lib/auth-token';
 import type { CentreDashboard } from '../domain/centre';
 import type { ExaminerDashboard } from '../domain/examiner';
+import type { TrainingPath } from '../domain/training-path';
 
 async function get<T>(url: string): Promise<T | null> {
   try {
@@ -27,4 +28,12 @@ export async function saveTrainingPath(profileId: string, pathId: string | null)
     });
     return res.ok ? null : ((await res.json().catch(() => ({}))) as { error?: string }).error ?? 'Enregistrement impossible.';
   } catch { return 'Enregistrement impossible.'; }
+}
+
+/** The catalogue of training paths (null when unreachable: the built-in paths are used). */
+export async function fetchTrainingPathCatalog(): Promise<TrainingPath[] | null> {
+  try {
+    const res = await fetch('/api/training-paths');
+    return res.ok ? ((await res.json()) as { paths: TrainingPath[] }).paths : null;
+  } catch { return null; }
 }

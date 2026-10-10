@@ -25,11 +25,11 @@ export default function CompetencesPage() {
         </span>
       </div>
       <CommandCenter key={profileId} profileId={profileId}>
-        <section>
+        {(pathSkillIds) => <section>
           <h2 className="text-2xl font-black text-[#1a1a2e]">Ma ville des compétences</h2>
           <p className="mb-5 mt-1 text-sm text-slate-500">Chaque bâtiment grandit avec ton niveau. Objectif : le château (niveau 5) !</p>
-          <SkillMap profileId={profileId} />
-        </section>
+          <SkillMap profileId={profileId} tradeSkillIds={pathSkillIds} />
+        </section>}
       </CommandCenter>
     </main>
   );

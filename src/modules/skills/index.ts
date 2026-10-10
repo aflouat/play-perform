@@ -1,7 +1,7 @@
 /** Public API of the skills module. Other modules must import from here only. */
 
 export type { Skill, SkillLevelNumber, SkillLevelInfo } from './domain/skill';
-export { SKILL_LEVELS, getSkillLevel } from './domain/skill';
+export { SKILL_LEVELS, getSkillLevel, isGeneralSkill } from './domain/skill';
 
 export { getSkills, getSkillById } from './infra/skills-repository';
 

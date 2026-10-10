@@ -65,6 +65,34 @@ const PROMPTS: Record<string, readonly string[]> = {
     'Explique comment tu fais pour te concentrer quand tu es distrait et ce que tu changerais.',
     'Fais le bilan d’un travail récent : ce qui a marché, ce qui a manqué, ce que tu feras la prochaine fois.',
   ],
+  'labo-securite': [
+    'Cite trois équipements de protection individuelle du laboratoire et explique ce que chacun protège.',
+    'Choisis trois pictogrammes de danger, décris-les et donne pour chacun une précaution de manipulation.',
+    'Tu reçois un produit inconnu de toi : explique comment tu utilises sa fiche de données de sécurité avant de le manipuler.',
+    'Un collègue reçoit une projection d’acide sur l’avant-bras : décris dans l’ordre ce que tu fais, et pourquoi.',
+    'Rédige l’analyse des risques d’une manipulation de ton choix : dangers, mesures de prévention, protections et gestion des déchets.',
+  ],
+  'labo-solutions': [
+    'Explique avec tes mots la différence entre soluté, solvant et solution, avec un exemple de la vie courante.',
+    'Décris pas à pas comment tu prépares 100 mL d’une solution à 10 g/L de sel, avec la verrerie utilisée.',
+    'Tu dois diluer 10 fois une solution pour obtenir 50 mL : calcule les volumes et décris le protocole.',
+    'Explique comment tu prépares une gamme d’étalonnage de 5 solutions filles à partir d’une solution mère, calculs à l’appui.',
+    'Décris un titrage acido-basique : montage, repérage de l’équivalence, calcul de la concentration et sources d’erreur.',
+  ],
+  'labo-mesures': [
+    'Cite quatre instruments de mesure du laboratoire et ce que chacun mesure, avec l’unité.',
+    'Explique comment tu mesures précisément 25,0 mL d’un liquide et pourquoi tu choisis cette verrerie.',
+    'Explique ce que signifie « étalonner » un appareil, avec l’exemple du pH-mètre.',
+    'Explique la différence entre justesse et fidélité, avec un exemple pour chacune.',
+    'À partir de dix mesures que tu inventes, calcule la moyenne et l’écart-type, puis écris le résultat avec son incertitude.',
+  ],
+  'labo-qualite': [
+    'Explique à quoi sert le cahier de laboratoire et ce qu’on doit y noter.',
+    'Décris comment tu corriges une erreur dans un cahier de laboratoire, et pourquoi on ne l’efface jamais.',
+    'Explique ce qu’est la traçabilité, en suivant un échantillon de sa réception jusqu’au résultat.',
+    'Un résultat de contrôle qualité est hors limites : décris ta démarche, de l’alerte à la correction.',
+    'Explique ce que garantit l’accréditation ISO/IEC 17025 à un client et ce qu’elle change dans le travail quotidien du technicien.',
+  ],
 };
 
 export function getEvaluationPrompt(skillId: string, level: SkillLevelNumber): string {

@@ -1,0 +1,48 @@
+import { q } from './placement-question';
+
+/** Placement questions — technicien(ne) de laboratoire. Index of the right option is the last argument. */
+export const PLACEMENT_BANK_D = [
+  q('labo-securite', 1, 'Que porte-t-on obligatoirement pour manipuler au laboratoire ?',
+    ['Une blouse et des lunettes de protection', 'Des sandales', 'Une écharpe', 'Rien de particulier'], 0),
+  q('labo-securite', 2, 'Le pictogramme « tête de mort sur deux tibias » signale un produit…',
+    ['Inflammable', 'Corrosif', 'À toxicité aiguë', 'Comburant'], 2),
+  q('labo-securite', 3, 'Pourquoi ne pipette-t-on jamais à la bouche ?',
+    ['Pour aller plus vite', 'Pour ne pas avaler ou inhaler le produit', 'Parce que la pipette casserait', 'Pour ne pas fausser le volume'], 1),
+  q('labo-securite', 4, 'Dans une fiche de données de sécurité, quelle rubrique décrit les premiers secours ?',
+    ['La rubrique 1 (identification)', 'La rubrique 9 (propriétés physiques)', 'La rubrique 13 (élimination)', 'La rubrique 4 (premiers secours)'], 3),
+  q('labo-securite', 5, 'Que désigne un produit « CMR » ?',
+    ['Cancérogène, mutagène ou toxique pour la reproduction', 'Chimique, minéral ou radioactif', 'Corrosif, mortel ou réactif', 'Combustible, magnétique ou réfrigéré'], 0),
+
+  q('labo-solutions', 1, 'Dans un sirop dilué à l’eau, quel est le solvant ?',
+    ['Le sirop', 'L’eau', 'Le verre', 'Le sucre'], 1),
+  q('labo-solutions', 2, 'On dissout 2 g de sel pour obtenir 0,5 L de solution. Concentration en masse ?',
+    ['1 g/L', '2,5 g/L', '4 g/L', '0,25 g/L'], 2),
+  q('labo-solutions', 3, 'On dilue 10 mL de solution mère pour obtenir 50 mL. Quel est le facteur de dilution ?',
+    ['5', '0,2', '40', '60'], 0),
+  q('labo-solutions', 4, 'Quelle masse de glucose (M = 180 g/mol) faut-il pour 0,25 L à 0,10 mol/L ?',
+    ['18 g', '45 g', '0,45 g', '4,5 g'], 3),
+  q('labo-solutions', 5, 'Titrage : 10,0 mL d’acide HCl sont neutralisés par 12,5 mL de soude à 0,100 mol/L. Concentration de l’acide ?',
+    ['0,080 mol/L', '0,125 mol/L', '1,25 mol/L', '0,100 mol/L'], 1),
+
+  q('labo-mesures', 1, 'Avec quel instrument mesure-t-on une température ?',
+    ['Une balance', 'Une burette', 'Un thermomètre', 'Un chronomètre'], 2),
+  q('labo-mesures', 2, 'Combien de grammes font 2,5 kg ?',
+    ['25 g', '250 g', '2 500 g', '25 000 g'], 2),
+  q('labo-mesures', 3, 'Que signifie « tarer » une balance ?',
+    ['La remettre à zéro avec le récipient posé dessus', 'La nettoyer', 'Vérifier qu’elle est de niveau', 'La régler sur les grammes'], 0),
+  q('labo-mesures', 4, 'Deux techniciens trouvent des résultats très proches mais tous éloignés de la valeur vraie. La méthode est…',
+    ['Juste mais pas fidèle', 'Ni juste ni fidèle', 'Juste et fidèle', 'Fidèle mais pas juste'], 3),
+  q('labo-mesures', 5, 'On ajoute deux volumes : (10,00 ± 0,02) mL et (5,00 ± 0,02) mL (incertitudes indépendantes). Incertitude du total ?',
+    ['Environ 0,03 mL', '0,04 mL exactement', '0,02 mL', '0,00 mL'], 0),
+
+  q('labo-qualite', 1, 'Que note-t-on dans le cahier de laboratoire ?',
+    ['Seulement les résultats réussis', 'Tout ce qu’on fait et observe, au fur et à mesure', 'Ses pensées du jour', 'Rien, l’ordinateur suffit'], 1),
+  q('labo-qualite', 2, 'Pourquoi étiquette-t-on chaque flacon préparé ?',
+    ['Pour la décoration', 'Pour le ranger par couleur', 'Pour savoir ce qu’il contient, quand et par qui il a été préparé', 'Ce n’est pas nécessaire'], 2),
+  q('labo-qualite', 3, 'Un appareil a dépassé sa date de vérification. Que fais-tu ?',
+    ['Je l’utilise quand même', 'Je ne l’utilise pas et je le signale', 'Je change l’étiquette', 'Je demande à un collègue de l’utiliser'], 1),
+  q('labo-qualite', 4, 'Qu’est-ce qu’une non-conformité ?',
+    ['Un écart par rapport à une exigence ou une procédure', 'Un résultat inattendu mais correct', 'Une nouvelle procédure', 'Un appareil neuf'], 0),
+  q('labo-qualite', 5, 'Quel organisme accrédite les laboratoires selon l’ISO/IEC 17025 en France ?',
+    ['L’AFNOR', 'L’INRS', 'L’ANSM', 'Le COFRAC'], 3),
+];

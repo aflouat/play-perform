@@ -1,6 +1,9 @@
 import type { TrainingPath } from '../domain/training-path';
 
-/** Training paths (POC: local seed, common to every centre like the skills catalogue). Same 4 phases, different chapters. */
+/**
+ * Built-in training paths: the content of the `training_paths` table at its creation (migration 20261022000000),
+ * and the fallback when the database is unreachable. The parent company edits the catalogue in /admin/formations.
+ */
 const PATHS: readonly TrainingPath[] = [
   { id: 'college', name: 'Réussir au collège', emoji: '🎒', description: 'Les fondamentaux du collège jusqu’au brevet.', phases: {
     fondations: { weeks: 3, chapters: [
@@ -25,23 +28,26 @@ const PATHS: readonly TrainingPath[] = [
   } },
   { id: 'technicien-laboratoire', name: 'Technicien(ne) de laboratoire', emoji: '🧪', description: 'Mesurer, préparer et analyser des échantillons en sécurité.', phases: {
     fondations: { weeks: 3, chapters: [
-      { title: 'Organiser son poste et tenir son cahier de laboratoire', skillId: 'methode', targetLevel: 2 },
-      { title: 'Sécurité, pictogrammes et unités de mesure', skillId: 'physique-energie', targetLevel: 1 },
+      { title: 'Sécurité : pictogrammes, EPI et bons gestes', skillId: 'labo-securite', targetLevel: 2 },
+      { title: 'Organiser son poste et tenir son cahier de laboratoire', skillId: 'labo-qualite', targetLevel: 1 },
+      { title: 'Unités, conversions et proportions', skillId: 'maths-fractions', targetLevel: 2 },
     ] },
     bases: { weeks: 4, chapters: [
-      { title: 'Proportions, dilutions et concentrations', skillId: 'maths-fractions', targetLevel: 2, requires: { skillId: 'methode', level: 2 } },
-      { title: 'Matière, mélanges et solutions', skillId: 'physique-energie', targetLevel: 2, requires: { skillId: 'maths-fractions', level: 1 } },
+      { title: 'Préparer une solution et calculer une concentration', skillId: 'labo-solutions', targetLevel: 2, requires: { skillId: 'maths-fractions', level: 2 } },
+      { title: 'Verrerie, pesée et mesure de volume', skillId: 'labo-mesures', targetLevel: 2, requires: { skillId: 'labo-securite', level: 2 } },
       { title: 'La cellule et les micro-organismes', skillId: 'svt-vivant', targetLevel: 2 },
     ] },
     consolidation: { weeks: 5, chapters: [
-      { title: 'Mesures, incertitudes et protocoles', skillId: 'physique-energie', targetLevel: 3, requires: { skillId: 'maths-fractions', level: 2 } },
-      { title: 'Analyses biologiques et échantillons', skillId: 'svt-vivant', targetLevel: 3 },
+      { title: 'Dilutions et gammes d’étalonnage', skillId: 'labo-solutions', targetLevel: 3, requires: { skillId: 'labo-mesures', level: 2 } },
+      { title: 'Incertitudes et expression d’un résultat', skillId: 'labo-mesures', targetLevel: 3, requires: { skillId: 'maths-fractions', level: 3 } },
+      { title: 'Traçabilité et bonnes pratiques de laboratoire', skillId: 'labo-qualite', targetLevel: 3 },
       { title: 'Lire une fiche technique en anglais', skillId: 'anglais-comprendre', targetLevel: 2 },
     ] },
     approfondissement: { weeks: 6, chapters: [
-      { title: 'Rédiger un compte rendu d’analyse', skillId: 'francais-accords', targetLevel: 3, requires: { skillId: 'methode', level: 2 } },
-      { title: 'Contrôle qualité : détecter une anomalie', skillId: 'logique', targetLevel: 3 },
-      { title: 'Réactions chimiques et énergie', skillId: 'physique-energie', targetLevel: 4, requires: { skillId: 'maths-fractions', level: 3 } },
+      { title: 'Dosages et titrages', skillId: 'labo-solutions', targetLevel: 4, requires: { skillId: 'labo-mesures', level: 3 } },
+      { title: 'Contrôle qualité : cartes de contrôle et non-conformités', skillId: 'labo-qualite', targetLevel: 4, requires: { skillId: 'labo-mesures', level: 3 } },
+      { title: 'Risques chimiques et biologiques : analyse de poste', skillId: 'labo-securite', targetLevel: 4 },
+      { title: 'Rédiger un compte rendu d’analyse', skillId: 'francais-accords', targetLevel: 3 },
     ] },
   } },
   { id: 'mathematiques', name: 'Mathématiques', emoji: '📐', description: 'Raisonner, calculer et démontrer.', phases: {

@@ -6,13 +6,13 @@ const labels = (links: { label: string }[]) => links.map((l) => l.label);
 describe('adminLinks (the one menu of the centre’s side)', () => {
   it('shows everything to the super admin, home first', () => {
     expect(labels(adminLinks(access(true)))).toEqual(
-      ['Mon centre', 'Questions', 'Import CSV', 'Parcours', 'Tarifs', 'Centres', 'Inscriptions', 'Corrections', 'Médailles']);
+      ['Mon centre', 'Questions', 'Import CSV', 'Parcours', 'Formations', 'Tarifs', 'Centres', 'Inscriptions', 'Corrections', 'Médailles']);
   });
 
   it('keeps a centre manager on the centre’s operations: no pricing, questions, routes or import', () => {
     const links = labels(adminLinks(access(false, 'org_admin')));
     expect(links).toEqual(['Mon centre', 'Inscriptions', 'Corrections', 'Médailles', 'Équipe']);
-    ['Tarifs', 'Parcours', 'Questions', 'Import CSV', 'Centres'].forEach((l) => expect(links).not.toContain(l));
+    ['Tarifs', 'Parcours', 'Formations', 'Questions', 'Import CSV', 'Centres'].forEach((l) => expect(links).not.toContain(l));
   });
 
   it('gives a teacher the students’ screens, an examiner only the corrections', () => {

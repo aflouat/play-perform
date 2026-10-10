@@ -17,6 +17,7 @@ beforeEach(() => {
   actor.canAccessProfile.mockResolvedValue(true);
   repo.readTrainingPath.mockResolvedValue(null);
   repo.writeTrainingPath.mockResolvedValue(undefined);
+  repo.choosablePathIds.mockResolvedValue(['college', 'technicien-laboratoire', 'mathematiques']);
 });
 
 describe('/api/training-path', () => {

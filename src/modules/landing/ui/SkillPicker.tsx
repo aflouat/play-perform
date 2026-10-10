@@ -1,4 +1,4 @@
-import { getSkills } from '@/modules/skills';
+import { getSkills, isGeneralSkill } from '@/modules/skills';
 import type { SavedPlacement } from '../infra/placement-storage';
 
 interface Props {
@@ -15,7 +15,7 @@ export function SkillPicker({ saved, onChoose, onChangeMode }: Props) {
       <p className="mt-1 text-slate-600 text-sm">5 questions de plus en plus difficiles pour trouver ton point de départ.</p>
 
       <ul className="mt-5 grid gap-3 sm:grid-cols-2">
-        {getSkills().map((skill) => {
+        {getSkills().filter(isGeneralSkill).map((skill) => {
           const previous = saved[skill.id];
           return (
             <li key={skill.id}>

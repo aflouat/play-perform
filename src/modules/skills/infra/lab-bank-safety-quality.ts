@@ -1,0 +1,58 @@
+import type { QuizQuestion } from '@/types';
+import { bankQuestion } from './question-builder';
+
+/** "Sécurité au laboratoire" (technicien de laboratoire), difficulty 1 → 4. */
+export const LAB_SAFETY_BANK: QuizQuestion[] = [
+  bankQuestion('labo-sec-01', 'chimie', '🦺', 1, 'Que signifie le pictogramme de danger représentant une flamme ?',
+    ['Produit corrosif', 'Produit inflammable', 'Gaz sous pression', 'Danger pour l’environnement'], 1,
+    'La flamme (SGH02) signale un produit inflammable : à tenir loin de toute source de chaleur ou d’étincelle.'),
+  bankQuestion('labo-sec-02', 'chimie', '🦺', 1, 'Quels équipements de protection porte-t-on dès qu’on manipule au laboratoire ?',
+    ['Une blouse fermée et des lunettes de protection', 'Un casque audio', 'Des gants de jardinage', 'Aucun si on fait attention'], 0,
+    'Blouse en coton fermée et lunettes de protection sont le minimum ; les gants s’ajoutent selon le produit manipulé.'),
+  bankQuestion('labo-sec-03', 'chimie', '🦺', 2, 'Le pictogramme montrant un liquide qui ronge une main et une surface indique un produit…',
+    ['Toxique', 'Comburant', 'Corrosif', 'Explosif'], 2,
+    'C’est le pictogramme SGH05 « corrosif » : il attaque la peau, les yeux et les métaux.'),
+  bankQuestion('labo-sec-04', 'chimie', '🦺', 2, 'Comment dilue-t-on un acide concentré ?',
+    ['On verse l’eau dans l’acide', 'On mélange les deux d’un coup', 'On chauffe l’acide avant', 'On verse lentement l’acide dans l’eau'], 3,
+    '« L’acide dans l’eau » : la dilution dégage beaucoup de chaleur ; dans ce sens, l’eau absorbe la chaleur et évite les projections.'),
+  bankQuestion('labo-sec-05', 'chimie', '🦺', 3, 'Où trouve-t-on les dangers d’un produit, les précautions et la conduite à tenir en cas d’accident ?',
+    ['Dans sa fiche de données de sécurité (FDS)', 'Sur le bon de livraison', 'Dans le règlement intérieur', 'Uniquement auprès du fournisseur'], 0,
+    'La FDS (16 rubriques) accompagne chaque produit dangereux : dangers, protection, stockage, premiers secours, élimination.'),
+  bankQuestion('labo-sec-06', 'chimie', '🦺', 3, 'Où manipule-t-on un solvant volatil et toxique ?',
+    ['Près d’une fenêtre ouverte', 'Sous une sorbonne (hotte aspirante) en fonctionnement', 'Sur la paillasse avec des gants', 'Dans une armoire fermée'], 1,
+    'La sorbonne aspire les vapeurs loin de l’opérateur ; les gants ne protègent pas des vapeurs inhalées.'),
+  bankQuestion('labo-sec-07', 'chimie', '🦺', 4, 'Que signifie la mention de danger H350 sur une étiquette ?',
+    ['Liquide et vapeurs très inflammables', 'Provoque une irritation cutanée', 'Peut provoquer le cancer', 'Très toxique pour les organismes aquatiques'], 2,
+    'Les mentions H3xx concernent la santé ; H350 = « Peut provoquer le cancer » (substance CMR, manipulation très encadrée).'),
+  bankQuestion('labo-sec-08', 'chimie', '🦺', 4, 'Où élimine-t-on un solvant organique halogéné usagé (ex. dichlorométhane) ?',
+    ['Dans l’évier avec beaucoup d’eau', 'Dans le bidon des solvants non halogénés', 'Dans la poubelle ordinaire', 'Dans le bidon de récupération des solvants halogénés'], 3,
+    'Les déchets sont triés par famille : les halogénés sont collectés à part car leur traitement (incinération) est spécifique.'),
+];
+
+/** "Qualité et traçabilité" (technicien de laboratoire), difficulty 1 → 4. */
+export const LAB_QUALITY_BANK: QuizQuestion[] = [
+  bankQuestion('labo-qua-01', 'chimie', '📋', 1, 'À quoi sert le cahier de laboratoire ?',
+    ['À noter seulement les bons résultats', 'À noter, au fur et à mesure, tout ce qu’on fait et observe', 'À faire ses brouillons au crayon', 'À rien si l’ordinateur enregistre'], 1,
+    'Le cahier trace tout, en direct : date, produits, lots, appareils, mesures, observations, même ce qui a raté.'),
+  bankQuestion('labo-qua-02', 'chimie', '📋', 1, 'Tu t’es trompé en notant une mesure dans le cahier. Que fais-tu ?',
+    ['Je barre d’un trait pour que ce reste lisible et j’écris la correction à côté', 'J’efface au correcteur', 'J’arrache la page', 'Je recopie tout au propre'], 0,
+    'Rien ne s’efface : on barre d’un trait, on corrige à côté, et on date ou paraphe la correction.'),
+  bankQuestion('labo-qua-03', 'chimie', '📋', 2, 'Que signifie la « traçabilité » d’un résultat ?',
+    ['Le résultat est écrit au stylo', 'On peut retrouver qui a fait quoi, quand, comment et avec quel matériel', 'Le résultat a été vérifié deux fois', 'Le résultat est enregistré sur ordinateur'], 1,
+    'Tracer, c’est pouvoir reconstituer tout l’historique d’un échantillon ou d’une mesure, des années plus tard.'),
+  bankQuestion('labo-qua-04', 'chimie', '📋', 2, 'Un échantillon arrive sans étiquette. Que fais-tu ?',
+    ['Je devine son origine', 'Je l’analyse et je l’étiquette après', 'Je ne l’analyse pas et je signale la non-conformité', 'Je le jette sans rien dire'], 2,
+    'Un échantillon non identifié ne peut pas être relié à un résultat : on le bloque et on signale l’anomalie.'),
+  bankQuestion('labo-qua-05', 'chimie', '📋', 3, 'Que veut dire « BPL » au laboratoire ?',
+    ['Bonnes pratiques de laboratoire', 'Bulletin de prélèvement', 'Balance de précision', 'Bilan périodique du laboratoire'], 0,
+    'Les BPL organisent la façon dont les études sont planifiées, réalisées, enregistrées et archivées.'),
+  bankQuestion('labo-qua-06', 'chimie', '📋', 3, 'Pourquoi analyse-t-on un échantillon de contrôle, de valeur connue, avec chaque série ?',
+    ['Pour utiliser le reste du produit', 'Pour vérifier que la série donne des résultats justes', 'Pour aller plus vite', 'Pour étalonner la balance'], 1,
+    'Si le contrôle ne retrouve pas sa valeur connue, les résultats de la série ne sont pas fiables.'),
+  bankQuestion('labo-qua-07', 'chimie', '📋', 4, 'Que concerne la norme ISO/IEC 17025 ?',
+    ['Le management environnemental', 'La sécurité informatique', 'La sécurité des aliments', 'La compétence des laboratoires d’essais et d’étalonnage'], 3,
+    'ISO/IEC 17025 sert à l’accréditation des laboratoires (en France par le COFRAC).'),
+  bankQuestion('labo-qua-08', 'chimie', '📋', 4, 'Sur une carte de contrôle, le contrôle sort des limites de ±3 écarts-types. Que fais-tu ?',
+    ['Je refais jusqu’à obtenir une valeur dans les limites', 'Je bloque la série, je cherche la cause et je ne rends aucun résultat avant correction', 'Je continue, c’est rare', 'J’élargis les limites'], 1,
+    'Hors limites = méthode hors maîtrise : on arrête, on enquête, on corrige, puis on refait la série.'),
+];

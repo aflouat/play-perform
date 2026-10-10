@@ -2,6 +2,8 @@ import type { QuizDifficulty, QuizQuestion, Subject } from '@/types';
 import { getQuestions } from '@/lib/question-banks';
 import type { SkillLevelNumber } from '../domain/skill';
 import { CLAUDE_PLATFORM_BANK } from './claude-platform-bank';
+import { LAB_QUALITY_BANK, LAB_SAFETY_BANK } from './lab-bank-safety-quality';
+import { LAB_MEASURES_BANK, LAB_SOLUTIONS_BANK } from './lab-bank-solutions-measures';
 
 /** Skill → existing question bank. Skills without a bank (logic, method) only offer the evaluation. */
 const SKILL_SUBJECT: Record<string, Subject> = {
@@ -21,7 +23,11 @@ export interface Flashcard {
 }
 
 /** Skills with their own question bank (no matching school subject). */
-const CUSTOM_BANKS: Record<string, QuizQuestion[]> = { 'claude-platform-docs': CLAUDE_PLATFORM_BANK };
+const CUSTOM_BANKS: Record<string, QuizQuestion[]> = {
+  'claude-platform-docs': CLAUDE_PLATFORM_BANK,
+  'labo-securite': LAB_SAFETY_BANK, 'labo-solutions': LAB_SOLUTIONS_BANK,
+  'labo-mesures': LAB_MEASURES_BANK, 'labo-qualite': LAB_QUALITY_BANK,
+};
 
 export function hasQuestionBank(skillId: string): boolean {
   return skillId in CUSTOM_BANKS || skillId in SKILL_SUBJECT;
