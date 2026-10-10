@@ -1,10 +1,9 @@
-import { useSyncExternalStore } from 'react';
 import type { BankQuestion, QuizQuestion, Subject } from '@/types';
 
 /**
  * Questions published in the database, layered over the built-in banks:
  * same id = the database version wins (admin edit), new id = added.
- * Module-level store; screens call useQuestionBankVersion() to refresh once it loads.
+ * Module-level store, free of React so servers can import it; screens refresh through question-bank-hooks.ts.
  */
 let overlay: BankQuestion[] = [];
 let version = 0;
@@ -19,16 +18,10 @@ export function setBankOverlay(items: BankQuestion[]): void {
 }
 
 export const getBankVersion = (): number => version;
-const subscribe = (cb: () => void) => { listeners.add(cb); return () => { listeners.delete(cb); }; };
+export const subscribeBank = (cb: () => void): (() => void) => { listeners.add(cb); return () => { listeners.delete(cb); }; };
 
 /** True once the database layer answered (or failed): quiz sessions wait for it so they draw from the final bank. */
-export function useQuestionBankReady(): boolean {
-  return useSyncExternalStore(subscribe, () => ready, () => false);
-}
-
-export function useQuestionBankVersion(): number {
-  return useSyncExternalStore(subscribe, getBankVersion, getBankVersion);
-}
+export const isBankReady = (): boolean => ready;
 
 /** Subject quizzes only see questions that are not attached to a skill. */
 export function overlayForSubject(subject: Subject): QuizQuestion[] {

@@ -336,7 +336,8 @@ Types : `src/types/reading.ts` (`ReadingWord`, `Syllable`, `ParsedWord`, `Readin
 | Fichier | Contenu |
 |---|---|
 | `question-bank-mapper.ts` | `dbToBankQuestion(row)` (ligne → `QuizQuestion` + `skillId`), `quizToDbRow(q, skillId)` |
-| `question-bank-overlay.ts` | Couche en mémoire : `setBankOverlay`, `overlayForSubject/ForSkill`, `mergeById(base, edited)` (même id = version base, indice du code conservé), hooks `useQuestionBankVersion()` / `useQuestionBankReady()` |
+| `question-bank-overlay.ts` | Couche en mémoire : `setBankOverlay`, `overlayForSubject/ForSkill`, `mergeById(base, edited)` (même id = version base, indice du code conservé), `subscribeBank`, `isBankReady` (sans React : importable côté serveur) |
+| `question-bank-hooks.ts` | Hooks client `useQuestionBankVersion()` / `useQuestionBankReady()` |
 | `admin-fetch.ts` | `adminFetch(url, init)` : fetch avec le jeton Supabase de l'admin |
 | `components/shared/QuestionBankSync.tsx` | Charge `/api/question-bank` une fois (délai 3 s, repli sur le code), monté dans `app/layout.tsx` |
 | `skills/infra/skill-content.ts` | `getSkillBank` (fusionné), `getBuiltInSkillBank` / `hasBuiltInQuestionBank` (code seul : défi hebdo noté côté serveur), `listBuiltInBanks()` |

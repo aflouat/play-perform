@@ -16,7 +16,7 @@ import { getQuestions } from '@/lib/question-banks';
 import { SUBJECT_META } from '@/lib/subjects';
 import { SubjectBadge } from '@/components/home/SubjectBadge';
 import type { DbParcours } from '@/lib/db';
-import { useQuestionBankVersion } from '@/lib/question-bank-overlay';
+import { useQuestionBankVersion } from '@/lib/question-bank-hooks';
 
 export default function HomePage() {
   const router = useRouter();

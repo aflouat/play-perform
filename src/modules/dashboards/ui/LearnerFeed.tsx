@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { describeEvent, fetchFeed, sendCheer, type FeedEvent } from '@/modules/competition';
 import { fetchDistributions } from '@/modules/community';
 import { getSkillBank } from '@/modules/skills';
-import { useQuestionBankVersion } from '@/lib/question-bank-overlay';
+import { useQuestionBankVersion } from '@/lib/question-bank-hooks';
 import { trapAlerts, type TrapAlert } from '../domain/scorecard';
 
 const FEED_SIZE = 5;

@@ -1,6 +1,6 @@
 'use client';
 
-import { useQuestionBankReady } from '@/lib/question-bank-overlay';
+import { useQuestionBankReady } from '@/lib/question-bank-hooks';
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import type { Subject } from '@/types';

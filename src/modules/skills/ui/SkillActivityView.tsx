@@ -11,7 +11,7 @@ import { isEnrolled } from '../domain/enrollment';
 import { persistSkillLevel } from '../application/skill-sync';
 import { advanceSkillLevel, setSkillLevel, useSkillLevels } from '../application/skill-progress';
 import { FLASHCARDS_XP, QUIZ_LENGTH, QUIZ_PASS_XP, isQuizPassed, type SkillActivity } from '../domain/activity';
-import { useQuestionBankVersion } from '@/lib/question-bank-overlay';
+import { useQuestionBankVersion } from '@/lib/question-bank-hooks';
 import { hasQuestionBank, pickSkillQuestions, toFlashcards } from '../infra/skill-content';
 import { SkillLevelMeter } from './SkillLevelMeter';
 import { SkillQuiz } from './SkillQuiz';
