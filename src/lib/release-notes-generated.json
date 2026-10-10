@@ -1,5 +1,21 @@
 [
   {
+    "id": "generated-v0.12.0",
+    "version": "0.12.0",
+    "deployed_at": "2026-10-10T11:44:28.093Z",
+    "title": "Version 0.12.0",
+    "summary": "3 nouveauté(s), 0 correction(s) — dont : compétences métier laboratoire et éditeur des parcours en base ; phases génériques, chapitres propres au parcours de formation ; centre de commande — carte au trésor des phases, reprise guidée, scorecard et fil du centre.",
+    "changes": [
+      "feat : compétences métier laboratoire et éditeur des parcours en base",
+      "feat : phases génériques, chapitres propres au parcours de formation",
+      "feat : centre de commande — carte au trésor des phases, reprise guidée, scorecard et fil du centre"
+    ],
+    "tags": [
+      "feat"
+    ],
+    "deployed_by": "aflouatabdelwedoud"
+  },
+  {
     "id": "generated-v0.11.0",
     "version": "0.11.0",
     "deployed_at": "2026-10-09T22:14:36.983Z",

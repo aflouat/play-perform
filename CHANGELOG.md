@@ -2,6 +2,13 @@
 
 Toutes les versions de Play Perform (générées par `npm run release:tag`).
 
+## v0.12.0 — 2026-10-10
+
+### ✨ Nouveautés
+- compétences métier laboratoire et éditeur des parcours en base (6add420)
+- phases génériques, chapitres propres au parcours de formation (2cd0f7d)
+- centre de commande — carte au trésor des phases, reprise guidée, scorecard et fil du centre (ab2f98c)
+
 ## v0.11.0 — 2026-10-09
 
 ### ✨ Nouveautés
