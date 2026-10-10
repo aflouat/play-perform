@@ -65,6 +65,13 @@ _Mis à jour : 2026-10-10 · v0.12.0_
 | `api/competition/events/[id]/route.ts` | DELETE | L'enseignant retire un élément du fil |
 | `api/stats/answers/route.ts` | GET, POST | Statistiques anonymes des réponses (pièges classiques) |
 | `api/profile/route.ts` | GET, PUT | Pseudo, prénom, nom, centre d'un apprenant (lui-même ou son enseignant) |
+| `api/certificates/route.ts` | GET | Certificat de l'élève pour une compétence (émis à l'éligibilité) + liens vérification / LinkedIn |
+| `api/certificates/[reference]/route.ts` | DELETE | Révocation (société mère, raison obligatoire) |
+| `api/certificates/[reference]/pdf/route.ts` | GET | PDF avec QR code (titulaire ou son enseignant ; 410 si révoqué) |
+| `api/chat/route.ts` | GET | Chat du binôme de la semaine (session apprenant), `?after=` pour les nouveaux messages |
+| `api/chat/messages/route.ts` | POST | Message (projet ouvert, 20 / min) |
+| `api/chat/messages/[id]/report/route.ts` | POST | Signalement d'un message du binôme |
+| `api/audit/chats/route.ts`, `api/audit/chats/[id]/route.ts` | GET | Audit des chats : liste et transcription (société mère) |
 | `api/oral-staff/route.ts` | GET, PUT | « Peut faire passer les oraux » : équipe du centre et réglage (responsable) |
 | `api/oral-examiner/status/route.ts` | GET | Centres où l'appelant fait passer les oraux, ses créneaux libres, élèves en attente (bandeau) |
 | `api/oral-requests/route.ts` | GET, POST | Liste d'attente de l'oral final (élève) |
@@ -113,6 +120,8 @@ _Mis à jour : 2026-10-10 · v0.12.0_
 | `docker/supabase/migrate.sh` | Applique les migrations non jouées (table `_local_migrations`) + seed au 1er run |
 | `supabase/migrations/20260927000000_initial_schema.sql` | Schéma complet (10 tables + RLS) reconstruit depuis la prod |
 | `supabase/migrations/20260928000000_reading_mode.sql` | CHECK `students.mode` accepte `reading` |
+| `supabase/migrations/20261027000000_pair_chat.sql` | `chat_threads`, `chat_messages` (trigger : jamais modifiés ni supprimés) |
+| `supabase/migrations/20261026000000_certificates.sql` | Registre `certificates` (trigger : champs signés figés, pas de suppression ; un certificat vivant par élève et compétence) |
 | `supabase/migrations/20261025000000_oral_staffing.sql` | `oral_examiners` (qui fait passer les oraux, examinateurs repris), `oral_requests` (liste d'attente, une par élève et compétence) |
 | `supabase/migrations/20261024000000_centre_leads.sql` | `centre_leads` (demandes de rappel des landings, service role) |
 | `supabase/migrations/20261023000000_exam_slots.sql` | `exam_slots`, `exam_bookings`, fonctions atomiques `book_exam_slot`, `cancel_exam_booking` (service role) |
@@ -151,6 +160,8 @@ _Mis à jour : 2026-10-10 · v0.12.0_
 | `organizations` | `domain/{access,inputs}.ts`, `infra/{organization-repository,organization-client}.ts`, `ui/{OrganizationCard,TeamLinks}.tsx`, `server.ts` | `DEFAULT_ORGANIZATION_ID`, `canRecruit`, `canManageStudents`, `canDecideEnrollments`, `canCorrectEvaluations`, `organizationsWhere`, `studentOrganization`, `validateOrganizationInput`, `validateMemberInput`, `validateSiren/Siret`, `validateCentreIdentity`, `isIdentityComplete`, `adminLinks`, `centreHome`, `navAccessOf`, `AdminNav`, `SuperAdminGate`, `CentreCard`, `CentreIdentityForm`, `CentreSignupForm`, `CentreApplicationBanner`, `ApplicationsReview`, `validateCentreApplication`, `validateApplicationDecision`, `fetchMyAccess`, `recruit`, `TeamLinks` · `lib/access-context.ts` : `getAccessContext(req)` |
 | `pricing` | `domain/plan.ts`, `infra/pricing-client.ts`, `infra/pricing-repository.ts` (serveur), `ui/{PricingSection,PlanEditor}.tsx`, `server.ts` | `formatPrice`, `billingSuffix`, `eurosToCents`, `centsToEuros`, `yearlySavingPercent`, `validatePlanUpdate`, `fetchActivePlans`, `fetchAllPlans`, `savePlan`, `PricingSection`, `PlanEditor` · `server.ts` : `fetchPlans`, `updatePlan` |
 | `exams` | `domain/{slots,types,staffing}.ts`, `application/{oral-service,staffing-service}.ts` (serveur), `infra/{slot-repository,booking-repository,staffing-repository}.ts` (serveur), `infra/{exam-client,staffing-client}.ts`, `ui/{ExamAgenda,AvailabilityForm,SlotRow,OutcomeForm,OralBooking,OralResult,OralWaitingMessage,OralAvailabilityNotice,OralStaffSettings,OralWaitingList,format}.tsx`, `server.ts` | `FINAL_ORAL_LEVEL` (4), `isFinalOralPhase`, `validateOralGrant(body, members)`, `oralRequestRefusal(ctx)`, `examinerNotice(status)`, `OralAvailabilityNotice`, `OralStaffSettings`, `OralWaitingList`, `fetchMyOralRequests` · serveur : `canOpenSlots(userId, org)` (table `oral_examiners`), `requestOral`, `examinerStatus`, `oralStaff`, `listWaitingRequests`, `resolveRequests` · `DEFAULT_SLOT_MINUTES` (30), `SLOT_DURATIONS`, `splitAvailability(from, to, min)`, `validateAvailability(body, now)`, `validateBookingRequest`, `bookingRefusal(ctx, now)`, `cancelRefusal(booking, by, now)`, `validateOutcome(body, startsAt, now)`, `groupByDay(slots, tz)`, `ExamAgenda`, `OralBooking`, `fetchMyOrals` · `server.ts` : `canOpenSlots`, `bookOral`, `recordOutcome`, `createSlots`, `listExaminerSlots`, `listOpenSlots`, `getSlot`, `closeFreeSlot`, `listBookingsForProfile`, `getBooking`, `liveBookingOfSlot`, `cancelBooking`, `studentOrganization` |
+| `certificates` | `domain/certificate.ts` (serveur : node:crypto), `application/issue.ts`, `infra/{certificate-repository,certificate-pdf}.ts` (serveur), `infra/certificate-client.ts`, `ui/{CertificateActions,VerificationView}.tsx`, `server.ts` | `CertificateActions`, `VerificationView` · serveur : `issueIfEligible(profileId, skillId)`, `issueInBackground`, `certificateSignature(record, secret)`, `verificationStatus(record, sig, secret)`, `verificationUrl`, `publicHolderName`, `linkedInAddToProfileUrl`, `linkedInShareUrl`, `certificatePdf(record, url)`, `findCertificate`, `liveCertificate`, `revokeCertificate`, `certificateSecret`, `siteUrl` |
+| `collab` | `domain/chat.ts`, `application/pair-chat.ts` (serveur), `infra/chat-repository.ts` (serveur), `infra/{chat-client,audit-client}.ts`, `ui/{PairChat,ChatAudit}.tsx`, `server.ts` | `CHAT_NOTICE`, `MESSAGES_PER_MINUTE`, `weekWindow(week)`, `chatState`, `membersKey`, `validateMessage`, `PairChat`, `ChatAudit` · serveur : `currentPairThread(profileId, now)`, `listMessages`, `insertMessage`, `reportMessage`, `listThreadsForAudit`, `learnerNames` |
 | `storefront` | `domain/storefront.ts`, `infra/{storefront-repository,storefront-client}.ts`, `ui/{CentreLanding,PathsOffer,LeadForm,CentreLeads}.tsx`, `server.ts` | `publicCentre(row)`, `centreMetadata(centre)`, `validateLead(body, pathIds)`, `validateLeadStatus`, `LEAD_STATUSES`, `CentreLanding`, `CentreLeads` · `server.ts` : `getPublicCentre(slug)`, `countOpenSlots`, `insertLead`, `listLeads`, `organizationOfLead`, `setLeadStatus` |
 | `landing` | `application/useLandingFlow.ts`, `infra/placement-storage.ts`, `ui/{LandingPage,Hero,FlowStepper,ModeChoice,SkillPicker,PlacementTest,PlacementResultView,ParentsSection}.tsx` | `LandingPage` |
 
@@ -408,6 +419,8 @@ Types : `src/types/reading.ts` (`ReadingWord`, `Syllable`, `ParsedWord`, `Readin
 | `integration/faq-alignment.test.tsx` | Intégration | FAQ alignée sur README, version, avatars, XP, matières, fonctionnalités |
 | `unit/release-tag.test.ts` | Unit | Script `release:tag` — semver, CHANGELOG, tag, note persistée, README synchronisé |
 | `unit/exam-slots.test.ts`, `unit/oral-service.test.ts`, `unit/exam-routes.test.ts`, `unit/oral-staffing.test.ts`, `unit/oral-staffing-routes.test.ts`, `integration/exam-ui.test.tsx` | Unit + intégration | Oraux : découpage des disponibilités, règles de réservation / annulation, résultat → évaluation, routes, agenda et réservation |
+| `unit/certificates.test.ts`, `unit/certificate-issue.test.ts`, `unit/certificate-routes.test.ts`, `integration/certificate-ui.test.tsx` | Unit + intégration | Signature, vérification, LinkedIn, PDF, émission automatique, routes, page de vérification |
+| `unit/pair-chat.test.ts`, `unit/pair-chat-routes.test.ts`, `integration/pair-chat-ui.test.tsx` | Unit + intégration | Fenêtre du projet, archivage, accès réservé au binôme, signalement, audit |
 | `unit/storefront.test.ts`, `unit/storefront-routes.test.ts`, `integration/centre-landing.test.tsx` | Unit + intégration | Landing des centres : données publiques, métadonnées, demande de rappel, suivi par le centre |
 | `unit/learner-roadmap.test.ts`, `unit/training-paths.test.ts`, `unit/training-path-route.test.ts`, `unit/training-path-input.test.ts`, `unit/training-paths-catalog-route.test.ts`, `integration/command-center.test.tsx`, `integration/training-path-admin.test.tsx` | Unit + intégration | Centre de commande : parcours (phases génériques, chapitres par parcours, choix élève / centre), verrou de phase, filtre de niveau, planification / retard, reprise, rang, badges, alertes de pièges |
 | `unit/onboarding.test.ts`, `integration/first-connection.test.tsx` | Unit + intégration | Première connexion en 3 étapes (profil, niveau, premier quiz) |
@@ -468,6 +481,14 @@ Oral sur créneau
   → /competences/[skillId] : OralBooking → GET /api/exam-slots/open → POST /api/exam-bookings (bookOral : bookingRefusal + book_exam_slot)
   → pas de créneau + niveau ≥ 4 : OralBooking → POST /api/oral-requests (requestOral) → OralWaitingList (centre), OralAvailabilityNotice (examinateurs autorisés), « Aujourd'hui » (élève) ; réservation → resolveRequests
   → après le début : OutcomeForm → PATCH /api/exam-bookings/:id → recordOutcome → recordOralEvaluation (skills) → niveau +1 + recordMilestone
+
+Certificat
+  → validation (PATCH skill-evaluations / exam-bookings) ou page /diplome → issueIfEligible → registre certificates (signature HMAC)
+  → CertificateActions : PDF (/api/certificates/:ref/pdf, QR → /verifier/:ref?s=sig), LinkedIn (add to profile / share)
+
+Chat de binôme
+  → /classement : PairChat → GET /api/chat (currentPairThread : loadPairData + groupsOfWeek → findOrCreateThread) → POST /api/chat/messages
+  → fin de semaine : chatState = archived (lecture seule) ; /admin/audit-chats → GET /api/audit/chats(/:id)
 
 Landing d'un centre
   → /centres/[slug] (serveur) : getPublicCentre + offeredPaths + countOpenSlots → CentreLanding → LeadForm → POST /api/centres/:slug/leads → centre_leads

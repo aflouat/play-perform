@@ -2,6 +2,12 @@
 
 Fichier unique de pilotage : **en cours**, **backlog** et **bugs connus** (remplace `in-progress.md` et `knownBugs.md`). Supprimer les lignes une fois réalisées ; l'état du projet est dans `README.md`.
 
+## En cours — Certificats PDF vérifiables + chat de binôme audité
+- [x] Certificats PDF vérifiables (registre signé, QR code, page publique, LinkedIn, révocation) et chat de binôme archivé et audité (livrés, voir README modules `certificates` et `collab`)
+- [ ] **Prod : définir `CERTIFICATE_SECRET` (Vercel, ne plus jamais le changer) et `NEXT_PUBLIC_SITE_URL` ; appliquer `20261026000000_certificates.sql` puis `20261027000000_pair_chat.sql`** (testées sur Postgres 17, rejouables)
+- [ ] Certificats : écran de révocation dans l'admin (la route existe) ; anciens diplômes imprimés avant le registre (référence `PP-…` sans entrée) : émis à la prochaine visite de la page du diplôme
+- [ ] Chat : projets en binôme créés par l'enseignant (titre, compétence, dates) en plus du binôme de la semaine — le modèle `chat_threads` (`context_kind`) est prêt ; temps réel (Supabase Realtime) à la place du rafraîchissement ; journal des consultations d'audit ; durée de conservation à fixer (RGPD)
+
 ## En cours — v0.13 : oraux sur créneaux + landing de chaque centre franchisé
 Décisions (2026-10-10) : back-office centralisé (société mère) ; le centre recrute les élèves et fait le support commercial ; **seul le créneau d'oral est payant**, **encaissé en central** puis la part du centre lui est **reversée** (commission de la plateforme retenue). Modèle repris d'app-store / freelancehub (créneaux, réservation atomique, montants recalculés serveur).
 - [x] Créneaux, réservation, résultat de l'oral, landing des centres et demandes de rappel (livrés, voir README modules `exams` et `storefront`)

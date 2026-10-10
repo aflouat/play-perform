@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { DiplomaView, fetchDiploma, getSkillById, type DiplomaGap, type DiplomaResponse } from '@/modules/skills';
 import { IdentityForm } from '@/modules/competition';
+import { CertificateActions } from '@/modules/certificates';
 import { useActiveProfileId, isProfileReady } from '@/hooks/useActiveProfileId';
 
 const GUIDE: Record<Exclude<DiplomaGap, 'names'>, (skillId: string) => { text: string; href: string; cta: string }> = {
@@ -32,6 +33,7 @@ export default function DiplomaPage() {
           <Link href="/competences" className="text-sm text-slate-400">← Ma ville</Link>
           <button onClick={() => window.print()} className="rounded-xl bg-violet-600 px-5 py-2.5 text-sm font-bold text-white">🖨️ Imprimer mon diplôme</button>
         </div>
+        <div className="mx-auto mb-6 max-w-3xl"><CertificateActions profileId={profileId} skillId={skillId} /></div>
         <DiplomaView diploma={state.diploma} />
       </main>
     );

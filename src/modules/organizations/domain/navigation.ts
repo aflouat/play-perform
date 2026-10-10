@@ -26,7 +26,7 @@ export function adminLinks(a: NavAccess): NavLink[] {
     ...home,
     ...(a.isSuperAdmin ? [
       { href: '/admin/questions', label: 'Questions' }, { href: '/admin/import', label: 'Import CSV' },
-      { href: '/admin/parcours', label: 'Parcours' }, { href: '/admin/formations', label: 'Formations' }, { href: '/admin/pricing', label: 'Tarifs' }, { href: '/admin/organisations', label: 'Centres' },
+      { href: '/admin/parcours', label: 'Parcours' }, { href: '/admin/formations', label: 'Formations' }, { href: '/admin/pricing', label: 'Tarifs' }, { href: '/admin/organisations', label: 'Centres' }, { href: '/admin/audit-chats', label: 'Audit des chats' },
     ] : []),
     ...(enrollments(a) ? [{ href: '/admin/inscriptions', label: 'Inscriptions' }] : []),
     ...(corrections(a) ? [{ href: '/admin/evaluations', label: 'Corrections' }] : []),

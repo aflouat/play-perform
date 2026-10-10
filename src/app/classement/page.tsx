@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ActivityFeed, CompetitionPanel, PairCard } from '@/modules/competition';
+import { PairChat } from '@/modules/collab';
 import { useActiveProfileId, isProfileReady } from '@/hooks/useActiveProfileId';
 import { useLearningMode } from '@/hooks/useLearningMode';
 import { useScore } from '@/hooks/useScore';
@@ -26,6 +27,7 @@ export default function RankingPage() {
         <p className="mt-1 text-sm text-slate-500">Un binôme et un défi chaque semaine, le classement et les réussites de ton centre. Tout le monde y apparaît sous un pseudo.</p>
       </div>
       <PairCard profileId={profileId} onBonus={(xp) => { addXp(xp, 'badge-earned'); triggerGain(xp); }} />
+      <PairChat />
       <CompetitionPanel profileId={profileId} mode={mode} />
       <ActivityFeed profileId={profileId} />
     </main>

@@ -4,6 +4,7 @@ import { getAccessContext } from '@/lib/access-context';
 import { cancelRefusal, validateOutcome } from '@/modules/exams';
 import { cancelBooking, getBooking, recordOutcome } from '@/modules/exams/server';
 import { recordMilestone } from '@/modules/competition/server';
+import { issueInBackground } from '@/modules/certificates/server';
 
 type Params = { params: Promise<{ id: string }> };
 const fail = (error: string, status: number) => NextResponse.json({ error }, { status });
@@ -38,7 +39,10 @@ export async function PATCH(req: NextRequest, { params }: Params): Promise<NextR
     if (!validation.ok) return fail(validation.error, 400);
     const result = await recordOutcome(booking, validation.value.outcome, validation.value.comment);
     if (!result) return fail('Le résultat de cet oral est déjà saisi.', 409);
-    if (result.newLevel) await recordMilestone(booking.profileId, booking.skillId, result.newLevel);
+    if (result.newLevel) {
+      await recordMilestone(booking.profileId, booking.skillId, result.newLevel);
+      await issueInBackground(booking.profileId, booking.skillId); // the certificate follows the diploma automatically
+    }
     return NextResponse.json({ ok: true, ...result });
   } catch (err) {
     console.error('[PATCH /api/exam-bookings/:id]', err);

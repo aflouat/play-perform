@@ -35,7 +35,9 @@ export default function PrivacyPage() {
           <li>Cours : les demandes d&apos;inscription (motivations) et les réponses du centre de formation.</li>
           <li>Communauté : tes passages de niveau (4 et 5) apparaissent dans le fil de ton centre sous ton pseudo, avec les « Bravo » reçus ; les statistiques des réponses aux questions sont anonymes (aucun lien avec toi).</li>
           <li>Compétition : un pseudo (jamais le nom) visible des seuls élèves du centre, les résultats du défi de la semaine et les médailles. L&apos;enseignant peut masquer un élève du classement.</li>
-          <li>Évaluations : les réponses rédigées, lues par un examinateur, avec son commentaire.</li>
+          <li>Évaluations : les réponses rédigées, lues par un examinateur, avec son commentaire ; les oraux réservés (date, compétence, résultat).</li>
+          <li>Chat de binôme : les messages échangés avec ton binôme pendant le projet de la semaine. Le chat est archivé à la fin du projet ; les messages ne peuvent être ni modifiés ni supprimés et sont conservés par Play Perform comme piste d&apos;audit, consultée uniquement par la société mère en cas de signalement ou de non-respect du règlement.</li>
+          <li>Certificats : prénom, nom, compétence, centre et date, signés et inscrits au registre. La page publique de vérification (QR code) n&apos;affiche que ton prénom et l&apos;initiale de ton nom ; c&apos;est toi qui décides de la partager (LinkedIn, employeur).</li>
           <li>Sur l&apos;appareil (localStorage) : progression, planning de révisions, plans de travail et heures de rappel, résultats du test de niveau fait sans compte. Les rappels sont des notifications du navigateur, que tu peux refuser ou retirer à tout moment.</li>
         </ul>
       </Block>

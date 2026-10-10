@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getAccessContext } from '@/lib/access-context';
 import { canCorrectEvaluations } from '@/modules/organizations';
 import { recordMilestone } from '@/modules/competition/server';
+import { issueInBackground } from '@/modules/certificates/server';
 import { correctEvaluation, organizationOfEvaluation, validateCorrection } from '@/modules/skills/server';
 
 type Params = { params: Promise<{ id: string }> };
@@ -18,7 +19,10 @@ export async function PATCH(req: NextRequest, { params }: Params): Promise<NextR
     if (!organizationId || !canCorrectEvaluations(ctx, organizationId)) return NextResponse.json({ error: 'Non autorisé' }, { status: 403 });
     const evaluation = await correctEvaluation(id, validation.value);
     if (!evaluation) return NextResponse.json({ error: 'Évaluation introuvable ou déjà corrigée' }, { status: 404 });
-    if (evaluation.status === 'passed') await recordMilestone(evaluation.profileId, evaluation.skillId, Math.min(5, evaluation.level + 1));
+    if (evaluation.status === 'passed') {
+      await recordMilestone(evaluation.profileId, evaluation.skillId, Math.min(5, evaluation.level + 1));
+      await issueInBackground(evaluation.profileId, evaluation.skillId); // the certificate follows the diploma automatically
+    }
     return NextResponse.json({ evaluation });
   } catch (err) {
     console.error('[PATCH /api/skill-evaluations]', err);
