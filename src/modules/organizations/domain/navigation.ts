@@ -30,6 +30,7 @@ export function adminLinks(a: NavAccess): NavLink[] {
     ] : []),
     ...(enrollments(a) ? [{ href: '/admin/inscriptions', label: 'Inscriptions' }] : []),
     ...(corrections(a) ? [{ href: '/admin/evaluations', label: 'Corrections' }] : []),
+    ...(has(a, 'examiner') ? [{ href: '/examinateur/agenda', label: 'Agenda des oraux' }] : []),
     ...(students(a) || a.isSuperAdmin ? [{ href: '/enseignant/classement', label: 'Médailles' }] : []),
     ...(!a.isSuperAdmin && has(a, 'org_admin') ? [{ href: '/admin/organisations', label: 'Équipe' }] : []),
   ];

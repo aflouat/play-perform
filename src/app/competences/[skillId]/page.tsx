@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { SkillActivityView } from '@/modules/skills';
 import { rememberLastSkill } from '@/modules/dashboards';
+import { OralBooking } from '@/modules/exams';
 import { useActiveProfileId, isProfileReady } from '@/hooks/useActiveProfileId';
 import { useSkillBootstrap } from '@/hooks/useSkillBootstrap';
 import { useScore } from '@/hooks/useScore';
@@ -30,6 +31,7 @@ export default function SkillPage() {
       <XpGainToast gain={lastGain} />
       <button onClick={() => router.push('/competences')} className="mb-4 text-sm text-slate-400">← Mes compétences</button>
       <SkillActivityView skillId={skillId} profileId={profileId} mode={mode} addXp={addXp} triggerGain={triggerGain} initialActivity={asked === 'quiz' || asked === 'flashcards' ? asked : null} />
+      <div className="mt-6"><OralBooking profileId={profileId} skillId={skillId} /></div>
     </main>
   );
 }

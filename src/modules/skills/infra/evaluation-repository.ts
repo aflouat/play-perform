@@ -67,3 +67,17 @@ export async function organizationOfEvaluation(id: string): Promise<string | nul
   const { data } = await table().select('organization_id').eq('id', id).maybeSingle();
   return (data as { organization_id: string } | null)?.organization_id ?? null;
 }
+
+/** An oral already marked by the examiner (exams module): stored as a corrected evaluation; a pass raises the level. */
+export async function recordOralEvaluation(oral: {
+  profileId: string; organizationId: string; skillId: string; level: SkillLevelNumber; prompt: string; answer: string; status: 'passed' | 'failed'; comment: string;
+}): Promise<SkillEvaluation> {
+  const { data, error } = await table().insert({
+    profile_id: oral.profileId, organization_id: oral.organizationId, skill_id: oral.skillId, level: oral.level, prompt: oral.prompt, answer: oral.answer,
+    status: oral.status, examiner_comment: oral.comment || null, corrected_at: new Date().toISOString(),
+  }).select().single();
+  if (error) throw new Error(error.message);
+  const evaluation = toEvaluation(data as Row);
+  if (evaluation.status === 'passed') await raiseLevel(evaluation.profileId, evaluation.skillId, Math.min(5, evaluation.level + 1) as SkillLevelNumber);
+  return evaluation;
+}

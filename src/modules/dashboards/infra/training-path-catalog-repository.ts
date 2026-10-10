@@ -35,3 +35,12 @@ export async function updateTrainingPath(path: TrainingPath & { active: boolean 
   if (error) throw new Error(error.message);
   return (data ?? []).length > 0 ? 'updated' : 'missing';
 }
+
+/** Paths offered to new learners, for public pages (built-in ones while the table is missing or empty). */
+export async function offeredPaths(): Promise<TrainingPath[]> {
+  try {
+    const paths = await listTrainingPaths();
+    if (paths.length > 0) return paths.filter((p) => p.active !== false);
+  } catch { /* table not migrated yet */ }
+  return [...getTrainingPaths()];
+}

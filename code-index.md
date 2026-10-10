@@ -1,5 +1,5 @@
 # Code Index — Play Perform
-_Mis à jour : 2026-10-10 · v0.11.0_
+_Mis à jour : 2026-10-10 · v0.12.0_
 > Lire avant de coder. Mettre à jour quand un fichier est créé, supprimé ou dépasse 150 lignes.
 
 ---
@@ -34,6 +34,8 @@ _Mis à jour : 2026-10-10 · v0.11.0_
 | `app/releases/page.tsx` | — | Historique versions |
 | `app/faq/page.tsx` | 122 | Guide utilisateur |
 | `app/mots/page.tsx` | — | Mode Mots — mots illustrés FR/EN/ES |
+| `app/centres/[slug]/page.tsx` | 22 | Landing d'un centre (serveur) : `generateMetadata` + `CentreLanding` |
+| `app/examinateur/agenda/page.tsx` | 23 | Agenda des oraux de l'examinateur |
 | `app/lecture/page.tsx` | 68 | Lecture syllabique — orchestre toolbar + activités |
 
 ---
@@ -63,6 +65,14 @@ _Mis à jour : 2026-10-10 · v0.11.0_
 | `api/competition/events/[id]/route.ts` | DELETE | L'enseignant retire un élément du fil |
 | `api/stats/answers/route.ts` | GET, POST | Statistiques anonymes des réponses (pièges classiques) |
 | `api/profile/route.ts` | GET, PUT | Pseudo, prénom, nom, centre d'un apprenant (lui-même ou son enseignant) |
+| `api/exam-slots/route.ts` | GET, POST | Agenda de l'examinateur (14 j max) ; ouverture d'une plage découpée en créneaux (examinateur du centre) |
+| `api/exam-slots/[id]/route.ts` | DELETE | Fermer un créneau libre / annuler un oral réservé (examinateur du créneau, avant le début) |
+| `api/exam-slots/open/route.ts` | GET | Créneaux libres du centre de l'élève (de +2 h à +30 j) |
+| `api/exam-bookings/route.ts` | GET, POST | Oraux de l'élève ; réservation (règles vérifiées en base, `book_exam_slot` atomique) |
+| `api/exam-bookings/[id]/route.ts` | DELETE, PATCH | Annulation par l'élève (24 h avant) ; résultat saisi par l'examinateur (validé → évaluation + niveau) |
+| `api/centres/[slug]/leads/route.ts` | POST | Demande de rappel depuis la landing d'un centre (public, 5 / h / IP) |
+| `api/centre-leads/route.ts` | GET | Demandes des centres de l'appelant |
+| `api/centre-leads/[id]/route.ts` | PATCH | Suivi d'une demande (contacté, inscrit, sans suite) |
 | `api/training-paths/route.ts` | GET, POST | Catalogue des parcours (public, secours = parcours intégrés) ; création (société mère) |
 | `api/training-paths/[id]/route.ts` | PUT | Modification d'un parcours (société mère) |
 | `api/training-path/route.ts` | GET, PUT | Parcours de formation d'un élève (chapitres de sa feuille de route) : le centre l'attribue, l'élève choisit le premier |
@@ -98,6 +108,8 @@ _Mis à jour : 2026-10-10 · v0.11.0_
 | `docker/supabase/migrate.sh` | Applique les migrations non jouées (table `_local_migrations`) + seed au 1er run |
 | `supabase/migrations/20260927000000_initial_schema.sql` | Schéma complet (10 tables + RLS) reconstruit depuis la prod |
 | `supabase/migrations/20260928000000_reading_mode.sql` | CHECK `students.mode` accepte `reading` |
+| `supabase/migrations/20261024000000_centre_leads.sql` | `centre_leads` (demandes de rappel des landings, service role) |
+| `supabase/migrations/20261023000000_exam_slots.sql` | `exam_slots`, `exam_bookings`, fonctions atomiques `book_exam_slot`, `cancel_exam_booking` (service role) |
 | `supabase/migrations/20261022000000_training_paths.sql` | Table `training_paths` (catalogue des parcours, lecture publique) + 3 parcours initiaux |
 | `supabase/migrations/20261021000000_training_path.sql` | `students.training_path` (parcours de formation) |
 | `supabase/migrations/20261020000000_community.sql` | `answer_stats` + `bump_answer_stat`, `activity_events`, `activity_cheers`, `pair_bonus_claims` |
@@ -132,6 +144,8 @@ _Mis à jour : 2026-10-10 · v0.11.0_
 | `competition` | `domain/{week,nickname,identity,ranking,seed}.ts`, `ui/IdentityForm.tsx` (+ `validatePersonName`, `validateIdentityUpdate`, `isIdentityReady`, `canPrintDiploma`), `application/{challenge,view}.ts`, `infra/{competition-repository,competition-client}.ts`, `ui/{Leaderboard,ChallengePlayer,CompetitionPanel}.tsx`, `server.ts` | `pairsFor`, `groupOf`, `bonusStatus`, `buildPairView`, `describeEvent`, `canCheer`, `PairCard`, `ActivityFeed`, `isoWeek`, `previousWeek`, `validateNickname`, `generateNickname`, `rankBy`, `rankWeekly`, `awardsFor`, `challengeFor`, `scoreChallenge`, `buildCompetitionView`, `pastAwardsOf`, `CompetitionPanel` |
 | `organizations` | `domain/{access,inputs}.ts`, `infra/{organization-repository,organization-client}.ts`, `ui/{OrganizationCard,TeamLinks}.tsx`, `server.ts` | `DEFAULT_ORGANIZATION_ID`, `canRecruit`, `canManageStudents`, `canDecideEnrollments`, `canCorrectEvaluations`, `organizationsWhere`, `studentOrganization`, `validateOrganizationInput`, `validateMemberInput`, `validateSiren/Siret`, `validateCentreIdentity`, `isIdentityComplete`, `adminLinks`, `centreHome`, `navAccessOf`, `AdminNav`, `SuperAdminGate`, `CentreCard`, `CentreIdentityForm`, `CentreSignupForm`, `CentreApplicationBanner`, `ApplicationsReview`, `validateCentreApplication`, `validateApplicationDecision`, `fetchMyAccess`, `recruit`, `TeamLinks` · `lib/access-context.ts` : `getAccessContext(req)` |
 | `pricing` | `domain/plan.ts`, `infra/pricing-client.ts`, `infra/pricing-repository.ts` (serveur), `ui/{PricingSection,PlanEditor}.tsx`, `server.ts` | `formatPrice`, `billingSuffix`, `eurosToCents`, `centsToEuros`, `yearlySavingPercent`, `validatePlanUpdate`, `fetchActivePlans`, `fetchAllPlans`, `savePlan`, `PricingSection`, `PlanEditor` · `server.ts` : `fetchPlans`, `updatePlan` |
+| `exams` | `domain/{slots,types}.ts`, `application/oral-service.ts` (serveur), `infra/{slot-repository,booking-repository}.ts` (serveur), `infra/exam-client.ts`, `ui/{ExamAgenda,AvailabilityForm,SlotRow,OutcomeForm,OralBooking,OralResult,format}.tsx`, `server.ts` | `DEFAULT_SLOT_MINUTES` (30), `SLOT_DURATIONS`, `splitAvailability(from, to, min)`, `validateAvailability(body, now)`, `validateBookingRequest`, `bookingRefusal(ctx, now)`, `cancelRefusal(booking, by, now)`, `validateOutcome(body, startsAt, now)`, `groupByDay(slots, tz)`, `ExamAgenda`, `OralBooking`, `fetchMyOrals` · `server.ts` : `canOpenSlots`, `bookOral`, `recordOutcome`, `createSlots`, `listExaminerSlots`, `listOpenSlots`, `getSlot`, `closeFreeSlot`, `listBookingsForProfile`, `getBooking`, `liveBookingOfSlot`, `cancelBooking`, `studentOrganization` |
+| `storefront` | `domain/storefront.ts`, `infra/{storefront-repository,storefront-client}.ts`, `ui/{CentreLanding,PathsOffer,LeadForm,CentreLeads}.tsx`, `server.ts` | `publicCentre(row)`, `centreMetadata(centre)`, `validateLead(body, pathIds)`, `validateLeadStatus`, `LEAD_STATUSES`, `CentreLanding`, `CentreLeads` · `server.ts` : `getPublicCentre(slug)`, `countOpenSlots`, `insertLead`, `listLeads`, `organizationOfLead`, `setLeadStatus` |
 | `landing` | `application/useLandingFlow.ts`, `infra/placement-storage.ts`, `ui/{LandingPage,Hero,FlowStepper,ModeChoice,SkillPicker,PlacementTest,PlacementResultView,ParentsSection}.tsx` | `LandingPage` |
 
 Partagé (`src/shared/ui`) : `AppVersion` (version depuis `NEXT_PUBLIC_APP_VERSION`), `SiteFooter`.
@@ -387,6 +401,8 @@ Types : `src/types/reading.ts` (`ReadingWord`, `Syllable`, `ParsedWord`, `Readin
 |---|---|---|
 | `integration/faq-alignment.test.tsx` | Intégration | FAQ alignée sur README, version, avatars, XP, matières, fonctionnalités |
 | `unit/release-tag.test.ts` | Unit | Script `release:tag` — semver, CHANGELOG, tag, note persistée, README synchronisé |
+| `unit/exam-slots.test.ts`, `unit/oral-service.test.ts`, `unit/exam-routes.test.ts`, `integration/exam-ui.test.tsx` | Unit + intégration | Oraux : découpage des disponibilités, règles de réservation / annulation, résultat → évaluation, routes, agenda et réservation |
+| `unit/storefront.test.ts`, `unit/storefront-routes.test.ts`, `integration/centre-landing.test.tsx` | Unit + intégration | Landing des centres : données publiques, métadonnées, demande de rappel, suivi par le centre |
 | `unit/learner-roadmap.test.ts`, `unit/training-paths.test.ts`, `unit/training-path-route.test.ts`, `unit/training-path-input.test.ts`, `unit/training-paths-catalog-route.test.ts`, `integration/command-center.test.tsx`, `integration/training-path-admin.test.tsx` | Unit + intégration | Centre de commande : parcours (phases génériques, chapitres par parcours, choix élève / centre), verrou de phase, filtre de niveau, planification / retard, reprise, rang, badges, alertes de pièges |
 | `unit/onboarding.test.ts`, `integration/first-connection.test.tsx` | Unit + intégration | Première connexion en 3 étapes (profil, niveau, premier quiz) |
 | `unit/community-traps.test.ts`, `unit/community-social.test.ts`, `unit/community-routes.test.ts`, `integration/community-ui.test.tsx` | Unit + intégration | Pièges classiques, échec constructif, binômes, bonus, fil, Bravo, modération |
@@ -440,6 +456,15 @@ Centre de commande (/competences)
   → phasesOf(parcours) + useSkillLevels (niveaux synchronisés avec skill_levels) + pp:roadmap:<profil>:<parcours> (départ, complétions)
   → buildRoadmap → RoadmapBanner / PhaseDetail ; resumeTarget (+ pp:last-skill, posé par /competences/[skillId]) → ResumeButton
   → Scorecard (score:<profil>) ; LearnerFeed → GET /api/competition/feed + GET /api/stats/answers
+
+Oral sur créneau
+  → /examinateur/agenda : AvailabilityForm → POST /api/exam-slots (validateAvailability → createSlots)
+  → /competences/[skillId] : OralBooking → GET /api/exam-slots/open → POST /api/exam-bookings (bookOral : bookingRefusal + book_exam_slot)
+  → après le début : OutcomeForm → PATCH /api/exam-bookings/:id → recordOutcome → recordOralEvaluation (skills) → niveau +1 + recordMilestone
+
+Landing d'un centre
+  → /centres/[slug] (serveur) : getPublicCentre + offeredPaths + countOpenSlots → CentreLanding → LeadForm → POST /api/centres/:slug/leads → centre_leads
+  → /enseignant : CentreLeads → GET /api/centre-leads, PATCH /api/centre-leads/:id
 
 Admin CSV import
   → ImportDropzone → parseAndValidateCsv

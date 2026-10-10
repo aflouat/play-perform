@@ -2,7 +2,7 @@
 export { organizationOfEvaluation } from './infra/evaluation-repository';
 export { organizationOfEnrollment } from './infra/enrollment-repository';
 export {
-  listEvaluationsForProfile, listPendingEvaluations, createEvaluation, correctEvaluation,
+  listEvaluationsForProfile, listPendingEvaluations, createEvaluation, correctEvaluation, recordOralEvaluation,
 } from './infra/evaluation-repository';
 export type { PendingEvaluation } from './infra/evaluation-repository';
 export { validateSubmission } from './application/validate-submission';

@@ -9,6 +9,7 @@ import { StudentCard } from '@/components/enseignant/StudentCard';
 import { apiFetchStudents } from '@/lib/students-api';
 import { CentreApplicationBanner, CentreCard, fetchMyAccess, isExaminerOnly, navAccessOf } from '@/modules/organizations';
 import { CentreDashboardView } from '@/modules/dashboards';
+import { CentreLeads } from '@/modules/storefront';
 
 function getClient() {
   return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL ?? '', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '');
@@ -44,6 +45,7 @@ export default function TeacherPage() {
 
         <CentreApplicationBanner />
         <CentreDashboardView />
+        <CentreLeads />
         <CentreCard />
 
         <div className="space-y-3">

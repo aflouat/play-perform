@@ -17,11 +17,11 @@ describe('adminLinks (the one menu of the centre’s side)', () => {
 
   it('gives a teacher the students’ screens, an examiner only the corrections', () => {
     expect(labels(adminLinks(access(false, 'teacher')))).toEqual(['Mon centre', 'Inscriptions', 'Médailles']);
-    expect(labels(adminLinks(access(false, 'examiner')))).toEqual(['Mes corrections', 'Corrections']);
+    expect(labels(adminLinks(access(false, 'examiner')))).toEqual(['Mes corrections', 'Corrections', 'Agenda des oraux']);
   });
 
   it('merges the roles of someone who is teacher in one centre and examiner in another', () => {
-    expect(labels(adminLinks(access(false, 'teacher', 'examiner')))).toEqual(['Mon centre', 'Inscriptions', 'Corrections', 'Médailles']);
+    expect(labels(adminLinks(access(false, 'teacher', 'examiner')))).toEqual(['Mon centre', 'Inscriptions', 'Corrections', 'Agenda des oraux', 'Médailles']);
   });
 
   it('never lists the same destination twice', () => {

@@ -2,6 +2,15 @@
 
 Fichier unique de pilotage : **en cours**, **backlog** et **bugs connus** (remplace `in-progress.md` et `knownBugs.md`). Supprimer les lignes une fois réalisées ; l'état du projet est dans `README.md`.
 
+## En cours — v0.13 : oraux sur créneaux + landing de chaque centre franchisé
+Décisions (2026-10-10) : back-office centralisé (société mère) ; le centre recrute les élèves et fait le support commercial ; **seul le créneau d'oral est payant**, **encaissé en central** puis la part du centre lui est **reversée** (commission de la plateforme retenue). Modèle repris d'app-store / freelancehub (créneaux, réservation atomique, montants recalculés serveur).
+- [x] Créneaux, réservation, résultat de l'oral, landing des centres et demandes de rappel (livrés, voir README modules `exams` et `storefront`)
+- [ ] **Prod : appliquer `20261023000000_exam_slots.sql` puis `20261024000000_centre_leads.sql`** (SQL Editor, dans cet ordre ; testées sur Postgres 17, rejouables)
+- [ ] Rappel de l'oral la veille (Web Push / e-mail) ; « Ton oral : mardi 10:00 » dans « Aujourd'hui » ; notifier l'examinateur d'une réservation ou annulation
+- [ ] Lien visio de l'oral (ou salle du centre) sur la réservation ; vérifier l'identité de l'élève avant l'oral
+- [ ] Landing : logo / photo et horaires du centre (édités par le centre), sitemap des pages `/centres/*`, lien vers la page depuis l'accueil (« Trouver un centre près de chez moi »)
+- [ ] **Paiement du créneau (étape suivante)** : prix fixé par la société mère, encaissement central (Stripe, via l'intégration Vercel Marketplace à relier au compte), commission de la plateforme et part du centre enregistrées par réservation, relevé des reversements par centre ; réservation confirmée au paiement (webhook idempotent)
+
 ## En cours — Landing visiteur + monolithe modulaire (POC)
  Nouveau code en anglais, textes UI en français. Approche « strangler » : `src/modules/` à côté de l'existant, anciens `lib/*` = ré-exports. Modes primaires (lecture, clavier, mots) hors modules. POC : données mockées / seed local.
 
