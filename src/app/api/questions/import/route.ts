@@ -1,26 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { parseAndValidateCsv } from '@/lib/csv-parser';
-import { insertQuestions, fetchQuestionsFromDb } from '@/lib/db';
+import { insertQuestions, fetchAllQuestionsFromDb } from '@/lib/db';
+import { isAdminAuthorized } from '@/lib/admin-auth';
 import { ALL_QUESTIONS } from '@/lib/question-banks';
 
-async function buildExistingIds(subject?: string): Promise<Set<string>> {
+/** Every id already taken: built-in banks and everything stored (drafts included). */
+async function buildExistingIds(): Promise<Set<string>> {
   const ids = new Set<string>();
-
-  // Static question IDs
-  for (const questions of Object.values(ALL_QUESTIONS)) {
-    for (const q of questions) ids.add(q.id);
-  }
-
-  // DB IDs for the given subject (or all if no subject filter)
-  if (subject) {
-    const dbRows = await fetchQuestionsFromDb(subject);
-    for (const r of dbRows) ids.add(r.id);
-  }
-
+  for (const questions of Object.values(ALL_QUESTIONS)) for (const q of questions) ids.add(q.id);
+  for (const r of await fetchAllQuestionsFromDb()) ids.add(r.id);
   return ids;
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
+  if (!await isAdminAuthorized(req)) return NextResponse.json({ error: 'Non autorisé.' }, { status: 401 });
   const contentType = req.headers.get('content-type') ?? '';
 
   try {

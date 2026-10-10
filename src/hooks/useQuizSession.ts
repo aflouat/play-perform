@@ -40,7 +40,7 @@ export function useQuizSession({
     setCurrentIndex(0); setAnswers([]); setFinished(false);
     setQuestionsLoaded(true);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sessionKey, profileId, bypassRecent]);
+  }, [sessionKey, profileId, bypassRecent, allForSubject.length > 0]);
 
   const handleAnswer = useCallback((optionId: QuizOptionId, timeMs: number) => {
     const q = questions[currentIndex];

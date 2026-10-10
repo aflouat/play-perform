@@ -1,5 +1,5 @@
 # Code Index — Play Perform
-_Mis à jour : 2026-10-10 · v0.12.0_
+_Mis à jour : 2026-10-10 · v0.12.0 (+ banque de questions en base)_
 > Lire avant de coder. Mettre à jour quand un fichier est créé, supprimé ou dépasse 150 lignes.
 
 ---
@@ -29,10 +29,10 @@ _Mis à jour : 2026-10-10 · v0.12.0_
 | `app/parent/new/page.tsx` | — | Ajout élève |
 | `app/admin/layout.tsx` | — | Guard admin |
 | `app/admin/import/page.tsx` | 131 | Import CSV questions |
-| `app/admin/questions/page.tsx` | 117 | Liste/filtrage questions importées |
-| `app/admin/questions/[id]/page.tsx` | 124 | Édition question |
+| `app/admin/questions/page.tsx` | 112 | Banque de questions : liste, filtre, brouillons, bouton « Copier les banques intégrées » |
+| `app/admin/questions/[id]/page.tsx` | 127 | Édition question (compétence, statut brouillon/publiée, indice) |
 | `app/releases/page.tsx` | — | Historique versions |
-| `app/faq/page.tsx` | 122 | Guide utilisateur |
+| `app/faq/page.tsx` | 123 | Guide utilisateur (composants `Section`, `Q`, `Table` dans `app/faq/FaqParts.tsx`) |
 | `app/mots/page.tsx` | — | Mode Mots — mots illustrés FR/EN/ES |
 | `app/centres/[slug]/page.tsx` | 22 | Landing d'un centre (serveur) : `generateMetadata` + `CentreLanding` |
 | `app/examinateur/agenda/page.tsx` | 23 | Agenda des oraux de l'examinateur |
@@ -45,9 +45,11 @@ _Mis à jour : 2026-10-10 · v0.12.0_
 | Fichier | Méthodes | Rôle |
 |---|---|---|
 | `api/is-admin/route.ts` | GET | `{ isAdmin: boolean }` — vérifie JWT + ADMIN_EMAILS |
-| `api/questions/route.ts` | GET | Liste questions par subject |
+| `api/questions/route.ts` | GET | Super admin : liste des questions (brouillons inclus) par subject |
+| `api/questions/seed/route.ts` | POST | Super admin : copie les banques intégrées en base (sans écraser les éditions) |
+| `api/question-bank/route.ts` | GET | Public : questions publiées (couche posée sur les banques du code) |
 | `api/questions/[id]/route.ts` | PUT, DELETE | Mise à jour / suppression question |
-| `api/questions/import/route.ts` | POST | Import batch CSV → DB |
+| `api/questions/import/route.ts` | POST | Super admin : import batch CSV → DB (refuse les id déjà pris, brouillons inclus) |
 | `api/students/route.ts` | GET, POST | Liste élèves / création |
 | `api/students/[id]/route.ts` | DELETE, PATCH | Suppression / mise à jour élève |
 | `api/releases/route.ts` | GET, POST | Historique releases — lecture / écriture |
@@ -156,7 +158,7 @@ _Mis à jour : 2026-10-10 · v0.12.0_
 | (partagé) | `hooks/useRole.ts`, `shared/ui/{SiteHeader,RoleGate}.tsx` | `useRole()` → `loading \| visitor \| learner \| teacher` ; `RoleGate deny=…` |
 | `dashboards` | `domain/{centre,examiner,learner,roadmap,scorecard,training-path,training-path-input}.ts`, `application/{useLearnerSnapshot,useRoadmap,useTrainingPath,useTrainingPathCatalog}.ts`, `infra/{dashboard-repository,dashboard-client,training-paths-seed,training-path-repository,training-path-catalog-repository,training-path-admin-client,roadmap-storage}.ts`, `ui/{CentreDashboardView,ExaminerDashboardView,LearnerHome,CommandCenter,PathRoadmap,TrainingPathPicker,TrainingPathSelect,TrainingPathAdmin,TrainingPathForm,PhaseEditor,ChapterEditor,RoadmapBanner,PhaseDetail,ResumeButton,Scorecard,LearnerFeed}.tsx`, `server.ts` | Centre de commande : `CommandCenter`, `GENERIC_PHASES`, `phasesOf(path)`, `validatePathChoice(body, actor, current, ids)`, `getTrainingPaths/getTrainingPath`, `useTrainingPath(profileId)` → `{ loaded, path, paths, choose }`, `useTrainingPathCatalog()` → `{ paths, loaded }`, `activePaths`, `validateTrainingPath(input, skillIds)`, `slugify`, `emptyTrainingPath`, `TrainingPathAdmin` (éditeur société mère), `saveCatalogPath`, `fetchTrainingPathCatalog`, `TrainingPathSelect` (centre), `useRoadmap(profileId, path)` → `{ phases, resume }`, `currentSkillIds`, `fetchTrainingPath/saveTrainingPath` · `server.ts` : `readTrainingPath/writeTrainingPath`, `listTrainingPaths/choosablePathIds/insertTrainingPath/updateTrainingPath` · `buildRoadmap(phases, levels, progress, today)`, `courseState`, `courseHref`, `plannedDates`, `newlyCompleted`, `resumeTarget(views, lastSkillId, hasQuiz?)`, `rankProgress(xp)`, `latestBadges(badges, n?)`, `trapAlerts(questions, distributions, skillId)`, `rememberLastSkill` · `onboardingSteps`, `firstQuizHref`, `applyStartLevel`, `FirstSteps`, `PlacementStep`, `activityStatus`, `buildCentreDashboard`, `buildExaminerDashboard`, `nextActionsFor`, `useLearnerSnapshot` · `skills` : `getSeen/markSeen` (nouveautés vues) |
 | `community` | `domain/traps.ts`, `infra/{stats-repository,community-client}.ts`, `ui/ClassicTraps.tsx`, `server.ts` | `trapSummary`, `trapMessage`, `constructiveFeedback`, `rankTraps`, `fetchDistributions`, `sendAnswers`, `ClassicTraps` |
-| `competition` | `domain/{week,nickname,identity,ranking,seed}.ts`, `ui/IdentityForm.tsx` (+ `validatePersonName`, `validateIdentityUpdate`, `isIdentityReady`, `canPrintDiploma`), `application/{challenge,view}.ts`, `infra/{competition-repository,competition-client}.ts`, `ui/{Leaderboard,ChallengePlayer,CompetitionPanel}.tsx`, `server.ts` | `pairsFor`, `groupOf`, `bonusStatus`, `buildPairView`, `describeEvent`, `canCheer`, `PairCard`, `ActivityFeed`, `isoWeek`, `previousWeek`, `validateNickname`, `generateNickname`, `rankBy`, `rankWeekly`, `awardsFor`, `challengeFor`, `scoreChallenge`, `buildCompetitionView`, `pastAwardsOf`, `CompetitionPanel` |
+| `competition` | `domain/{week,nickname,identity,ranking,seed}.ts`, `ui/IdentityForm.tsx` (+ `validatePersonName`, `validateIdentityUpdate`, `isIdentityReady`, `canPrintDiploma`), `application/{challenge,view}.ts`, `infra/{competition-repository,feed-repository,competition-client}.ts`, `ui/{Leaderboard,ChallengePlayer,CompetitionPanel}.tsx`, `server.ts` | `pairsFor`, `groupOf`, `bonusStatus`, `buildPairView`, `describeEvent`, `canCheer`, `PairCard`, `ActivityFeed`, `isoWeek`, `previousWeek`, `validateNickname`, `generateNickname`, `rankBy`, `rankWeekly`, `awardsFor`, `challengeFor`, `scoreChallenge`, `buildCompetitionView`, `pastAwardsOf`, `CompetitionPanel` |
 | `organizations` | `domain/{access,inputs}.ts`, `infra/{organization-repository,organization-client}.ts`, `ui/{OrganizationCard,TeamLinks}.tsx`, `server.ts` | `DEFAULT_ORGANIZATION_ID`, `canRecruit`, `canManageStudents`, `canDecideEnrollments`, `canCorrectEvaluations`, `organizationsWhere`, `studentOrganization`, `validateOrganizationInput`, `validateMemberInput`, `validateSiren/Siret`, `validateCentreIdentity`, `isIdentityComplete`, `adminLinks`, `centreHome`, `navAccessOf`, `AdminNav`, `SuperAdminGate`, `CentreCard`, `CentreIdentityForm`, `CentreSignupForm`, `CentreApplicationBanner`, `ApplicationsReview`, `validateCentreApplication`, `validateApplicationDecision`, `fetchMyAccess`, `recruit`, `TeamLinks` · `lib/access-context.ts` : `getAccessContext(req)` |
 | `pricing` | `domain/plan.ts`, `infra/pricing-client.ts`, `infra/pricing-repository.ts` (serveur), `ui/{PricingSection,PlanEditor}.tsx`, `server.ts` | `formatPrice`, `billingSuffix`, `eurosToCents`, `centsToEuros`, `yearlySavingPercent`, `validatePlanUpdate`, `fetchActivePlans`, `fetchAllPlans`, `savePlan`, `PricingSection`, `PlanEditor` · `server.ts` : `fetchPlans`, `updatePlan` |
 | `exams` | `domain/{slots,types,staffing}.ts`, `application/{oral-service,staffing-service}.ts` (serveur), `infra/{slot-repository,booking-repository,staffing-repository}.ts` (serveur), `infra/{exam-client,staffing-client}.ts`, `ui/{ExamAgenda,AvailabilityForm,SlotRow,OutcomeForm,OralBooking,OralResult,OralWaitingMessage,OralAvailabilityNotice,OralStaffSettings,OralWaitingList,format}.tsx`, `server.ts` | `FINAL_ORAL_LEVEL` (4), `isFinalOralPhase`, `validateOralGrant(body, members)`, `oralRequestRefusal(ctx)`, `examinerNotice(status)`, `OralAvailabilityNotice`, `OralStaffSettings`, `OralWaitingList`, `fetchMyOralRequests` · serveur : `canOpenSlots(userId, org)` (table `oral_examiners`), `requestOral`, `examinerStatus`, `oralStaff`, `listWaitingRequests`, `resolveRequests` · `DEFAULT_SLOT_MINUTES` (30), `SLOT_DURATIONS`, `splitAvailability(from, to, min)`, `validateAvailability(body, now)`, `validateBookingRequest`, `bookingRefusal(ctx, now)`, `cancelRefusal(booking, by, now)`, `validateOutcome(body, startsAt, now)`, `groupByDay(slots, tz)`, `ExamAgenda`, `OralBooking`, `fetchMyOrals` · `server.ts` : `canOpenSlots`, `bookOral`, `recordOutcome`, `createSlots`, `listExaminerSlots`, `listOpenSlots`, `getSlot`, `closeFreeSlot`, `listBookingsForProfile`, `getBooking`, `liveBookingOfSlot`, `cancelBooking`, `studentOrganization` |
@@ -330,7 +332,16 @@ Types : `src/types/reading.ts` (`ReadingWord`, `Syllable`, `ParsedWord`, `Readin
 | `MODE_LABELS` | Labels assisté/avancé |
 | `STUDENT_MODE_LABELS` | Labels + routes par mode élève |
 
-### CSV · `csv-parser.ts` + `csv-tokenizer.ts`
+### Banque de questions en base · `lib/question-bank-*.ts`
+| Fichier | Contenu |
+|---|---|
+| `question-bank-mapper.ts` | `dbToBankQuestion(row)` (ligne → `QuizQuestion` + `skillId`), `quizToDbRow(q, skillId)` |
+| `question-bank-overlay.ts` | Couche en mémoire : `setBankOverlay`, `overlayForSubject/ForSkill`, `mergeById(base, edited)` (même id = version base, indice du code conservé), hooks `useQuestionBankVersion()` / `useQuestionBankReady()` |
+| `admin-fetch.ts` | `adminFetch(url, init)` : fetch avec le jeton Supabase de l'admin |
+| `components/shared/QuestionBankSync.tsx` | Charge `/api/question-bank` une fois (délai 3 s, repli sur le code), monté dans `app/layout.tsx` |
+| `skills/infra/skill-content.ts` | `getSkillBank` (fusionné), `getBuiltInSkillBank` / `hasBuiltInQuestionBank` (code seul : défi hebdo noté côté serveur), `listBuiltInBanks()` |
+
+### CSV · `csv-parser.ts` + `csv-headers.ts` + `csv-tokenizer.ts`
 | Fonction | Rôle |
 |---|---|
 | `parseAndValidateCsv(content)` | Valide CSV → `{ questions, errors }` |
@@ -361,7 +372,8 @@ Types : `src/types/reading.ts` (`ReadingWord`, `Syllable`, `ParsedWord`, `Readin
 ### Question Banks · `lib/question-banks/`
 | Fichier | Contenu |
 |---|---|
-| `index.ts` | Re-export + `getQuestionsForSubject(subject)` |
+| `index.ts` | `getQuestions(subject)` (code + base fusionnés), `getBuiltInQuestions(subject)` (code seul) |
+| `hints-questions.ts`, `hints-histoire-svt.ts` | Questions avec indices (maths/français ; histoire/SVT) |
 | `brevet_questions.ts` | 100+ questions brevet (maths, français, histoire…) |
 | `anglais.ts` | Vocabulaire anglais |
 | `espagnol.ts` | Vocabulaire espagnol |
@@ -381,7 +393,7 @@ Types : `src/types/reading.ts` (`ReadingWord`, `Syllable`, `ParsedWord`, `Readin
 |---|---|---|
 | `client.ts` | — | `getClient()`, `getServerClient()` |
 | `students.ts` | `DbStudent`, `StudentMode`, `StudentLearningMode` | `fetchStudents`, `insertStudent`, `deleteStudent`, `updateStudent` |
-| `questions.ts` | `DbQuestion` | `insertQuestions`, `fetchQuestionsFromDb`, `fetchAllQuestionsFromDb`, `updateQuestion`, `deleteQuestion` |
+| `questions.ts` | `DbQuestion` (+ `skill_id`, `status`, `hint`) | `insertQuestions`, `fetchQuestionsFromDb`, `fetchPublishedQuestions`, `seedQuestions`, `fetchAllQuestionsFromDb`, `updateQuestion`, `deleteQuestion` |
 | `scores.ts` | `DbScore`, `DbBadge`, `DbQuizAnswer`, `DbKeyboardProgress` | `syncScoreToDb`, `fetchScoreFromDb`, `syncBadgeToDb`, `logQuizAnswer`, `logKeyboardSession` |
 | `releases.ts` | `DbReleaseNote`, `ReleaseNoteFilter` | `insertReleaseNote`, `fetchReleaseNotes` |
 | `index.ts` | (re-export tout) | — |
@@ -443,7 +455,9 @@ Types : `src/types/reading.ts` (`ReadingWord`, `Syllable`, `ParsedWord`, `Readin
 | `unit/useScore.test.ts` | Unit | `useScore` — XP, niveau, badges, streak |
 | `unit/useAvatar.test.ts` | Unit | `useAvatar` — débloquage selon XP |
 | `unit/useEngagement.test.ts` | Unit | `useEngagement` — pings, bricks, throttle |
-| `unit/csv-parser.test.ts` | Unit | `parseAndValidateCsv` — cas valides et erreurs |
+| `unit/csv-parser.test.ts` | Unit | `parseAndValidateCsv` — cas valides et erreurs, colonnes skillId / status / hint |
+| `unit/question-bank.test.ts` | Unit | mapper, `mergeById`, couche base sur les banques du code, banque intégrée pour le défi |
+| `unit/question-bank-routes.test.ts` | Unit | `/api/question-bank`, seed, import et liste réservés à l'admin |
 | `integration/QuizCard.test.tsx` | Intégration | `QuizCard` — sélection réponse, timer, hint |
 | `integration/ScoreBadge.test.tsx` | Intégration | `ScoreBadge` — affichage XP / niveau |
 | `integration/AvatarPicker.test.tsx` | Intégration | `AvatarPicker` — sélection avatar débloqué |
@@ -462,7 +476,7 @@ Clic profil
   → /home ou /keyboard selon mode
 
 Quiz (/quiz/[subject])
-  → fetchQuestionsFromDb() OU question-banks statiques
+  → question-banks du code + GET /api/question-bank (questions publiées, fusion par id dans `getQuestions`/`getSkillBank`)
   → useSpacedRepetition → questions dues
   → useQuizSession → réponses, XP
   → useScore.addXp() → syncScoreToDb()
@@ -496,5 +510,6 @@ Landing d'un centre
 
 Admin CSV import
   → ImportDropzone → parseAndValidateCsv
-  → POST /api/questions/import → insertQuestions()
+  → POST /api/questions/import (admin) → insertQuestions() → visible des élèves si status = published
+  → /admin/questions « Copier les banques intégrées » → POST /api/questions/seed
 ```

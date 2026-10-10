@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { describeEvent, fetchFeed, sendCheer, type FeedEvent } from '@/modules/competition';
 import { fetchDistributions } from '@/modules/community';
 import { getSkillBank } from '@/modules/skills';
+import { useQuestionBankVersion } from '@/lib/question-bank-overlay';
 import { trapAlerts, type TrapAlert } from '../domain/scorecard';
 
 const FEED_SIZE = 5;
@@ -14,6 +15,7 @@ export function LearnerFeed({ profileId, skillIds }: { profileId: string; skillI
   const [events, setEvents] = useState<FeedEvent[]>([]);
   const [alerts, setAlerts] = useState<TrapAlert[]>([]);
   const skillsKey = skillIds.join(',');
+  const bankVersion = useQuestionBankVersion();
 
   useEffect(() => {
     let alive = true;
@@ -28,7 +30,7 @@ export function LearnerFeed({ profileId, skillIds }: { profileId: string; skillI
       if (alive) setAlerts(banks.flatMap((b) => trapAlerts(b.questions, d, b.id, 1)).slice(0, 2));
     });
     return () => { alive = false; };
-  }, [skillsKey]);
+  }, [skillsKey, bankVersion]);
 
   async function cheer(event: FeedEvent) {
     setEvents((all) => all.map((e) => (e.id === event.id ? { ...e, cheeredByMe: true, cheers: e.cheers + 1 } : e))); // optimistic

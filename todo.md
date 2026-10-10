@@ -2,6 +2,14 @@
 
 Fichier unique de pilotage : **en cours**, **backlog** et **bugs connus** (remplace `in-progress.md` et `knownBugs.md`). Supprimer les lignes une fois réalisées ; l'état du projet est dans `README.md`.
 
+## En cours — Banque de questions pilotée par la base
+- [x] Table `questions` lue par les quiz (couche base sur les banques du code, secours hors ligne), statut brouillon/publiée, `skill_id`, indice, copie des banques intégrées, import / liste / seed réservés à la société mère
+- [ ] **Prod : appliquer `20261028000000_question_bank.sql`** (RLS sur `questions` : règle l'alerte sécurité Supabase), puis ouvrir `/admin/questions` → « Copier les banques intégrées » (non testée sur Postgres depuis l'assistant : `psql` seul, pas de serveur)
+- [ ] Défi hebdomadaire : encore sur les banques du code (noté côté serveur) ; lui faire lire la base côté serveur pour qu'une édition y soit prise en compte
+- [ ] Quiz hors compétence (`/quiz/[subject]`, parcours) : SRS suit les ids — vérifier qu'une question rééditée garde son historique (même id = oui)
+- [ ] Parcours de formation : relier un chapitre à une banque en base pour créer « Pharma » sans coder ; dates de phases en base (aujourd'hui `localStorage`)
+- [ ] Unifier les accueils : `/competences` seule entrée, `/home` devient l'onglet « Par matière » ; rendu serveur du premier écran
+
 ## En cours — Certificats PDF vérifiables + chat de binôme audité
 - [x] Certificats PDF vérifiables (registre signé, QR code, page publique, LinkedIn, révocation) et chat de binôme archivé et audité (livrés, voir README modules `certificates` et `collab`)
 - [ ] **Prod : définir `CERTIFICATE_SECRET` (Vercel, ne plus jamais le changer) et `NEXT_PUBLIC_SITE_URL` ; appliquer `20261026000000_certificates.sql` puis `20261027000000_pair_chat.sql`** (testées sur Postgres 17, rejouables)
@@ -65,7 +73,7 @@ Décisions (2026-10-10) : back-office centralisé (société mère) ; le centre 
 - [ ] Centre de formation = admin (`ADMIN_EMAILS`) : prévoir un rôle « centre » distinct et des notifications de décision (inscription, correction)
 - [ ] Vérifier côté serveur le temps réellement travaillé (aujourd'hui l'effort quotidien est déclaratif)
 - [ ] **Emails d'inscription prod** : saisir Brevo (`smtp-relay.brevo.com:587`) dans Supabase → Auth → SMTP Settings, valider l'expéditeur dans Brevo, relever la limite d'emails, vérifier `NEXT_PUBLIC_SITE_URL` (procédure : `docs/deploiement.md`)
-- [ ] Prod : activer RLS sur `questions` et `release_notes` (alerte sécurité Supabase) avec les policies adaptées
+- [ ] Prod : activer RLS sur `release_notes` (alerte sécurité Supabase) — `questions` est traité par la migration `20261028000000`
 - [ ] Vérification visuelle tarifs / admin (Docker arrêté)
 - [ ] Paiement en ligne (non demandé pour l'instant)
 

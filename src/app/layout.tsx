@@ -4,6 +4,7 @@ import './globals.css';
 import { SiteHeader } from '@/shared/ui/SiteHeader';
 import { SiteFooter } from '@/shared/ui/SiteFooter';
 import { ReminderRunner } from '@/modules/skills';
+import { QuestionBankSync } from '@/components/shared/QuestionBankSync';
 
 const geist = Geist({
   subsets: ['latin'],
@@ -23,6 +24,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <div className="flex-1 flex flex-col">{children}</div>
         <SiteFooter />
         <ReminderRunner />
+        <QuestionBankSync />
       </body>
     </html>
   );

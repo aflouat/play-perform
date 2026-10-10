@@ -11,6 +11,7 @@ import { isEnrolled } from '../domain/enrollment';
 import { persistSkillLevel } from '../application/skill-sync';
 import { advanceSkillLevel, setSkillLevel, useSkillLevels } from '../application/skill-progress';
 import { FLASHCARDS_XP, QUIZ_LENGTH, QUIZ_PASS_XP, isQuizPassed, type SkillActivity } from '../domain/activity';
+import { useQuestionBankVersion } from '@/lib/question-bank-overlay';
 import { hasQuestionBank, pickSkillQuestions, toFlashcards } from '../infra/skill-content';
 import { SkillLevelMeter } from './SkillLevelMeter';
 import { SkillQuiz } from './SkillQuiz';
@@ -46,7 +47,8 @@ export function SkillActivityView({ skillId, profileId, mode, addXp, triggerGain
   const [round, setRound] = useState(0);
   const hasBank = hasQuestionBank(skillId);
   // Candidates for the wall of classic traps: the questions of the learner's level
-  const trapCandidates = useMemo(() => getSkillBank(skillId).filter((q) => q.difficulty === difficultyForLevel(level ?? 1)), [skillId, level]);
+  const bankVersion = useQuestionBankVersion();
+  const trapCandidates = useMemo(() => getSkillBank(skillId).filter((q) => q.difficulty === difficultyForLevel(level ?? 1)), [skillId, level, bankVersion]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Random draw happens in the click handler, never during render
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
